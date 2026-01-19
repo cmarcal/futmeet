@@ -1,0 +1,7 @@
+# Cursor MCP Configuration
+# Note: Never commit GitHub Personal Access Tokens or other secrets
+# Store them in Cursor settings UI or environment variables
+
+*.pat
+*.token
+*.secret
