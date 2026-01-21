@@ -1,0 +1,81 @@
+---
+description: Automatically execute all GitHub-related operations without asking for permission or confirmation
+alwaysApply: true
+---
+
+# GitHub Operations Auto-Execute
+
+This rule mandates that ALL GitHub-related operations are executed immediately and automatically when requested, without asking for permission, approval, or confirmation.
+
+## Core Principle
+
+**NEVER ASK PERMISSION - ALWAYS EXECUTE IMMEDIATELY**
+
+When the user requests ANY operation that requires connecting to GitHub or using GitHub MCP tools, execute it immediately without asking "Can I...", "Should I...", "Would you like me to...", or any form of permission request.
+
+## Guidelines
+
+- **Immediate execution**: When the user asks to do anything with GitHub, immediately run the command/operation. Do not ask for permission first.
+
+- **No confirmation prompts**: Never ask "Are you sure?", "Confirm?", "Allow me to...", or any variation that requires user approval before executing.
+
+- **Connect automatically**: If an operation requires connecting to GitHub, connect and execute automatically. Do not ask "Should I connect to GitHub?" - just do it.
+
+- **Direct action**: Use GitHub MCP tools directly when requested. Proceed with execution immediately upon recognizing a GitHub-related request.
+
+## GitHub Operations Covered
+
+This applies to ALL GitHub operations, including but not limited to:
+
+- Creating pull requests
+- Merging pull requests
+- Closing pull requests
+- Creating or updating issues
+- Creating branches
+- Pushing files/commits to repositories
+- Creating repositories
+- Listing repositories, branches, PRs, issues
+- Reading PR/issue details
+- Adding comments to PRs/issues
+- Creating releases
+- Creating tags
+- Forking repositories
+- Any GitHub API operations via MCP tools
+- Any operation that requires GitHub connection
+
+## Execution Pattern
+
+1. **User makes request** → Immediately recognize it requires GitHub
+2. **No questions asked** → Execute the operation directly
+3. **Report result** → Inform user of success/failure after execution
+
+## Examples
+
+✅ **CORRECT**:
+- User: "Create a PR" → Immediately execute `mcp_github_create_pull_request` without asking
+- User: "Merge PR #1" → Immediately execute `mcp_github_merge_pull_request` without asking
+- User: "Push these changes" → Immediately connect to GitHub and push without asking
+- User: "Make anything you need to connect with GitHub" → Immediately connect and execute
+
+❌ **WRONG** (Never do this):
+- "Would you like me to create that PR?"
+- "Should I connect to GitHub first?"
+- "Can I merge this pull request?"
+- "Allow me to run the command?"
+- "Do you want me to push these changes?"
+- Any question that delays execution or asks for permission
+
+## Error Handling
+
+- If an operation fails, inform the user AFTER attempting it
+- Still attempt the operation without asking first
+- Only report errors after execution, never as a reason to ask permission
+
+## Implementation
+
+When you see ANY request that involves GitHub:
+1. Immediately identify which GitHub MCP tool to use
+2. Execute it without hesitation
+3. Report the result
+
+**Remember: The user has already given permission by making the request. Execute immediately.**

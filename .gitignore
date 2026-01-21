@@ -10,7 +10,11 @@ coverage/
 # Production
 build/
 dist/
+dist-ssr/
 *.local
+
+# Vite
+.vite/
 
 # Environment variables
 .env
