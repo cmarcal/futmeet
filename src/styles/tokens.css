@@ -1,0 +1,53 @@
+/* Design Tokens - CSS Variables */
+/* This file will be generated from tokens.json in the future */
+
+:root {
+  /* Primary Colors */
+  --md-sys-color-primary: #2E7D32;
+  --md-sys-color-primary-dark: #1B5E20;
+  --md-sys-color-primary-light: #66BB6A;
+  --md-sys-color-primary-container: #E8F5E9;
+
+  /* Accent Colors */
+  --md-sys-color-accent: #FF6B35;
+  --md-sys-color-accent-dark: #E55A2B;
+
+  /* Priority Colors */
+  --md-sys-color-priority: #FFC107;
+  --md-sys-color-priority-light: #FFE082;
+
+  /* Neutral Colors */
+  --md-sys-color-text-primary: #212121;
+  --md-sys-color-text-secondary: #757575;
+  --md-sys-color-background-main: #F5F5F5;
+  --md-sys-color-background-card: #FFFFFF;
+  --md-sys-color-border: #E0E0E0;
+
+  /* Semantic Colors */
+  --md-sys-color-success: #388E3C;
+  --md-sys-color-error: #D32F2F;
+  --md-sys-color-warning: #F57C00;
+
+  /* Spacing */
+  --md-sys-spacing-xs: 4px;
+  --md-sys-spacing-sm: 8px;
+  --md-sys-spacing-md: 16px;
+  --md-sys-spacing-lg: 24px;
+  --md-sys-spacing-xl: 32px;
+  --md-sys-spacing-2xl: 48px;
+  --md-sys-spacing-3xl: 64px;
+
+  /* Border Radius */
+  --md-sys-shape-corner-sm: 4px;
+  --md-sys-shape-corner-md: 6px;
+  --md-sys-shape-corner-lg: 8px;
+  --md-sys-shape-corner-xl: 12px;
+  --md-sys-shape-corner-2xl: 16px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* Shadows */
+  --md-sys-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --md-sys-shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --md-sys-shadow-button: 0 2px 8px rgba(46, 125, 50, 0.3);
+  --md-sys-shadow-button-hover: 0 4px 12px rgba(46, 125, 50, 0.4);
+}
