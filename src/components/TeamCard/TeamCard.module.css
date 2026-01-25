@@ -69,14 +69,23 @@
 }
 
 .players {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
   padding: var(--spacing-md);
 
   @media (--tablet) {
-    gap: var(--spacing-md);
     padding: var(--spacing-lg);
+  }
+}
+
+.playersList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @media (--tablet) {
+    gap: var(--spacing-md);
   }
 }
 

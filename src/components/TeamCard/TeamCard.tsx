@@ -27,8 +27,8 @@ export const TeamCard = ({ team, showPlayerActions = false, teamColor }: TeamCar
   const cardColor = teamColor || teamColors[colorIndex % teamColors.length];
 
   return (
-    <div className={styles.card} style={{ '--team-color': cardColor } as React.CSSProperties}>
-      <div className={styles.header}>
+    <article className={styles.card} style={{ '--team-color': cardColor } as React.CSSProperties}>
+      <header className={styles.header}>
         <div className={styles.titleRow}>
           <div className={styles.iconWrapper}>
             <Users size={24} aria-hidden="true" />
@@ -38,16 +38,20 @@ export const TeamCard = ({ team, showPlayerActions = false, teamColor }: TeamCar
             <span className={styles.count}>{team.players.length} player{team.players.length !== 1 ? 's' : ''}</span>
           </div>
         </div>
-      </div>
-      <div className={styles.players}>
+      </header>
+      <section className={styles.players}>
         {team.players.length === 0 ? (
           <p className={styles.emptyMessage}>No players assigned</p>
         ) : (
-          team.players.map((player, index) => (
-            <PlayerCard key={player.id} player={player} index={index} showActions={showPlayerActions} />
-          ))
+          <ul className={styles.playersList}>
+            {team.players.map((player, index) => (
+              <li key={player.id}>
+                <PlayerCard player={player} index={index} showActions={showPlayerActions} />
+              </li>
+            ))}
+          </ul>
         )}
-      </div>
-    </div>
+      </section>
+    </article>
   );
 };

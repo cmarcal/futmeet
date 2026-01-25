@@ -27,9 +27,9 @@ export const PlayerList = ({
   }
 
   return (
-    <div className={styles.list} role="list">
+    <ul className={styles.list}>
       {players.map((player, index) => (
-        <div key={player.id} role="listitem">
+        <li key={player.id}>
           <PlayerCard
             player={player}
             index={index}
@@ -37,8 +37,8 @@ export const PlayerList = ({
             onRemove={onRemove}
             showActions={showActions}
           />
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
