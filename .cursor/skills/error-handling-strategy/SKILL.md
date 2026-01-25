@@ -1,27 +1,25 @@
 ---
 name: error-handling-strategy
-description: Implement multi-layer error handling with Error Boundaries, form validation, and API error handling. This skill guides comprehensive error handling following the project's error strategy.
+description: Implement error handling with Error Boundaries and form validation. This skill guides error handling for client-side only MVP.
 ---
 
 # Error Handling Strategy
 
-When implementing error handling in this project, use a multi-layer approach covering React Error Boundaries, form validation, API errors, and user-facing messages.
+When implementing error handling in this project, use a multi-layer approach covering React Error Boundaries and form validation.
 
 ## When to Use This Skill
 
 - Setting up Error Boundaries
 - Handling form validation errors
-- Managing API error states
 - Creating user-friendly error messages
-- Handling async errors
 
 ## Key Principles
 
-1. **Multi-Layer Approach**: Error Boundaries, Form Validation, API Errors, User Messages
-2. **User-Friendly Messages**: Clear, actionable error messages
-3. **Recovery Options**: Always provide ways to recover from errors
-4. **Accessibility**: Proper ARIA attributes for error states
-5. **Logging**: Log errors for debugging (development/production)
+1. **Error Boundaries**: Catch unexpected runtime errors
+2. **Form Validation**: Handle validation errors gracefully
+3. **User-Friendly Messages**: Clear, actionable error messages
+4. **Recovery Options**: Always provide ways to recover from errors
+5. **Accessibility**: Proper ARIA attributes for error states
 
 ## Error Handling Layers
 
@@ -42,11 +40,6 @@ npm install react-error-boundary
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from './ErrorFallback';
 
-const logError = (error: Error, errorInfo: { componentStack: string }) => {
-  console.error('Error caught by boundary:', error, errorInfo);
-  // TODO: Send to error tracking service (Sentry, etc.)
-};
-
 interface AppErrorBoundaryProps {
   children: React.ReactNode;
 }
@@ -55,7 +48,6 @@ export function AppErrorBoundary({ children }: AppErrorBoundaryProps) {
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
-      onError={logError}
       onReset={() => {
         window.location.href = '/';
       }}
@@ -94,27 +86,6 @@ export function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       </div>
     </div>
   );
-}
-```
-
-#### Using useErrorHandler Hook
-
-```typescript
-// For catching errors in async code
-import { useErrorHandler } from 'react-error-boundary';
-
-function PlayerList() {
-  const handleError = useErrorHandler();
-
-  const handleAsyncOperation = async () => {
-    try {
-      await someAsyncOperation();
-    } catch (error) {
-      handleError(error); // Will be caught by ErrorBoundary
-    }
-  };
-
-  return <div>{/* component content */}</div>;
 }
 ```
 
@@ -175,61 +146,7 @@ function PlayerInput() {
 }
 ```
 
-### 3. API Errors (TanStack Query)
-
-Handle API errors in queries and mutations.
-
-#### Query Error Handling
-
-```typescript
-function PlayerList() {
-  const { data, isLoading, error } = usePlayers(gameId);
-  
-  if (isLoading) return <div>Loading...</div>;
-  
-  if (error) {
-    return (
-      <div role="alert" className={styles.errorContainer}>
-        <p>Failed to load players: {error.message}</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
-  
-  return <div>{/* Player list */}</div>;
-}
-```
-
-#### Mutation Error Handling
-
-```typescript
-function PlayerInput() {
-  const { mutate: addPlayer, isPending, error } = useAddPlayer();
-  
-  const onSubmit = (data: AddPlayerInput) => {
-    addPlayer(data, {
-      onError: (error) => {
-        // Handle mutation error
-        console.error('Failed to add player:', error);
-        // Show user notification
-      },
-    });
-  };
-  
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {error && (
-        <Alert variant="error" role="alert">
-          Failed to add player: {error.message}
-        </Alert>
-      )}
-      {/* Form fields */}
-    </form>
-  );
-}
-```
-
-### 4. User-Facing Error Messages
+### 3. User-Facing Error Messages
 
 Display clear, actionable error messages.
 
@@ -257,32 +174,16 @@ export function Alert({ variant = 'info', children, onClose }: AlertProps) {
 }
 ```
 
-#### Usage Examples
-
-```typescript
-// Error message
-<Alert variant="error">
-  Failed to save player. Please try again.
-</Alert>
-
-// Success message
-<Alert variant="success">
-  Player added successfully!
-</Alert>
-```
-
 ## Best Practices
 
 1. **Always Provide Recovery**: Give users ways to fix or retry
 2. **Clear Messages**: Use plain language, avoid technical jargon
 3. **Accessibility**: Use `role="alert"` for error messages
-4. **Logging**: Log errors for debugging (development only in console, production to service)
-5. **Don't Crash**: Error Boundaries should catch everything, not let app crash
+4. **Don't Crash**: Error Boundaries should catch everything, not let app crash
 
 ## Related Files
 
 - `adr/frontend/01-frontend-architecture/error-handling-strategy.md` - Full error handling documentation
-- `adr/frontend/01-frontend-architecture/final-decisions.md` - Error handling decision
 
 ## Checklist
 
@@ -290,6 +191,4 @@ export function Alert({ variant = 'info', children, onClose }: AlertProps) {
 - [ ] Set up Error Boundary in App
 - [ ] Create ErrorFallback component
 - [ ] Create FormError component
-- [ ] Handle API errors in queries/mutations
 - [ ] Create Alert component for user messages
-- [ ] Test error scenarios
