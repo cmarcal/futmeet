@@ -11,16 +11,20 @@
   transition: all 0.2s ease-in-out;
   gap: var(--spacing-md);
   min-height: 64px;
-}
 
-.card:hover {
-  box-shadow: var(--shadow-card);
-  border-color: var(--color-primary);
-}
+  &:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-primary);
+  }
 
-.card[data-priority='true'] {
-  border-color: var(--color-priority);
-  background-color: var(--color-priority-light);
+  &[data-priority='true'] {
+    border-color: var(--color-priority);
+    background-color: var(--color-priority-light);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
 }
 
 .content {
@@ -68,6 +72,10 @@
   font-weight: 500;
   color: var(--color-text-primary);
   word-break: break-word;
+
+  @media (max-width: 480px) {
+    font-size: 0.9375rem;
+  }
 }
 
 .notes {
@@ -104,23 +112,20 @@
   transition: all 0.2s ease-in-out;
   color: var(--color-text-secondary);
   outline: none;
-}
 
-.priorityButton:hover,
-.removeButton:hover {
-  background-color: var(--color-background-main);
-  color: var(--color-text-primary);
-}
+  &:hover {
+    background-color: var(--color-background-main);
+    color: var(--color-text-primary);
+  }
 
-.priorityButton:focus-visible,
-.removeButton:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 
-.priorityButton:active,
-.removeButton:active {
-  transform: scale(0.95);
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .starActive {
@@ -132,16 +137,8 @@
   color: var(--color-text-secondary);
 }
 
-.removeButton:hover {
-  color: var(--color-error);
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-
-  .name {
-    font-size: 0.9375rem;
+.removeButton {
+  &:hover {
+    color: var(--color-error);
   }
 }

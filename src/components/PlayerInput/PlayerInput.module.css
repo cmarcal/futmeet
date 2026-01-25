@@ -5,10 +5,19 @@
   flex-direction: column;
   gap: var(--spacing-md);
   width: 100%;
+
+  @media (min-width: 481px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }
 
 .inputWrapper {
   width: 100%;
+
+  @media (min-width: 481px) {
+    flex: 1;
+  }
 }
 
 .submitButton {
@@ -17,19 +26,8 @@
   justify-content: center;
   gap: var(--spacing-sm);
   width: 100%;
-}
 
-@media (min-width: 481px) {
-  .form {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  .inputWrapper {
-    flex: 1;
-  }
-
-  .submitButton {
+  @media (min-width: 481px) {
     width: auto;
     min-width: 140px;
   }

@@ -10,6 +10,10 @@
   max-width: 600px;
   margin: 0 auto;
   padding: var(--spacing-xl);
+
+  @media (max-width: 480px) {
+    padding: var(--spacing-lg);
+  }
 }
 
 .title {
@@ -17,24 +21,18 @@
   font-size: 3rem;
   font-weight: 700;
   color: var(--color-primary);
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+  }
 }
 
 .subtitle {
   margin: 0 0 var(--spacing-xl) 0;
   font-size: 1.25rem;
   color: var(--color-text-secondary);
-}
 
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-lg);
-  }
-
-  .title {
-    font-size: 2rem;
-  }
-
-  .subtitle {
+  @media (max-width: 480px) {
     font-size: 1.125rem;
   }
 }

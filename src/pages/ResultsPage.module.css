@@ -8,6 +8,11 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-lg);
+
+  @media (max-width: 480px) {
+    padding: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
 }
 
 .header {
@@ -20,6 +25,10 @@
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
+
+  @media (max-width: 480px) {
+    font-size: 1.5rem;
+  }
 }
 
 .subtitle {
@@ -37,31 +46,18 @@
   flex-direction: column;
   gap: var(--spacing-md);
   width: 100%;
+
+  @media (min-width: 481px) {
+    flex-direction: row;
+    justify-content: center;
+  }
 }
 
 .button {
   width: 100%;
-}
 
-@media (min-width: 481px) {
-  .actions {
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .button {
+  @media (min-width: 481px) {
     width: auto;
     min-width: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-md);
-    gap: var(--spacing-lg);
-  }
-
-  .title {
-    font-size: 1.5rem;
   }
 }
