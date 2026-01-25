@@ -9,7 +9,6 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     padding: var(--spacing-lg);
   }

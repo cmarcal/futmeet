@@ -1,8 +1,6 @@
 /* Utility Classes */
 /* Additional utility classes can be added here as needed */
 
-/* Breakpoints are defined in tokens.css */
-/* Use --breakpoint-tablet (768px) and --breakpoint-desktop (1024px) */
 
 /* Container */
 .container {
@@ -12,7 +10,6 @@
   padding: 0 var(--spacing-md);
 }
 
-/* Tablet and up - see tokens.css for --breakpoint-tablet */
 @media (min-width: 768px) {
   .container {
     max-width: 720px;
@@ -20,7 +17,6 @@
   }
 }
 
-/* Desktop and up - see tokens.css for --breakpoint-desktop */
 @media (min-width: 1024px) {
   .container {
     max-width: 960px;

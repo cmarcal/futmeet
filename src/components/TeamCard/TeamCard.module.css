@@ -22,7 +22,6 @@
   background-color: var(--team-color, var(--color-primary));
   color: var(--color-background-card);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     padding: var(--spacing-md) var(--spacing-lg);
   }
@@ -58,7 +57,6 @@
   margin: 0;
   color: var(--color-background-card);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     font-size: 1.25rem;
   }
@@ -76,7 +74,6 @@
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     gap: var(--spacing-md);
     padding: var(--spacing-lg);

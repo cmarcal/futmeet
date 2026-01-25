@@ -6,7 +6,6 @@
   gap: var(--spacing-lg);
   width: 100%;
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

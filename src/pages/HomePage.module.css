@@ -11,7 +11,6 @@
   margin: 0 auto;
   padding: var(--spacing-lg);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     max-width: 600px;
     padding: var(--spacing-xl);
@@ -24,7 +23,6 @@
   font-weight: 700;
   color: var(--color-primary);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     font-size: 3rem;
   }
@@ -35,7 +33,6 @@
   font-size: 1.125rem;
   color: var(--color-text-secondary);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     font-size: 1.25rem;
   }

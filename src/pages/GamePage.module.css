@@ -8,7 +8,6 @@
   margin: 0 auto;
   padding: var(--spacing-md);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     gap: var(--spacing-xl);
     padding: var(--spacing-lg);
@@ -23,7 +22,6 @@
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     flex-direction: row;
     align-items: center;
@@ -37,7 +35,6 @@
   color: var(--color-text-primary);
   margin: 0;
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     font-size: 2rem;
   }
@@ -62,7 +59,6 @@
   color: var(--color-text-primary);
   margin: 0;
 
-  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     font-size: 1.25rem;
   }
