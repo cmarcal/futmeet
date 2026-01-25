@@ -1,30 +1,22 @@
 # Testing Strategy
 
 ## Overview
-Comprehensive testing strategy using Vitest and React Testing Library for the FutMeet MVP.
+Simple testing setup using Vitest and React Testing Library for the FutMeet MVP. Focus on testing critical paths only - no coverage goals, just test what matters.
 
 ---
 
 ## Decision: Vitest + React Testing Library
 
-### What is Vitest?
-Modern, fast testing framework built for Vite. Provides Jest-compatible API with better performance and seamless Vite integration.
-
-### Why Vitest for This Project?
-
-**Benefits ✅**
+### Why Vitest?
 - **Vite Integration**: Same config, no duplicate tooling
 - **Fast Execution**: Native ESM, faster than Jest
-- **TypeScript**: Native TypeScript support (no Babel)
-- **Watch Mode**: Lightning-fast watch mode
-- **Jest Compatible**: Same API, easy migration/migration back
-- **Small Bundle**: Only includes what you use
+- **TypeScript**: Native TypeScript support
+- **Jest Compatible**: Same API, easy to use
 
 ### Why React Testing Library?
 - **User-Centric Testing**: Tests behavior, not implementation
-- **Accessibility**: Encourages accessible components
 - **Best Practices**: Industry standard for React component testing
-- **Great DX**: Simple API, excellent documentation
+- **Simple API**: Easy to learn and use
 
 ---
 
@@ -68,17 +60,9 @@ afterEach(() => {
 
 ---
 
-## Testing Levels
+## Test Examples
 
-### 1. Unit Tests
-**What**: Individual functions, utilities, hooks
-
-**Examples:**
-- `utils/teamSorter.ts` - Sorting algorithm logic
-- `utils/priorityManager.ts` - Priority handling
-- `hooks/usePlayerManagement.ts` - Custom hook logic
-
-**Example Test:**
+### Unit Test: Team Sorting Algorithm
 ```typescript
 // utils/__tests__/teamSorter.test.ts
 import { describe, it, expect } from 'vitest';
@@ -102,17 +86,7 @@ describe('sortTeams', () => {
 });
 ```
 
----
-
-### 2. Component Tests
-**What**: UI components in isolation
-
-**Examples:**
-- Button component behavior
-- FormField validation display
-- PlayerCard interactions
-
-**Example Test:**
+### Component Test: Button
 ```typescript
 // components/base-elements/Button/__tests__/Button.test.tsx
 import { describe, it, expect, vi } from 'vitest';
@@ -140,81 +114,6 @@ describe('Button', () => {
 
 ---
 
-### 3. Integration Tests
-**What**: Multiple components working together
-
-**Examples:**
-- Form submission flow
-- Player addition workflow
-- Team sorting and display
-
-**Example Test:**
-```typescript
-// components/sections/PlayerInput/__tests__/PlayerInput.integration.test.tsx
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { PlayerInput } from '../PlayerInput';
-import { useGameStore } from '@/stores/gameStore';
-
-describe('PlayerInput Integration', () => {
-  it('should add player to store on form submit', async () => {
-    const user = userEvent.setup();
-    
-    render(<PlayerInput />);
-    
-    const input = screen.getByLabelText('Player Name');
-    await user.type(input, 'John Doe');
-    
-    const submitButton = screen.getByRole('button', { name: /add/i });
-    await user.click(submitButton);
-    
-    const { players } = useGameStore.getState();
-    expect(players).toContainEqual(
-      expect.objectContaining({ name: 'John Doe' })
-    );
-  });
-});
-```
-
----
-
-## Accessibility Testing
-
-### Manual Testing
-- **Screen Readers**: NVDA (Windows), JAWS, VoiceOver (Mac/iOS)
-- **Keyboard Navigation**: Tab through entire app
-- **Color Contrast**: Use browser DevTools or axe DevTools
-
-### Automated Testing
-```typescript
-// Example accessibility test
-import { describe, it } from 'vitest';
-import { render } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
-import { Button } from '../Button';
-
-expect.extend(toHaveNoViolations);
-
-describe('Button Accessibility', () => {
-  it('should have no accessibility violations', async () => {
-    const { container } = render(<Button>Click me</Button>);
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  });
-});
-```
-
----
-
-## Test Coverage Goals
-
-- **Unit Tests**: 80%+ coverage for utilities and hooks
-- **Component Tests**: Critical user interactions
-- **Integration Tests**: Key user flows (add player, sort teams)
-
----
-
 ## Running Tests
 
 ```bash
@@ -224,12 +123,19 @@ npm run test
 # Watch mode
 npm run test:watch
 
-# Coverage report
-npm run test:coverage
-
 # UI mode (Vitest UI)
 npm run test:ui
 ```
+
+---
+
+## Implementation Checklist
+
+- [ ] Install Vitest and React Testing Library dependencies
+- [ ] Configure `vite.config.ts` with test settings
+- [ ] Create `src/test/setup.ts` file
+- [ ] Write unit test for team sorting algorithm
+- [ ] Write component test for Button component
 
 ---
 
@@ -237,16 +143,10 @@ npm run test:ui
 
 ✅ **Use Vitest + React Testing Library**
 
-**Benefits:**
-- Fast, Vite-integrated testing
-- User-centric component testing
-- Accessibility testing included
-- TypeScript-first approach
-
-**Testing Levels:**
-- Unit tests for utilities and hooks
-- Component tests for UI components
-- Integration tests for user flows
+**MVP Approach:**
+- Test critical paths only (team sorting, basic component rendering)
+- No coverage goals - focus on what matters
+- Keep it simple and maintainable
 
 ---
 
