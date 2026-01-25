@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PlayerList } from './PlayerList';
 import type { Player } from '../../types';
 
@@ -38,25 +39,23 @@ describe('PlayerList', () => {
   it('should call onTogglePriority when priority is toggled', async () => {
     const players = [createPlayer('1', 'Player 1')];
     const handleTogglePriority = vi.fn();
-    const { container } = render(<PlayerList players={players} onTogglePriority={handleTogglePriority} />);
+    render(<PlayerList players={players} onTogglePriority={handleTogglePriority} />);
 
-    const priorityButton = container.querySelector('[aria-label*="priority"]');
-    if (priorityButton) {
-      await priorityButton.click();
-      expect(handleTogglePriority).toHaveBeenCalled();
-    }
+    const priorityButton = screen.getByLabelText(/priority/i);
+    const user = userEvent.setup();
+    await user.click(priorityButton);
+    expect(handleTogglePriority).toHaveBeenCalled();
   });
 
   it('should call onRemove when player is removed', async () => {
     const players = [createPlayer('1', 'Player 1')];
     const handleRemove = vi.fn();
-    const { container } = render(<PlayerList players={players} onRemove={handleRemove} />);
+    render(<PlayerList players={players} onRemove={handleRemove} />);
 
-    const removeButton = container.querySelector('[aria-label*="Remove"]');
-    if (removeButton) {
-      await removeButton.click();
-      expect(handleRemove).toHaveBeenCalled();
-    }
+    const removeButton = screen.getByLabelText(/remove/i);
+    const user = userEvent.setup();
+    await user.click(removeButton);
+    expect(handleRemove).toHaveBeenCalled();
   });
 
   it('should not show actions when showActions is false', () => {
