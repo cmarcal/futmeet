@@ -6,15 +6,9 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   errorMessage?: string;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ error = false, errorMessage, className = '', ...props }, ref) => {
-    const inputClasses = [
-      styles.input,
-      error && styles.error,
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+    const inputClasses = [styles.input, error && styles.error, className].filter(Boolean).join(' ');
 
     return (
       <div className={styles.wrapper}>
@@ -26,11 +20,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {error && errorMessage && (
-          <span
-            id={props.id ? `${props.id}-error` : 'input-error'}
-            className={styles.errorMessage}
-            role="alert"
-          >
+          <span id={props.id ? `${props.id}-error` : 'input-error'} className={styles.errorMessage} role="alert">
             {errorMessage}
           </span>
         )}
@@ -38,7 +28,3 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
-
-Input.displayName = 'Input';
-
-export default Input;

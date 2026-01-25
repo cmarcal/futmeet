@@ -17,132 +17,142 @@ When creating components in this project, use CSS Modules for scoped styling wit
 
 ```
 src/components/
-└── ComponentName.tsx
-└── ComponentName.module.css
+└── ComponentName/
+    ├── ComponentName.tsx
+    ├── ComponentName.module.css
+    └── index.ts
 ```
 
-All components live in a flat `components/` folder structure.
+All components live in a flat `components/` folder structure with their own subfolder.
 
 ## File Naming Convention
 
 ```
-ComponentName.tsx          # Component implementation
-ComponentName.module.css    # CSS Modules stylesheet
+ComponentName/
+├── ComponentName.tsx          # Component implementation
+├── ComponentName.module.css   # CSS Modules stylesheet
+└── index.ts                   # Re-exports
+```
+
+## Component Export Pattern
+
+**IMPORTANT:** Always export the component inline with the const definition. Never use `displayName`.
+
+### Standard Component
+
+```typescript
+// components/Button/Button.tsx
+export const Button = ({ variant = 'primary', children, ...props }: ButtonProps) => {
+  return <button {...props}>{children}</button>;
+};
+```
+
+### ForwardRef Component
+
+```typescript
+// components/Input/Input.tsx
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ error = false, className = '', ...props }, ref) => {
+    return <input ref={ref} className={className} {...props} />;
+  }
+);
+```
+
+### Index File
+
+```typescript
+// components/Button/index.ts
+export { Button } from './Button';
+export type { ButtonProps, ButtonVariant } from './Button';
 ```
 
 ## CSS Modules
 
-CSS Modules provide scoped styling by automatically generating unique class names. Each `.module.css` file creates a local scope for its styles, preventing naming conflicts.
+CSS Modules provide scoped styling by automatically generating unique class names.
 
-### Example: Button Component
-
-```typescript
-// components/Button.tsx
-import styles from './Button.module.css';
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'small' | 'medium' | 'large';
-}
-
-export const Button = ({ 
-  variant = 'primary', 
-  size = 'medium', 
-  className,
-  children,
-  ...props 
-}: ButtonProps) => {
-  const classes = [
-    styles.button,
-    styles[variant],
-    styles[size],
-    className,
-  ].filter(Boolean).join(' ');
-
-  return (
-    <button className={classes} {...props}>
-      {children}
-    </button>
-  );
-};
-```
+### Use Nested Pseudo-Classes
 
 ```css
-/* components/Button.module.css */
+/* components/Button/Button.module.css */
 .button {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-weight: 600;
   transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .primary {
   background-color: var(--color-primary);
-  color: var(--color-on-primary);
+  color: var(--color-background-card);
 }
-
-.secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-on-secondary);
-}
-
-.small {
-  padding: 4px 12px;
-  font-size: 14px;
-}
-
-.medium {
-  padding: 8px 16px;
-  font-size: 16px;
-}
-
-.large {
-  padding: 12px 24px;
-  font-size: 18px;
-}
-```
-
-## Usage Pattern
-
-### Importing Styles
-
-```typescript
-import styles from './Component.module.css';
-
-// Use in className
-<div className={styles.container}>
-  <p className={styles.text}>Content</p>
-</div>
 ```
 
 ### Combining Classes
 
 ```typescript
-const classes = [
-  styles.base,
-  variant && styles[variant],
-  className, // Allow external className
-].filter(Boolean).join(' ');
-
-<div className={classes} />
+const classes = [styles.button, styles[variant], className].filter(Boolean).join(' ');
 ```
 
 ### Using Design Tokens
 
 ```css
-/* Use CSS variables from design tokens */
 .button {
   background-color: var(--color-primary);
   padding: var(--spacing-md);
-  font-size: var(--font-size-base);
+  border-radius: var(--radius-md);
 }
+```
+
+## Full Example
+
+```typescript
+// components/Badge/Badge.tsx
+import styles from './Badge.module.css';
+
+export type BadgeVariant = 'default' | 'priority' | 'success' | 'error';
+
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: BadgeVariant;
+}
+
+export const Badge = ({ variant = 'default', className = '', children, ...props }: BadgeProps) => {
+  const badgeClasses = [styles.badge, styles[variant], className].filter(Boolean).join(' ');
+
+  return (
+    <span className={badgeClasses} {...props}>
+      {children}
+    </span>
+  );
+};
+```
+
+```typescript
+// components/Badge/index.ts
+export { Badge } from './Badge';
+export type { BadgeProps, BadgeVariant } from './Badge';
 ```
 
 ## Implementation Checklist
 
-- [ ] Create component file: `ComponentName.tsx`
-- [ ] Create stylesheet: `ComponentName.module.css`
-- [ ] Use CSS Modules for scoped styling
-- [ ] Reference design tokens via CSS variables
+- [ ] Create component folder: `ComponentName/`
+- [ ] Create component file: `ComponentName.tsx` with inline export
+- [ ] Create stylesheet: `ComponentName.module.css` with nested pseudo-classes
+- [ ] Create index file: `index.ts` with named exports
+- [ ] Use CSS variables from design tokens
 - [ ] Use TypeScript for component props
+- [ ] NO `displayName` - export inline instead
+- [ ] NO default exports - use named exports only
