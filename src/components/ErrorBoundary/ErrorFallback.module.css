@@ -1,0 +1,109 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-main);
+}
+
+.content {
+  max-width: 600px;
+  width: 100%;
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.heading {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-error);
+}
+
+.errorDetails {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: #FFEBEE;
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.errorMessage {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-weight: 600;
+  color: var(--color-error);
+}
+
+.errorStack {
+  margin: 0;
+  padding: var(--spacing-sm);
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-card);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-background-card);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  min-width: 120px;
+  outline: none;
+}
+
+.button:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-button);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.button:active {
+  background-color: var(--color-primary-dark);
+  transform: translateY(1px);
+}
+
+.buttonSecondary {
+  background-color: var(--color-background-card);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.buttonSecondary:hover {
+  background-color: var(--color-primary-container);
+  box-shadow: none;
+}
+
+.buttonSecondary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.buttonSecondary:active {
+  background-color: var(--color-primary-container);
+}
