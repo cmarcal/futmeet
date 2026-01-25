@@ -10,14 +10,14 @@
   padding: 0 var(--spacing-md);
 }
 
-@media (min-width: 768px) {
+@media (--tablet) {
   .container {
     max-width: 720px;
     padding: 0 var(--spacing-lg);
   }
 }
 
-@media (min-width: 1024px) {
+@media (--desktop) {
   .container {
     max-width: 960px;
   }

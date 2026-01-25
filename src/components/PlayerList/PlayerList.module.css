@@ -6,7 +6,7 @@
   gap: var(--spacing-sm);
   width: 100%;
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     gap: var(--spacing-md);
   }
 }

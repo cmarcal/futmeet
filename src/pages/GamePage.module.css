@@ -8,7 +8,7 @@
   margin: 0 auto;
   padding: var(--spacing-md);
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     gap: var(--spacing-xl);
     padding: var(--spacing-lg);
     max-width: 800px;
@@ -22,7 +22,7 @@
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -35,7 +35,7 @@
   color: var(--color-text-primary);
   margin: 0;
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     font-size: 2rem;
   }
 }
@@ -59,7 +59,7 @@
   color: var(--color-text-primary);
   margin: 0;
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     font-size: 1.25rem;
   }
 }

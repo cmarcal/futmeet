@@ -11,7 +11,7 @@
   margin: 0 auto;
   padding: var(--spacing-lg);
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     max-width: 600px;
     padding: var(--spacing-xl);
   }
@@ -23,7 +23,7 @@
   font-weight: 700;
   color: var(--color-primary);
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     font-size: 3rem;
   }
 }
@@ -33,7 +33,7 @@
   font-size: 1.125rem;
   color: var(--color-text-secondary);
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     font-size: 1.25rem;
   }
 }

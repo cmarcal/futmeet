@@ -9,7 +9,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 
-  @media (min-width: 768px) {
+  @media (--tablet) {
     padding: var(--spacing-lg);
   }
 }

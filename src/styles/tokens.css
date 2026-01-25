@@ -58,3 +58,7 @@
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1024px;
 }
+
+/* Custom Media Queries - Use these in @media queries */
+@custom-media --tablet (min-width: 768px);
+@custom-media --desktop (min-width: 1024px);
