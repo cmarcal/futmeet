@@ -15,6 +15,11 @@
     padding-bottom: var(--spacing-3xl);
     max-width: 800px;
   }
+
+  @media (--desktop) {
+    max-width: 900px;
+    gap: var(--spacing-2xl);
+  }
 }
 
 .header {

@@ -4,10 +4,27 @@
   padding: var(--spacing-md);
   overflow-y: auto;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  /* Safe area support for mobile devices */
+  padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+  padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+  padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+  padding-right: max(var(--spacing-md), env(safe-area-inset-right));
 }
 
 .content {
   width: 100%;
   max-width: 100%;
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  
+  @media (--desktop) {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
 }
