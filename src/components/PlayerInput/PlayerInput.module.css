@@ -6,7 +6,7 @@
   gap: var(--spacing-md);
   width: 100%;
 
-  @media (min-width: 481px) {
+  @media (min-width: 768px) {
     flex-direction: row;
     align-items: flex-start;
   }
@@ -15,7 +15,7 @@
 .inputWrapper {
   width: 100%;
 
-  @media (min-width: 481px) {
+  @media (min-width: 768px) {
     flex: 1;
   }
 }
@@ -27,7 +27,7 @@
   gap: var(--spacing-sm);
   width: 100%;
 
-  @media (min-width: 481px) {
+  @media (min-width: 768px) {
     width: auto;
     min-width: 140px;
   }

@@ -3,17 +3,15 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
   width: 100%;
+
+  @media (min-width: 768px) {
+    gap: var(--spacing-md);
+  }
 }
 
 .empty {
   padding: var(--spacing-xl) var(--spacing-md);
   text-align: center;
-}
-
-@media (max-width: 480px) {
-  .list {
-    gap: var(--spacing-sm);
-  }
 }

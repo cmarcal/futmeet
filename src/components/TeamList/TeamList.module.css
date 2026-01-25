@@ -3,25 +3,17 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
   width: 100%;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+  }
 }
 
 .empty {
   padding: var(--spacing-xl) var(--spacing-md);
   text-align: center;
-}
-
-@media (min-width: 768px) {
-  .list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-  }
-}
-
-@media (max-width: 480px) {
-  .list {
-    gap: var(--spacing-lg);
-  }
 }
