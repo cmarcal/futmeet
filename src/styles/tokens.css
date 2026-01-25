@@ -25,7 +25,11 @@
   /* Semantic Colors */
   --color-success: #388E3C;
   --color-error: #D32F2F;
+  --color-error-dark: #B71C1C;
+  --color-error-container: #FFEBEE;
   --color-warning: #F57C00;
+  --color-warning-container: #FFF3E0;
+  --color-success-container: #E8F5E9;
 
   /* Spacing */
   --spacing-xs: 4px;

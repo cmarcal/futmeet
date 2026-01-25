@@ -1,9 +1,18 @@
-function App() {
+import { Routes, Route } from 'react-router-dom'
+import { ErrorBoundary } from './components/ErrorBoundary'
+import HomePage from './pages/HomePage'
+import GamePage from './pages/GamePage'
+import ResultsPage from './pages/ResultsPage'
+
+const App = () => {
   return (
-    <div>
-      <h1>FutMeet</h1>
-      <p>Organize Your Pickup Game</p>
-    </div>
+    <ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/game" element={<GamePage />} />
+        <Route path="/results" element={<ResultsPage />} />
+      </Routes>
+    </ErrorBoundary>
   )
 }
 

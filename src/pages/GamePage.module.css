@@ -1,0 +1,18 @@
+.title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.placeholder {
+  margin: 0 0 var(--spacing-lg) 0;
+  color: var(--color-text-secondary);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
