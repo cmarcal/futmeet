@@ -24,7 +24,7 @@ When writing tests in this project, use Vitest and React Testing Library. Focus 
 ## Installation
 
 ```bash
-npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
+npm install -D vitest@1.6.0 @testing-library/react@15.0.7 @testing-library/jest-dom@6.4.5 @testing-library/user-event@14.5.2 jsdom@24.0.0 @vitest/coverage-v8@1.6.0
 ```
 
 ## Configuration
