@@ -22,6 +22,7 @@
     background-color: var(--color-priority-light);
   }
 
+  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     padding: var(--spacing-md);
   }
@@ -73,6 +74,7 @@
   color: var(--color-text-primary);
   word-break: break-word;
 
+  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     font-size: 1rem;
   }

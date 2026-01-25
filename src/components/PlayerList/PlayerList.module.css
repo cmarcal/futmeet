@@ -6,6 +6,7 @@
   gap: var(--spacing-sm);
   width: 100%;
 
+  /* Tablet and up - see tokens.css for --breakpoint-tablet */
   @media (min-width: 768px) {
     gap: var(--spacing-md);
   }

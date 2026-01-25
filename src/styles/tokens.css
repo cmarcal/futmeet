@@ -53,4 +53,13 @@
   --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
   --shadow-button: 0 2px 8px rgba(46, 125, 50, 0.3);
   --shadow-button-hover: 0 4px 12px rgba(46, 125, 50, 0.4);
+
+  /* Breakpoints */
+  /* Note: CSS custom properties cannot be used directly in @media queries */
+  /* Use these pixel values consistently in all media queries */
+  /* Mobile: 0-767px (base styles, no media query) */
+  /* Tablet: 768px and up - use: @media (min-width: 768px) */
+  /* Desktop: 1024px and up - use: @media (min-width: 1024px) */
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
 }
