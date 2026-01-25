@@ -7,10 +7,12 @@
   width: 100%;
   margin: 0 auto;
   padding: var(--spacing-md);
+  padding-bottom: var(--spacing-2xl);
 
   @media (--tablet) {
     gap: var(--spacing-xl);
     padding: var(--spacing-lg);
+    padding-bottom: var(--spacing-3xl);
     max-width: 800px;
   }
 }

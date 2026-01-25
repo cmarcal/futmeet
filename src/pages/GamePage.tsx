@@ -66,13 +66,8 @@ const GamePage = () => {
           <TeamSettings
             teamCount={teamCount}
             onTeamCountChange={setTeamCount}
-            disabled={gameStatus === 'sorting' || players.length > 0}
+            disabled={gameStatus === 'sorting'}
           />
-          {players.length > 0 && (
-            <Alert variant="info" className={styles.infoAlert}>
-              Team count cannot be changed after players are added. Reset the game to change team count.
-            </Alert>
-          )}
         </section>
 
         <section className={styles.section}>
