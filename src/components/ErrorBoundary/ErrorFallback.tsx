@@ -20,9 +20,9 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         <h1 className={styles.heading}>Something went wrong</h1>
 
         {isDevelopment && (
-          <div className={styles['error-details']}>
-            <p className={styles['error-message']}>{errorMessage}</p>
-            {errorStack && <pre className={styles['error-stack']}>{errorStack}</pre>}
+          <div className={styles.errorDetails}>
+            <p className={styles.errorMessage}>{errorMessage}</p>
+            {errorStack && <pre className={styles.errorStack}>{errorStack}</pre>}
           </div>
         )}
 
@@ -33,7 +33,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
           <button
             type="button"
             onClick={handleGoHome}
-            className={`${styles.button} ${styles['button--secondary']}`}
+            className={`${styles.button} ${styles.buttonSecondary}`}
             aria-label="Go to home page"
           >
             Go Home
