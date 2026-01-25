@@ -1,0 +1,46 @@
+# CI/CD Checks Rule
+
+All code changes must pass CI checks before merging. This rule ensures code quality and prevents broken builds.
+
+## Guidelines
+
+- **Run checks locally before pushing**: Always run `npm run lint`, `npm run test`, and `npm run build` before pushing changes
+- **Fix all lint warnings**: CI uses `--max-warnings 0`, so warnings are treated as errors
+- **Write tests for critical paths**: Focus on testing essential functionality, not coverage goals
+- **Don't skip CI**: Never bypass CI checks or use `[skip ci]` in commits to main
+
+## Required Commands
+
+Before pushing any changes, run these commands:
+
+```bash
+# Check for lint errors
+npm run lint
+
+# Run all tests
+npm run test
+
+# Verify build succeeds
+npm run build
+```
+
+## PR Merge Requirements
+
+Pull requests to `main` must pass:
+1. **Lint job**: ESLint with zero warnings
+2. **Test job**: All Vitest tests passing
+3. **Build job**: TypeScript compilation and Vite build
+
+## Test File Conventions
+
+- Place tests next to source files: `Component.tsx` → `Component.test.tsx`
+- Or in `__tests__` directories: `utils/__tests__/helper.test.ts`
+- Use descriptive test names with `describe` and `it` blocks
+- Test behavior, not implementation details
+
+## When CI Fails
+
+1. Read the error message in the GitHub Actions log
+2. Reproduce locally with the appropriate npm command
+3. Fix the issue and push again
+4. Never force-merge with failing checks
