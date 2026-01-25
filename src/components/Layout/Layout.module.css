@@ -2,9 +2,12 @@
   min-height: 100vh;
   background-color: var(--color-background-main);
   padding: var(--spacing-md);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .content {
   width: 100%;
   max-width: 100%;
+  min-height: 100%;
 }
