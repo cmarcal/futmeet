@@ -1,12 +1,6 @@
 /* Utility Classes */
 /* Additional utility classes can be added here as needed */
 
-:root {
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-}
 
 /* Container */
 .container {
@@ -16,14 +10,14 @@
   padding: 0 var(--spacing-md);
 }
 
-@media (min-width: 768px) {
+@media (--tablet) {
   .container {
     max-width: 720px;
     padding: 0 var(--spacing-lg);
   }
 }
 
-@media (min-width: 1024px) {
+@media (--desktop) {
   .container {
     max-width: 960px;
   }

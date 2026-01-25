@@ -53,4 +53,12 @@
   --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
   --shadow-button: 0 2px 8px rgba(46, 125, 50, 0.3);
   --shadow-button-hover: 0 4px 12px rgba(46, 125, 50, 0.4);
+
+  /* Breakpoints */
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
 }
+
+/* Custom Media Queries - Use these in @media queries */
+@custom-media --tablet (min-width: 768px);
+@custom-media --desktop (min-width: 1024px);

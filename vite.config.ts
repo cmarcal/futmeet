@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import postcssNesting from 'postcss-nesting'
+import postcssCustomMedia from 'postcss-custom-media'
 
 export default defineConfig({
   plugins: [react()],
@@ -10,7 +11,7 @@ export default defineConfig({
       localsConvention: 'camelCase',
     },
     postcss: {
-      plugins: [postcssNesting()],
+      plugins: [postcssNesting(), postcssCustomMedia()],
     },
   },
   test: {

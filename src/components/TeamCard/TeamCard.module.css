@@ -1,0 +1,98 @@
+@import '../../styles/tokens.css';
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background-card);
+  border: 2px solid var(--team-color, var(--color-primary));
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: linear-gradient(135deg, var(--team-color, var(--color-primary)), var(--team-color, var(--color-primary)));
+  background-color: var(--team-color, var(--color-primary));
+  color: var(--color-background-card);
+
+  @media (--tablet) {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.titleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-background-card);
+
+  @media (--tablet) {
+    font-size: 1.25rem;
+  }
+}
+
+.count {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  color: var(--color-background-card);
+}
+
+.players {
+  padding: var(--spacing-md);
+
+  @media (--tablet) {
+    padding: var(--spacing-lg);
+  }
+}
+
+.playersList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @media (--tablet) {
+    gap: var(--spacing-md);
+  }
+}
+
+.emptyMessage {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  padding: var(--spacing-xl);
+  margin: 0;
+}

@@ -1,0 +1,19 @@
+@import '../../styles/tokens.css';
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+
+  @media (--tablet) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+  }
+}
+
+.empty {
+  padding: var(--spacing-xl) var(--spacing-md);
+  text-align: center;
+}
