@@ -1,75 +1,53 @@
-import type { Player, Team } from '../types'
+import type { Player, Team } from '../types';
 
 /**
  * Sorts players into teams using a round-robin algorithm.
- * Priority players are distributed evenly first, then remaining players.
+ * Priority players are distributed first, then remaining players continue from where priority left off.
  *
  * @param players - Array of players to sort into teams
  * @param teamCount - Number of teams to create (must be at least 2)
  * @returns Array of teams with players distributed evenly
- *
- * @example
- * const players = [
- *   { id: '1', name: 'Alice', timestamp: new Date(), priority: true },
- *   { id: '2', name: 'Bob', timestamp: new Date(), priority: false }
- * ]
- * const teams = sortTeams(players, 2)
  */
 export const sortTeams = (players: Player[], teamCount: number): Team[] => {
-  // Edge case: If team count is less than 2, return empty array
   if (teamCount < 2) {
-    return []
+    return [];
   }
 
-  // Edge case: If no players, return empty teams
+  const teams: Team[] = createEmptyTeams(teamCount);
+
   if (players.length === 0) {
-    return createEmptyTeams(teamCount)
+    return teams;
   }
 
-  // Separate priority players from regular players
-  const priorityPlayers = players.filter((player) => player.priority)
-  const regularPlayers = players.filter((player) => !player.priority)
+  const priorityPlayers = players.filter((player) => player.priority);
+  const regularPlayers = players.filter((player) => !player.priority);
 
-  // Create empty teams array with names like "Team 1", "Team 2", etc.
-  const teams: Team[] = createEmptyTeams(teamCount)
+  let currentIndex = 0;
+  currentIndex = distributePlayersRoundRobin(priorityPlayers, teams, currentIndex);
+  distributePlayersRoundRobin(regularPlayers, teams, currentIndex);
 
-  // Distribute priority players evenly using round-robin
-  distributePlayersRoundRobin(priorityPlayers, teams)
-
-  // Distribute remaining players using round-robin
-  distributePlayersRoundRobin(regularPlayers, teams)
-
-  return teams
-}
+  return teams;
+};
 
 /**
  * Creates an array of empty teams with sequential names.
- *
- * @param teamCount - Number of teams to create
- * @returns Array of empty teams
  */
 const createEmptyTeams = (teamCount: number): Team[] => {
   return Array.from({ length: teamCount }, (_, index) => ({
-    id: `team-${index + 1}`,
+    id: crypto.randomUUID(),
     name: `Team ${index + 1}`,
     players: [],
-  }))
-}
+  }));
+};
 
 /**
- * Distributes players across teams using round-robin algorithm.
- * Players are assigned to teams in order: Team 1, Team 2, ..., Team N, Team 1, ...
- *
- * @param players - Array of players to distribute
- * @param teams - Array of teams to distribute players into
+ * Distributes players across teams using round-robin algorithm, starting from a given index.
+ * Returns the next index to continue from.
  */
-const distributePlayersRoundRobin = (
-  players: Player[],
-  teams: Team[],
-): void => {
-  players.forEach((player, index) => {
-    // Round-robin: cycle through teams using modulo
-    const teamIndex = index % teams.length
-    teams[teamIndex].players.push(player)
-  })
-}
+const distributePlayersRoundRobin = (players: Player[], teams: Team[], startIndex: number): number => {
+  players.forEach((player, i) => {
+    const teamIndex = (startIndex + i) % teams.length;
+    teams[teamIndex].players.push(player);
+  });
+  return (startIndex + players.length) % teams.length;
+};

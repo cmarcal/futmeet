@@ -1,4 +1,3 @@
-import React from 'react';
 import { X } from 'lucide-react';
 import styles from './Alert.module.css';
 
@@ -11,44 +10,18 @@ export interface AlertProps {
   className?: string;
 }
 
-const Alert = ({ variant = 'info', children, onClose, className = '' }: AlertProps) => {
-  const alertClasses = [
-    styles.alert,
-    styles[variant],
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleClose();
-    }
-  };
+export const Alert = ({ variant = 'info', children, onClose, className = '' }: AlertProps) => {
+  const alertClasses = [styles.alert, styles[variant], className].filter(Boolean).join(' ');
 
   return (
-    <div
-      role="alert"
-      className={alertClasses}
-    >
-      <div className={styles.content}>
-        {children}
-      </div>
+    <div role="alert" className={alertClasses}>
+      <div className={styles.content}>{children}</div>
       {onClose && (
         <button
           type="button"
-          onClick={handleClose}
-          onKeyDown={handleKeyDown}
+          onClick={onClose}
           className={styles.closeButton}
           aria-label="Close alert"
-          tabIndex={0}
         >
           <X size={20} aria-hidden="true" />
         </button>
@@ -56,5 +29,3 @@ const Alert = ({ variant = 'info', children, onClose, className = '' }: AlertPro
     </div>
   );
 };
-
-export default Alert;

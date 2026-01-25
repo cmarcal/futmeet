@@ -11,7 +11,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
     resetErrorBoundary();
   };
 
-  // Safely extract error message and stack
   const errorMessage = error instanceof Error ? error.message : String(error);
   const errorStack = error instanceof Error ? error.stack : undefined;
 
@@ -19,23 +18,16 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
     <div role="alert" className={styles.container}>
       <div className={styles.content}>
         <h1 className={styles.heading}>Something went wrong</h1>
-        
+
         {isDevelopment && (
           <div className={styles.errorDetails}>
             <p className={styles.errorMessage}>{errorMessage}</p>
-            {errorStack && (
-              <pre className={styles.errorStack}>{errorStack}</pre>
-            )}
+            {errorStack && <pre className={styles.errorStack}>{errorStack}</pre>}
           </div>
         )}
 
         <div className={styles.actions}>
-          <button
-            type="button"
-            onClick={resetErrorBoundary}
-            className={styles.button}
-            aria-label="Try again"
-          >
+          <button type="button" onClick={resetErrorBoundary} className={styles.button} aria-label="Try again">
             Try Again
           </button>
           <button

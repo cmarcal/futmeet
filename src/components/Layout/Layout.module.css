@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-main);
+}
+
+.content {
+  max-width: 600px;
+  width: 100%;
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}

@@ -1,29 +1,13 @@
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: var(--spacing-md);
-  background-color: var(--color-background-main);
-}
-
-.content {
-  text-align: center;
-  max-width: 600px;
-  width: 100%;
-}
-
 .title {
-  font-size: 2.5rem;
-  font-weight: 700;
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.5rem;
+  font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-lg) 0;
 }
 
 .placeholder {
-  font-size: 1.125rem;
+  margin: 0 0 var(--spacing-lg) 0;
   color: var(--color-text-secondary);
-  margin: 0 0 var(--spacing-2xl) 0;
 }
 
 .buttonGroup {
@@ -31,8 +15,4 @@
   gap: var(--spacing-md);
   justify-content: center;
   flex-wrap: wrap;
-}
-
-.button {
-  min-width: 150px;
 }

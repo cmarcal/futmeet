@@ -29,37 +29,36 @@
   min-width: 32px;
   min-height: 32px;
   outline: none;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 }
 
-.closeButton:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.closeButton:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-.closeButton:active {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Variants */
 .error {
   border-color: var(--color-error);
-  background-color: #FFEBEE;
+  background-color: var(--color-error-container);
   color: var(--color-error);
 }
 
 .warning {
   border-color: var(--color-warning);
-  background-color: #FFF3E0;
+  background-color: var(--color-warning-container);
   color: var(--color-warning);
 }
 
 .success {
   border-color: var(--color-success);
-  background-color: #E8F5E9;
+  background-color: var(--color-success-container);
   color: var(--color-success);
 }
 

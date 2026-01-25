@@ -1,5 +1,4 @@
 .badge {
-  /* Base styles */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +10,6 @@
   white-space: nowrap;
 }
 
-/* Variants */
 .default {
   background-color: var(--color-background-card);
   color: var(--color-text-primary);

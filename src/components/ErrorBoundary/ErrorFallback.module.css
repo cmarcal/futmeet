@@ -27,7 +27,7 @@
 .errorDetails {
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md);
-  background-color: #FFEBEE;
+  background-color: var(--color-error-container);
   border: 1px solid var(--color-error);
   border-radius: var(--radius-md);
   text-align: left;
@@ -71,39 +71,39 @@
   transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   min-width: 120px;
   outline: none;
-}
 
-.button:hover {
-  background-color: var(--color-primary-dark);
-  box-shadow: var(--shadow-button);
-}
+  &:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: var(--shadow-button);
+  }
 
-.button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 
-.button:active {
-  background-color: var(--color-primary-dark);
-  transform: translateY(1px);
+  &:active {
+    background-color: var(--color-primary-dark);
+    transform: translateY(1px);
+  }
 }
 
 .buttonSecondary {
   background-color: var(--color-background-card);
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
-}
 
-.buttonSecondary:hover {
-  background-color: var(--color-primary-container);
-  box-shadow: none;
-}
+  &:hover {
+    background-color: var(--color-primary-container);
+    box-shadow: none;
+  }
 
-.buttonSecondary:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 
-.buttonSecondary:active {
-  background-color: var(--color-primary-container);
+  &:active {
+    background-color: var(--color-primary-container);
+  }
 }

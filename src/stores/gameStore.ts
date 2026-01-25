@@ -1,15 +1,13 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import type { Player, Team, GameStatus } from '../types';
+import { sortTeams as sortTeamsUtil } from '../utils/teamSorter';
 
 interface GameState {
-  // State
   players: Player[];
   teams: Team[];
   teamCount: number;
   gameStatus: GameStatus;
-
-  // Actions
   addPlayer: (name: string) => void;
   removePlayer: (playerId: string) => void;
   togglePriority: (playerId: string) => void;
@@ -25,6 +23,32 @@ const initialState = {
   gameStatus: 'setup' as GameStatus,
 };
 
+const createPlayer = (name: string): Player => ({
+  id: crypto.randomUUID(),
+  name: name.trim(),
+  timestamp: new Date(),
+  priority: false,
+});
+
+const validateTeamCount = (count: number): number => {
+  return Math.max(2, Math.min(10, Math.round(count)));
+};
+
+const filterPlayerById = (players: Player[], playerId: string): Player[] => {
+  return players.filter((p) => p.id !== playerId);
+};
+
+const togglePlayerPriority = (players: Player[], playerId: string): Player[] => {
+  return players.map((player) => (player.id === playerId ? { ...player, priority: !player.priority } : player));
+};
+
+const removePlayerFromTeams = (teams: Team[], playerId: string): Team[] => {
+  return teams.map((team) => ({
+    ...team,
+    players: team.players.filter((p) => p.id !== playerId),
+  }));
+};
+
 export const useGameStore = create<GameState>()(
   devtools(
     persist(
@@ -32,30 +56,15 @@ export const useGameStore = create<GameState>()(
         ...initialState,
 
         addPlayer: (name: string) => {
-          const newPlayer: Player = {
-            id: crypto.randomUUID(),
-            name: name.trim(),
-            timestamp: new Date(),
-            priority: false,
-          };
-
-          set(
-            (state) => ({
-              players: [...state.players, newPlayer],
-            }),
-            false,
-            'addPlayer'
-          );
+          const newPlayer = createPlayer(name);
+          set((state) => ({ players: [...state.players, newPlayer] }), false, 'addPlayer');
         },
 
         removePlayer: (playerId: string) => {
           set(
             (state) => ({
-              players: state.players.filter((p) => p.id !== playerId),
-              teams: state.teams.map((team) => ({
-                ...team,
-                players: team.players.filter((p) => p.id !== playerId),
-              })),
+              players: filterPlayerById(state.players, playerId),
+              teams: removePlayerFromTeams(state.teams, playerId),
             }),
             false,
             'removePlayer'
@@ -63,74 +72,23 @@ export const useGameStore = create<GameState>()(
         },
 
         togglePriority: (playerId: string) => {
-          set(
-            (state) => ({
-              players: state.players.map((player) =>
-                player.id === playerId
-                  ? { ...player, priority: !player.priority }
-                  : player
-              ),
-            }),
-            false,
-            'togglePriority'
-          );
+          set((state) => ({ players: togglePlayerPriority(state.players, playerId) }), false, 'togglePriority');
         },
 
         setTeamCount: (count: number) => {
-          const validCount = Math.max(2, Math.min(10, Math.round(count)));
-
-          set(
-            () => ({
-              teamCount: validCount,
-            }),
-            false,
-            'setTeamCount'
-          );
+          const validCount = validateTeamCount(count);
+          set(() => ({ teamCount: validCount }), false, 'setTeamCount');
         },
 
         sortTeams: () => {
-          const currentState = get();
+          const { players, teamCount } = get();
+          const validTeamCount = validateTeamCount(teamCount);
 
-          set(
-            () => ({
-              gameStatus: 'sorting' as GameStatus,
-            }),
-            false,
-            'sortTeams/start'
-          );
+          set(() => ({ gameStatus: 'sorting' as GameStatus }), false, 'sortTeams/start');
 
-          // Sorting algorithm: distribute players evenly across teams
-          // Priority players are distributed first, then others
-          const sortedPlayers = [...currentState.players].sort((a, b) => {
-            if (a.priority && !b.priority) return -1;
-            if (!a.priority && b.priority) return 1;
-            return 0;
-          });
+          const teams = sortTeamsUtil(players, validTeamCount);
 
-          const teams: Team[] = Array.from(
-            { length: currentState.teamCount },
-            (_, i) => ({
-              id: crypto.randomUUID(),
-              name: `Team ${i + 1}`,
-              players: [],
-            })
-          );
-
-          // Distribute players round-robin style
-          sortedPlayers.forEach((player, index) => {
-            const teamIndex = index % currentState.teamCount;
-            teams[teamIndex].players.push(player);
-          });
-
-          // Update state with sorted teams and complete status
-          set(
-            () => ({
-              teams,
-              gameStatus: 'complete' as GameStatus,
-            }),
-            false,
-            'sortTeams/complete'
-          );
+          set(() => ({ teams, gameStatus: 'complete' as GameStatus }), false, 'sortTeams/complete');
         },
 
         reset: () => {
@@ -149,15 +107,15 @@ export const useGameStore = create<GameState>()(
             return;
           }
 
-          if (state?.players) {
-            // Convert timestamp strings back to Date objects
-            state.players = state.players.map((player) => ({
-              ...player,
-              timestamp:
-                player.timestamp instanceof Date
-                  ? player.timestamp
-                  : new Date(player.timestamp),
-            }));
+          if (state) {
+            state.teamCount = validateTeamCount(state.teamCount);
+
+            if (state.players) {
+              state.players = state.players.map((player) => ({
+                ...player,
+                timestamp: player.timestamp instanceof Date ? player.timestamp : new Date(player.timestamp),
+              }));
+            }
           }
         },
       }
