@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useReducer, useRef, useCallback } from 'react';
 import { calculateInsertIndex, calculateItemShift, getItemBounds, getItemHeightWithGap } from '../utils/dragAndDropUtils';
 
 export interface UseDragAndDropOptions {
@@ -6,6 +6,85 @@ export interface UseDragAndDropOptions {
   onReorder: (fromIndex: number, toIndex: number) => void;
   enabled?: boolean;
 }
+
+interface DragState {
+  draggedIndex: number | null;
+  dragOverIndex: number | null;
+  touchStartIndex: number | null;
+  touchStartY: number | null;
+  touchCurrentY: number | null;
+}
+
+type DragAction =
+  | { type: 'DRAG_START'; payload: { index: number } }
+  | { type: 'DRAG_END' }
+  | { type: 'DRAG_OVER'; payload: { index: number } }
+  | { type: 'DRAG_LEAVE' }
+  | { type: 'TOUCH_START'; payload: { index: number; y: number } }
+  | { type: 'TOUCH_MOVE'; payload: { y: number } }
+  | { type: 'TOUCH_END' }
+  | { type: 'TOUCH_CANCEL' }
+  | { type: 'RESET' };
+
+const initialState: DragState = {
+  draggedIndex: null,
+  dragOverIndex: null,
+  touchStartIndex: null,
+  touchStartY: null,
+  touchCurrentY: null,
+};
+
+const dragReducer = (state: DragState, action: DragAction): DragState => {
+  switch (action.type) {
+    case 'DRAG_START':
+      return {
+        ...state,
+        draggedIndex: action.payload.index,
+      };
+
+    case 'DRAG_END':
+      return {
+        ...state,
+        draggedIndex: null,
+        dragOverIndex: null,
+      };
+
+    case 'DRAG_OVER':
+      return {
+        ...state,
+        dragOverIndex: action.payload.index,
+      };
+
+    case 'DRAG_LEAVE':
+      return {
+        ...state,
+        dragOverIndex: null,
+      };
+
+    case 'TOUCH_START':
+      return {
+        ...state,
+        touchStartIndex: action.payload.index,
+        touchStartY: action.payload.y,
+        touchCurrentY: action.payload.y,
+        draggedIndex: action.payload.index,
+      };
+
+    case 'TOUCH_MOVE':
+      return {
+        ...state,
+        touchCurrentY: action.payload.y,
+      };
+
+    case 'TOUCH_END':
+    case 'TOUCH_CANCEL':
+    case 'RESET':
+      return initialState;
+
+    default:
+      return state;
+  }
+};
 
 export interface UseDragAndDropReturn {
   // State
@@ -44,11 +123,8 @@ export const useDragAndDrop = ({
   onReorder,
   enabled = true,
 }: UseDragAndDropOptions): UseDragAndDropReturn => {
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [touchStartIndex, setTouchStartIndex] = useState<number | null>(null);
-  const [touchStartY, setTouchStartY] = useState<number | null>(null);
-  const [touchCurrentY, setTouchCurrentY] = useState<number | null>(null);
+  const [state, dispatch] = useReducer(dragReducer, initialState);
+  const { draggedIndex, dragOverIndex, touchStartIndex, touchStartY, touchCurrentY } = state;
 
   const listRef = useRef<HTMLUListElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -59,14 +135,13 @@ export const useDragAndDrop = ({
       if (!enabled) return;
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/html', index.toString());
-      setDraggedIndex(index);
+      dispatch({ type: 'DRAG_START', payload: { index } });
     },
     [enabled]
   );
 
   const handleDragEnd = useCallback(() => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+    dispatch({ type: 'DRAG_END' });
   }, []);
 
   const handleDragOver = useCallback(
@@ -91,17 +166,17 @@ export const useDragAndDrop = ({
 
       // Ensure valid index and different from dragged
       if (targetIndex >= 0 && targetIndex < itemCount && targetIndex !== draggedIndex) {
-        setDragOverIndex(targetIndex);
+        dispatch({ type: 'DRAG_OVER', payload: { index: targetIndex } });
       } else if (targetIndex === draggedIndex && draggedIndex < itemCount - 1) {
         // If we're at the dragged position but moving down, go to next position
-        setDragOverIndex(draggedIndex + 1);
+        dispatch({ type: 'DRAG_OVER', payload: { index: draggedIndex + 1 } });
       }
     },
     [draggedIndex, itemCount, enabled]
   );
 
   const handleDragLeave = useCallback(() => {
-    setDragOverIndex(null);
+    dispatch({ type: 'DRAG_LEAVE' });
   }, []);
 
   const handleDrop = useCallback(
@@ -110,8 +185,7 @@ export const useDragAndDrop = ({
       if (draggedIndex !== null && draggedIndex !== dropIndex && onReorder && enabled) {
         onReorder(draggedIndex, dropIndex);
       }
-      setDraggedIndex(null);
-      setDragOverIndex(null);
+      dispatch({ type: 'DRAG_END' });
     },
     [draggedIndex, onReorder, enabled]
   );
@@ -127,10 +201,7 @@ export const useDragAndDrop = ({
       }
 
       const touch = e.touches[0];
-      setTouchStartIndex(index);
-      setTouchStartY(touch.clientY);
-      setTouchCurrentY(touch.clientY);
-      setDraggedIndex(index);
+      dispatch({ type: 'TOUCH_START', payload: { index, y: touch.clientY } });
     },
     [enabled, onReorder]
   );
@@ -141,15 +212,15 @@ export const useDragAndDrop = ({
 
       e.preventDefault();
       const touch = e.touches[0];
-      setTouchCurrentY(touch.clientY);
+      dispatch({ type: 'TOUCH_MOVE', payload: { y: touch.clientY } });
 
       const items = getItemBounds(itemRefs.current);
       const targetIndex = calculateInsertIndex(touch.clientY, items, touchStartIndex);
 
       if (targetIndex !== null && targetIndex !== touchStartIndex && targetIndex >= 0 && targetIndex < itemCount) {
-        setDragOverIndex(targetIndex);
+        dispatch({ type: 'DRAG_OVER', payload: { index: targetIndex } });
       } else {
-        setDragOverIndex(null);
+        dispatch({ type: 'DRAG_LEAVE' });
       }
     },
     [touchStartIndex, touchStartY, itemCount, enabled]
@@ -162,19 +233,11 @@ export const useDragAndDrop = ({
       onReorder(touchStartIndex, dragOverIndex);
     }
 
-    setTouchStartIndex(null);
-    setTouchStartY(null);
-    setTouchCurrentY(null);
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+    dispatch({ type: 'TOUCH_END' });
   }, [touchStartIndex, dragOverIndex, onReorder, enabled]);
 
   const handleTouchCancel = useCallback(() => {
-    setTouchStartIndex(null);
-    setTouchStartY(null);
-    setTouchCurrentY(null);
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+    dispatch({ type: 'TOUCH_CANCEL' });
   }, []);
 
   // Utility functions
