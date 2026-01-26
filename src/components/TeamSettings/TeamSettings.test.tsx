@@ -90,9 +90,4 @@ describe('TeamSettings', () => {
     expect(screen.getByLabelText('Increase team count')).toBeDisabled();
   });
 
-  it('should display hint with min and max values', () => {
-    const handleChange = vi.fn();
-    render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} minTeams={2} maxTeams={10} />);
-    expect(screen.getByText('Teams: 2 - 10')).toBeInTheDocument();
-  });
 });

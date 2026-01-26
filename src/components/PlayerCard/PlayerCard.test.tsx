@@ -24,16 +24,20 @@ describe('PlayerCard', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
-  it('should show priority badge when player has priority', () => {
+  it('should show priority button with active state when player has priority', () => {
     const player = createPlayer('1', 'Priority Player', true);
-    render(<PlayerCard player={player} index={0} />);
-    expect(screen.getByText('Priority')).toBeInTheDocument();
+    render(<PlayerCard player={player} index={0} onTogglePriority={() => {}} />);
+    const priorityButton = screen.getByLabelText('Remove priority');
+    expect(priorityButton).toBeInTheDocument();
+    expect(priorityButton).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('should not show priority badge when player does not have priority', () => {
+  it('should show priority button with inactive state when player does not have priority', () => {
     const player = createPlayer('1', 'Regular Player', false);
-    render(<PlayerCard player={player} index={0} />);
-    expect(screen.queryByText('Priority')).not.toBeInTheDocument();
+    render(<PlayerCard player={player} index={0} onTogglePriority={() => {}} />);
+    const priorityButton = screen.getByLabelText('Mark as priority');
+    expect(priorityButton).toBeInTheDocument();
+    expect(priorityButton).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('should call onTogglePriority when priority button is clicked', async () => {
@@ -65,7 +69,7 @@ describe('PlayerCard', () => {
     expect(screen.queryByLabelText('Remove Player 1')).not.toBeInTheDocument();
   });
 
-  it('should display notes when provided', () => {
+  it('should not display notes when provided (notes feature removed)', () => {
     const player: Player = {
       id: '1',
       name: 'Player 1',
@@ -74,7 +78,7 @@ describe('PlayerCard', () => {
       notes: 'Goalkeeper',
     };
     render(<PlayerCard player={player} index={0} />);
-    expect(screen.getByText('Goalkeeper')).toBeInTheDocument();
+    expect(screen.queryByText('Goalkeeper')).not.toBeInTheDocument();
   });
 
   it('should have correct aria-label for priority button when player has priority', () => {
