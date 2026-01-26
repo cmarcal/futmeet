@@ -11,6 +11,7 @@ interface GameState {
   addPlayer: (name: string) => void;
   removePlayer: (playerId: string) => void;
   togglePriority: (playerId: string) => void;
+  reorderPlayers: (fromIndex: number, toIndex: number) => void;
   setTeamCount: (count: number) => void;
   sortTeams: () => void;
   reset: () => void;
@@ -73,6 +74,19 @@ export const useGameStore = create<GameState>()(
 
         togglePriority: (playerId: string) => {
           set((state) => ({ players: togglePlayerPriority(state.players, playerId) }), false, 'togglePriority');
+        },
+
+        reorderPlayers: (fromIndex: number, toIndex: number) => {
+          set(
+            (state) => {
+              const newPlayers = [...state.players];
+              const [movedPlayer] = newPlayers.splice(fromIndex, 1);
+              newPlayers.splice(toIndex, 0, movedPlayer);
+              return { players: newPlayers };
+            },
+            false,
+            'reorderPlayers'
+          );
         },
 
         setTeamCount: (count: number) => {
