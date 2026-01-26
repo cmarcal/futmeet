@@ -6,6 +6,7 @@ import styles from './TeamSettings.module.css';
 export interface TeamSettingsProps {
   teamCount: number;
   onTeamCountChange: (count: number) => void;
+  onMaxTeamsExceeded?: () => void;
   minTeams?: number;
   maxTeams?: number;
   disabled?: boolean;
@@ -14,6 +15,7 @@ export interface TeamSettingsProps {
 export const TeamSettings = ({
   teamCount,
   onTeamCountChange,
+  onMaxTeamsExceeded,
   minTeams = 2,
   maxTeams = 10,
   disabled = false,
@@ -21,8 +23,13 @@ export const TeamSettings = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value)) {
-      const clampedValue = Math.max(minTeams, Math.min(maxTeams, value));
-      onTeamCountChange(clampedValue);
+      if (value > maxTeams) {
+        onMaxTeamsExceeded?.();
+        onTeamCountChange(maxTeams);
+      } else {
+        const clampedValue = Math.max(minTeams, Math.min(maxTeams, value));
+        onTeamCountChange(clampedValue);
+      }
     }
   };
 
@@ -35,6 +42,8 @@ export const TeamSettings = ({
   const handleIncrement = () => {
     if (teamCount < maxTeams) {
       onTeamCountChange(teamCount + 1);
+    } else {
+      onMaxTeamsExceeded?.();
     }
   };
 
@@ -77,9 +86,6 @@ export const TeamSettings = ({
           +
         </button>
       </div>
-      <p className={styles.hint}>
-        Teams: {minTeams} - {maxTeams}
-      </p>
     </div>
   );
 };

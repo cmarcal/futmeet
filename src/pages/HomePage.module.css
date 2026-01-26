@@ -10,10 +10,17 @@
   width: 100%;
   margin: 0 auto;
   padding: var(--spacing-lg);
+  gap: var(--spacing-md);
 
   @media (--tablet) {
     max-width: 600px;
     padding: var(--spacing-xl);
+    gap: var(--spacing-lg);
+  }
+
+  @media (--desktop) {
+    max-width: 700px;
+    padding: var(--spacing-2xl);
   }
 }
 

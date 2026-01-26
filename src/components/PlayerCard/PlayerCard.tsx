@@ -1,5 +1,4 @@
-import { Star, X } from 'lucide-react';
-import { Badge } from '../Badge';
+import { GripVertical, Star, X } from 'lucide-react';
 import type { Player } from '../../types';
 import styles from './PlayerCard.module.css';
 
@@ -28,38 +27,42 @@ export const PlayerCard = ({
 
   return (
     <div className={styles.card} data-priority={player.priority}>
+      {showActions && (
+        <button
+          type="button"
+          className={styles.reorderHandle}
+          aria-label="Reorder player"
+          tabIndex={-1}
+        >
+          <GripVertical size={20} aria-hidden="true" />
+        </button>
+      )}
+      <div className={styles.badge}>
+        <span className={styles.badgeNumber}>{index + 1}</span>
+      </div>
       <div className={styles.content}>
-        <div className={styles.order}>
-          <span className={styles.orderNumber}>{index + 1}</span>
-        </div>
-        <div className={styles.info}>
-          <div className={styles.nameRow}>
-            <span className={styles.name}>{player.name}</span>
-            {player.priority && (
-              <Badge variant="priority" className={styles.priorityBadge}>
-                <Star size={12} aria-hidden="true" />
-                Priority
-              </Badge>
-            )}
-          </div>
-          {player.notes && <p className={styles.notes}>{player.notes}</p>}
+        <div className={styles.nameRow}>
+          <span className={styles.name}>{player.name}</span>
         </div>
       </div>
       {showActions && (
         <div className={styles.actions}>
-          <button
-            type="button"
-            onClick={handleTogglePriority}
-            className={styles.priorityButton}
-            aria-label={player.priority ? 'Remove priority' : 'Mark as priority'}
-            aria-pressed={player.priority}
-          >
-            <Star
-              size={20}
-              className={player.priority ? styles.starActive : styles.starInactive}
-              aria-hidden="true"
-            />
-          </button>
+          {onTogglePriority && (
+            <button
+              type="button"
+              onClick={handleTogglePriority}
+              className={`${styles.priorityButton} ${player.priority ? styles.priorityButtonActive : ''}`}
+              aria-label={player.priority ? 'Remove priority' : 'Mark as priority'}
+              aria-pressed={player.priority}
+            >
+              <Star
+                size={20}
+                className={player.priority ? styles.starActive : styles.starInactive}
+                aria-hidden="true"
+                fill={player.priority ? 'currentColor' : 'none'}
+              />
+            </button>
+          )}
           {onRemove && (
             <button
               type="button"

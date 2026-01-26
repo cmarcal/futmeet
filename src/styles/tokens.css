@@ -14,11 +14,14 @@
   /* Priority Colors */
   --color-priority: #FFC107;
   --color-priority-light: #FFE082;
+  --color-priority-container: #FFF9E6;
+  --color-priority-gold: #D4AF37;
 
   /* Neutral Colors */
   --color-text-primary: #212121;
   --color-text-secondary: #757575;
   --color-background-main: #F5F5F5;
+  --color-background-lighter: #FAFAFA;
   --color-background-card: #FFFFFF;
   --color-border: #E0E0E0;
 
@@ -27,6 +30,7 @@
   --color-error: #D32F2F;
   --color-error-dark: #B71C1C;
   --color-error-container: #FFEBEE;
+  --color-error-strong: #C62828;
   --color-warning: #F57C00;
   --color-warning-container: #FFF3E0;
   --color-success-container: #E8F5E9;

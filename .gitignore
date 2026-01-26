@@ -57,3 +57,6 @@ yarn-error.log*
 *.tmp
 *.temp
 .cache/
+
+# Documentation and planning files
+PHASE_*.md
