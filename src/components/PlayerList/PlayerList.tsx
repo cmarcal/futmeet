@@ -1,5 +1,5 @@
+import { Users } from 'lucide-react';
 import { PlayerCard } from '../PlayerCard';
-import { Alert } from '../Alert';
 import type { Player } from '../../types';
 import styles from './PlayerList.module.css';
 
@@ -9,6 +9,7 @@ export interface PlayerListProps {
   onRemove?: (playerId: string) => void;
   showActions?: boolean;
   emptyMessage?: string;
+  emptySubMessage?: string;
 }
 
 export const PlayerList = ({
@@ -16,12 +17,15 @@ export const PlayerList = ({
   onTogglePriority,
   onRemove,
   showActions = true,
-  emptyMessage = 'No players added yet. Add players to get started!',
+  emptyMessage = 'No players yet',
+  emptySubMessage = 'Add your first player to get started',
 }: PlayerListProps) => {
   if (players.length === 0) {
     return (
       <div className={styles.empty}>
-        <Alert variant="info">{emptyMessage}</Alert>
+        <Users size={64} className={styles.emptyIcon} aria-hidden="true" />
+        <p className={styles.emptyMessage}>{emptyMessage}</p>
+        <p className={styles.emptySubMessage}>{emptySubMessage}</p>
       </div>
     );
   }

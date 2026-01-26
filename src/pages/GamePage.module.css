@@ -7,18 +7,19 @@
   width: 100%;
   margin: 0 auto;
   padding: var(--spacing-md);
-  padding-bottom: var(--spacing-2xl);
+  padding-bottom: calc(var(--spacing-2xl) + 80px);
 
   @media (--tablet) {
     gap: var(--spacing-xl);
     padding: var(--spacing-lg);
-    padding-bottom: var(--spacing-3xl);
+    padding-bottom: calc(var(--spacing-3xl) + 80px);
     max-width: 800px;
   }
 
   @media (--desktop) {
     max-width: 900px;
     gap: var(--spacing-2xl);
+    padding-bottom: calc(var(--spacing-3xl) + 80px);
   }
 }
 
@@ -31,9 +32,16 @@
 
   @media (--tablet) {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
   }
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
 }
 
 .title {
@@ -47,7 +55,53 @@
   }
 }
 
-.section {
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+
+  @media (--tablet) {
+    font-size: 1rem;
+  }
+}
+
+.newGameButton {
+  align-self: flex-start;
+
+  @media (--tablet) {
+    align-self: flex-end;
+  }
+}
+
+.addPlayerSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.addPlayerCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--color-background-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+
+  @media (--tablet) {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+}
+
+.statisticsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.playerListSection {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
@@ -61,27 +115,59 @@
 }
 
 .sectionTitle {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
-
-  @media (--tablet) {
-    font-size: 1.25rem;
-  }
 }
 
-.infoAlert,
-.warningAlert {
-  margin-top: var(--spacing-sm);
+.sortIndicator {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
 }
 
-.actions {
+
+.teamSettingsSection {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
 
+.teamWarningAlert {
+  margin: 0;
+}
+
+.actionsSection {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: #FAFAFA;
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+
+  @media (--tablet) {
+    padding: var(--spacing-md) var(--spacing-lg);
+    max-width: 800px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (--desktop) {
+    max-width: 900px;
+  }
+}
+
+.warningAlert {
+  margin: 0;
+}
+
 .sortButton {
   width: 100%;
+  border-radius: var(--radius-xl);
 }

@@ -2,33 +2,29 @@
 
 .form {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
   width: 100%;
-
-  @media (--tablet) {
-    flex-direction: row;
-    align-items: flex-start;
-  }
 }
 
 .inputWrapper {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+}
 
-  @media (--tablet) {
-    flex: 1;
-  }
+.input {
+  width: 100%;
 }
 
 .submitButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
-  width: 100%;
-
-  @media (--tablet) {
-    width: auto;
-    min-width: 140px;
-  }
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: var(--radius-xl);
+  min-width: 40px;
 }

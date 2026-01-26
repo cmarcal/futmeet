@@ -9,13 +9,13 @@
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   font-family: inherit;
   color: var(--color-text-primary);
-  background-color: var(--color-background-card);
+  background-color: var(--color-background-main);
   transition: all 0.2s ease-in-out;
-  min-height: 44px;
+  min-height: 48px;
   outline: none;
 
   &::placeholder {

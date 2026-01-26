@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background-color: var(--color-background-main);
+  background-color: #FAFAFA;
   padding: var(--spacing-md);
   overflow-y: auto;
   overflow-x: hidden;

@@ -50,6 +50,7 @@ export const PlayerInput = ({ onSubmit, disabled = false, placeholder = 'Enter p
           onKeyDown={handleKeyDown}
           aria-label="Player name"
           autoComplete="off"
+          className={styles.input}
         />
       </div>
       <Button
@@ -61,7 +62,6 @@ export const PlayerInput = ({ onSubmit, disabled = false, placeholder = 'Enter p
         aria-label="Add player"
       >
         <Plus size={20} aria-hidden="true" />
-        Add Player
       </Button>
     </form>
   );
