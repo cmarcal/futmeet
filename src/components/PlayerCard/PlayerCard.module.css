@@ -12,6 +12,7 @@
   transition: all 0.2s ease-in-out;
   gap: var(--spacing-sm);
   min-height: 72px;
+  position: relative;
 
   &:hover {
     box-shadow: var(--shadow-card-hover);
@@ -19,6 +20,30 @@
 
   &[data-priority='true'] {
     border-color: var(--color-priority);
+  }
+
+  &[draggable='true'] {
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      /* Mobile devices */
+      cursor: default;
+    }
+  }
+
+  &.cardDragging {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 0 2px var(--color-primary);
+    opacity: 0.9;
+    z-index: 1000;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease-in-out;
+    border-color: var(--color-primary);
   }
 }
 

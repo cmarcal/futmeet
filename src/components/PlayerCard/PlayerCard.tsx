@@ -8,6 +8,14 @@ export interface PlayerCardProps {
   onTogglePriority?: (playerId: string) => void;
   onRemove?: (playerId: string) => void;
   showActions?: boolean;
+  draggable?: boolean;
+  onDragStart?: (e: React.DragEvent) => void;
+  onDragEnd?: (e: React.DragEvent) => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDragLeave?: (e: React.DragEvent) => void;
+  onDrop?: (e: React.DragEvent) => void;
+  onTouchStart?: (e: React.TouchEvent) => void;
+  isDragging?: boolean;
 }
 
 export const PlayerCard = ({
@@ -16,17 +24,50 @@ export const PlayerCard = ({
   onTogglePriority,
   onRemove,
   showActions = true,
+  draggable = false,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onTouchStart,
+  isDragging = false,
 }: PlayerCardProps) => {
-  const handleTogglePriority = () => {
+  const handleTogglePriority = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onTogglePriority?.(player.id);
   };
 
-  const handleRemove = () => {
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onRemove?.(player.id);
   };
 
+  const handleButtonMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleCardDragStart = (e: React.DragEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
+      e.preventDefault();
+      return;
+    }
+    onDragStart?.(e);
+  };
+
   return (
-    <div className={styles.card} data-priority={player.priority}>
+    <div
+      className={`${styles.card} ${isDragging ? styles.cardDragging : ''}`}
+      data-priority={player.priority}
+      draggable={draggable}
+      onDragStart={handleCardDragStart}
+      onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      onTouchStart={onTouchStart}
+    >
       {showActions && (
         <button
           type="button"
@@ -34,6 +75,7 @@ export const PlayerCard = ({
           aria-label="Drag to reorder player"
           tabIndex={-1}
           draggable={false}
+          onMouseDown={handleButtonMouseDown}
         >
           <GripVertical size={20} aria-hidden="true" />
         </button>
@@ -52,6 +94,7 @@ export const PlayerCard = ({
             <button
               type="button"
               onClick={handleTogglePriority}
+              onMouseDown={handleButtonMouseDown}
               className={`${styles.priorityButton} ${player.priority ? styles.priorityButtonActive : ''}`}
               aria-label={player.priority ? 'Remove priority' : 'Mark as priority'}
               aria-pressed={player.priority}
@@ -68,6 +111,7 @@ export const PlayerCard = ({
             <button
               type="button"
               onClick={handleRemove}
+              onMouseDown={handleButtonMouseDown}
               className={styles.removeButton}
               aria-label={`Remove ${player.name}`}
             >
