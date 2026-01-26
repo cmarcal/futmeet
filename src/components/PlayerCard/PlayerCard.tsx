@@ -31,8 +31,9 @@ export const PlayerCard = ({
         <button
           type="button"
           className={styles.reorderHandle}
-          aria-label="Reorder player"
+          aria-label="Drag to reorder player"
           tabIndex={-1}
+          draggable={false}
         >
           <GripVertical size={20} aria-hidden="true" />
         </button>

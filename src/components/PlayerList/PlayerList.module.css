@@ -14,6 +14,24 @@
   }
 }
 
+.listItem {
+  cursor: grab;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+
+  &.dragOver {
+    transform: translateY(4px);
+  }
+}
+
 .empty {
   display: flex;
   flex-direction: column;

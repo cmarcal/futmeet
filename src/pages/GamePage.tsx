@@ -12,7 +12,7 @@ import styles from './GamePage.module.css';
 
 const GamePage = () => {
   const navigate = useNavigate();
-  const { players, teamCount, gameStatus, addPlayer, removePlayer, togglePriority, setTeamCount, sortTeams, reset } =
+  const { players, teamCount, gameStatus, addPlayer, removePlayer, togglePriority, reorderPlayers, setTeamCount, sortTeams, reset } =
     useGameStore();
   const [showMaxTeamsWarning, setShowMaxTeamsWarning] = useState(false);
 
@@ -87,6 +87,7 @@ const GamePage = () => {
             players={players}
             onTogglePriority={togglePriority}
             onRemove={removePlayer}
+            onReorder={reorderPlayers}
             showActions={gameStatus !== 'sorting'}
             emptyMessage="No players yet"
           />
