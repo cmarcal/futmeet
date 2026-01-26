@@ -14,7 +14,7 @@ const createPlayer = (id: string, name: string, priority = false): Player => ({
 describe('PlayerList', () => {
   it('should render empty message when no players', () => {
     render(<PlayerList players={[]} />);
-    expect(screen.getByText(/no players added yet/i)).toBeInTheDocument();
+    expect(screen.getByText('No players yet')).toBeInTheDocument();
   });
 
   it('should render custom empty message', () => {
