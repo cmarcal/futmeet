@@ -26,6 +26,29 @@ type DragAction =
   | { type: 'TOUCH_CANCEL' }
   | { type: 'RESET' };
 
+export interface UseDragAndDropReturn {
+  draggedIndex: number | null;
+  dragOverIndex: number | null;
+  touchStartIndex: number | null;
+  touchStartY: number | null;
+  touchCurrentY: number | null;
+  handleDragStart: (e: React.DragEvent, index: number) => void;
+  handleDragEnd: () => void;
+  handleDragOver: (e: React.DragEvent, index: number) => void;
+  handleDragLeave: () => void;
+  handleDrop: (e: React.DragEvent, index: number) => void;
+  handleTouchStart: (e: React.TouchEvent, index: number) => void;
+  handleTouchMove: (e: React.TouchEvent) => void;
+  handleTouchEnd: () => void;
+  handleTouchCancel: () => void;
+  getItemShift: (index: number) => number;
+  getItemHeight: () => number;
+  isDragging: (index: number) => boolean;
+  isDragOver: (index: number) => boolean;
+  listRef: React.RefObject<HTMLUListElement>;
+  itemRefs: React.MutableRefObject<(HTMLLIElement | null)[]>;
+}
+
 const initialState: DragState = {
   draggedIndex: null,
   dragOverIndex: null,
@@ -37,29 +60,16 @@ const initialState: DragState = {
 const dragReducer = (state: DragState, action: DragAction): DragState => {
   switch (action.type) {
     case 'DRAG_START':
-      return {
-        ...state,
-        draggedIndex: action.payload.index,
-      };
+      return { ...state, draggedIndex: action.payload.index };
 
     case 'DRAG_END':
-      return {
-        ...state,
-        draggedIndex: null,
-        dragOverIndex: null,
-      };
+      return { ...state, draggedIndex: null, dragOverIndex: null };
 
     case 'DRAG_OVER':
-      return {
-        ...state,
-        dragOverIndex: action.payload.index,
-      };
+      return { ...state, dragOverIndex: action.payload.index };
 
     case 'DRAG_LEAVE':
-      return {
-        ...state,
-        dragOverIndex: null,
-      };
+      return { ...state, dragOverIndex: null };
 
     case 'TOUCH_START':
       return {
@@ -71,10 +81,7 @@ const dragReducer = (state: DragState, action: DragAction): DragState => {
       };
 
     case 'TOUCH_MOVE':
-      return {
-        ...state,
-        touchCurrentY: action.payload.y,
-      };
+      return { ...state, touchCurrentY: action.payload.y };
 
     case 'TOUCH_END':
     case 'TOUCH_CANCEL':
@@ -86,37 +93,34 @@ const dragReducer = (state: DragState, action: DragAction): DragState => {
   }
 };
 
-export interface UseDragAndDropReturn {
-  // State
-  draggedIndex: number | null;
-  dragOverIndex: number | null;
-  touchStartIndex: number | null;
-  touchStartY: number | null;
-  touchCurrentY: number | null;
+const calculateDesktopTargetIndex = (
+  mouseY: number,
+  elementRect: DOMRect,
+  currentIndex: number,
+  draggedIndex: number,
+  itemCount: number
+): number | null => {
+  const middle = elementRect.top + elementRect.height / 2;
+  let targetIndex = mouseY < middle ? currentIndex : currentIndex + 1;
 
-  // Desktop drag handlers
-  handleDragStart: (e: React.DragEvent, index: number) => void;
-  handleDragEnd: () => void;
-  handleDragOver: (e: React.DragEvent, index: number) => void;
-  handleDragLeave: () => void;
-  handleDrop: (e: React.DragEvent, index: number) => void;
+  if (draggedIndex < targetIndex) {
+    targetIndex = targetIndex - 1;
+  }
 
-  // Touch drag handlers
-  handleTouchStart: (e: React.TouchEvent, index: number) => void;
-  handleTouchMove: (e: React.TouchEvent) => void;
-  handleTouchEnd: () => void;
-  handleTouchCancel: () => void;
+  if (targetIndex >= 0 && targetIndex < itemCount && targetIndex !== draggedIndex) {
+    return targetIndex;
+  }
 
-  // Utility functions
-  getItemShift: (index: number) => number;
-  getItemHeight: () => number;
-  isDragging: (index: number) => boolean;
-  isDragOver: (index: number) => boolean;
+  if (targetIndex === draggedIndex && draggedIndex < itemCount - 1) {
+    return draggedIndex + 1;
+  }
 
-  // Refs
-  listRef: React.RefObject<HTMLUListElement>;
-  itemRefs: React.MutableRefObject<(HTMLLIElement | null)[]>;
-}
+  return null;
+};
+
+const isButtonElement = (target: HTMLElement): boolean => {
+  return target.tagName === 'BUTTON' || target.closest('button') !== null;
+};
 
 export const useDragAndDrop = ({
   itemCount,
@@ -129,7 +133,6 @@ export const useDragAndDrop = ({
   const listRef = useRef<HTMLUListElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
 
-  // Desktop drag handlers
   const handleDragStart = useCallback(
     (e: React.DragEvent, index: number) => {
       if (!enabled) return;
@@ -148,28 +151,14 @@ export const useDragAndDrop = ({
     (e: React.DragEvent, index: number) => {
       e.preventDefault();
       e.stopPropagation();
+
       if (draggedIndex === null || draggedIndex === index || !enabled) return;
 
-      // Use the mouse position to determine if we should insert before or after
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      const mouseY = e.clientY;
-      const middle = rect.top + rect.height / 2;
+      const targetIndex = calculateDesktopTargetIndex(e.clientY, rect, index, draggedIndex, itemCount);
 
-      // If mouse is in upper half, insert before this item
-      // If mouse is in lower half, insert after this item
-      let targetIndex = mouseY < middle ? index : index + 1;
-
-      // Adjust for the fact that we're removing the dragged item
-      if (draggedIndex < targetIndex) {
-        targetIndex = targetIndex - 1;
-      }
-
-      // Ensure valid index and different from dragged
-      if (targetIndex >= 0 && targetIndex < itemCount && targetIndex !== draggedIndex) {
+      if (targetIndex !== null) {
         dispatch({ type: 'DRAG_OVER', payload: { index: targetIndex } });
-      } else if (targetIndex === draggedIndex && draggedIndex < itemCount - 1) {
-        // If we're at the dragged position but moving down, go to next position
-        dispatch({ type: 'DRAG_OVER', payload: { index: draggedIndex + 1 } });
       }
     },
     [draggedIndex, itemCount, enabled]
@@ -190,15 +179,10 @@ export const useDragAndDrop = ({
     [draggedIndex, onReorder, enabled]
   );
 
-  // Touch drag handlers
   const handleTouchStart = useCallback(
     (e: React.TouchEvent, index: number) => {
       if (!enabled || !onReorder) return;
-
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'BUTTON' || target.closest('button')) {
-        return;
-      }
+      if (isButtonElement(e.target as HTMLElement)) return;
 
       const touch = e.touches[0];
       dispatch({ type: 'TOUCH_START', payload: { index, y: touch.clientY } });
@@ -240,7 +224,6 @@ export const useDragAndDrop = ({
     dispatch({ type: 'TOUCH_CANCEL' });
   }, []);
 
-  // Utility functions
   const getItemShift = useCallback(
     (index: number): number => {
       return calculateItemShift(index, draggedIndex ?? -1, dragOverIndex ?? -1);
@@ -254,47 +237,34 @@ export const useDragAndDrop = ({
   }, []);
 
   const isDragging = useCallback(
-    (index: number): boolean => {
-      return draggedIndex === index;
-    },
+    (index: number): boolean => draggedIndex === index,
     [draggedIndex]
   );
 
   const isDragOver = useCallback(
-    (index: number): boolean => {
-      return dragOverIndex === index;
-    },
+    (index: number): boolean => dragOverIndex === index,
     [dragOverIndex]
   );
 
   return {
-    // State
     draggedIndex,
     dragOverIndex,
     touchStartIndex,
     touchStartY,
     touchCurrentY,
-
-    // Desktop drag handlers
     handleDragStart,
     handleDragEnd,
     handleDragOver,
     handleDragLeave,
     handleDrop,
-
-    // Touch drag handlers
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
     handleTouchCancel,
-
-    // Utility functions
     getItemShift,
     getItemHeight,
     isDragging,
     isDragOver,
-
-    // Refs
     listRef,
     itemRefs,
   };
