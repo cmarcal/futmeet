@@ -1,14 +1,12 @@
 .container {
   min-height: 100vh;
-  background-color: #FAFAFA;
+  background-color: var(--color-background-lighter);
   padding: var(--spacing-md);
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
-  
-  /* Safe area support for mobile devices */
   padding-top: max(var(--spacing-md), env(safe-area-inset-top));
   padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
   padding-left: max(var(--spacing-md), env(safe-area-inset-left));
