@@ -12,7 +12,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "analyze": "ANALYZE=true npm run build"
+    "analyze": "npx cross-env ANALYZE=true npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
