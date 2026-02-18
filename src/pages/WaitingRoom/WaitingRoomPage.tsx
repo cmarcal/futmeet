@@ -43,10 +43,15 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
   const handleShareWhatsApp = () => {
     const waitingRoomUrl = globalThis.location.href;
     const playerLabel = players.length === 1 ? 'confirmado' : 'confirmados';
-    const playerLines = players.map((p, i) => `${i + 1}. ${p.name}${p.priority ? ' *' : ''}`).join('\n');
-    const confirmedLine = players.length > 0 ? `${playerLines}\n\n_(${players.length} ${playerLabel})_\n\n` : '';
-    const text = `*FutMeet - Sala de Espera*\n\n${confirmedLine}Adicione seu nome na lista e confirme sua presenca:\n${waitingRoomUrl}`;
-    globalThis.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    const playerLines = players.map((p, i) => `${i + 1}. ${p.name}${p.priority ? ' (prioridade)' : ''}`).join('\n');
+    const parts = [
+      'FutMeet - Sala de Espera',
+      '',
+      ...(players.length > 0 ? [playerLines, '', `(${players.length} ${playerLabel})`, ''] : []),
+      'Adicione seu nome na lista e confirme sua presenca:',
+      waitingRoomUrl,
+    ];
+    globalThis.open(`https://wa.me/?text=${encodeURIComponent(parts.join('\n'))}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleClearRequest = () => {
