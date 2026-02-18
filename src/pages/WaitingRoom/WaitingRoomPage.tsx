@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
+import { ArrowLeft, Share2 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { PlayerInput } from '../../components/PlayerInput';
@@ -55,9 +56,6 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
 
     const shareText = lines.join('\n');
 
-    // Use the native share sheet only on mobile (Android/iOS) where WhatsApp
-    // reliably appears as a share target. On desktop the OS share dialog
-    // (e.g. Windows) does not list WhatsApp, so skip straight to wa.me.
     const isMobile = /Android|iPhone|iPad|iPod/i.test(globalThis.navigator?.userAgent ?? '');
     if (isMobile && globalThis.navigator?.share) {
       const shared = await globalThis.navigator
@@ -67,7 +65,6 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
       if (shared) return;
     }
 
-    // Desktop and fallback: open WhatsApp Web with the pre-filled message
     globalThis.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer');
   };
 
@@ -103,7 +100,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
             className={styles.backButton}
             aria-label="Voltar para página inicial"
           >
-            ← Início
+            <ArrowLeft size={16} aria-hidden="true" /> Início
           </Button>
         </header>
 
@@ -187,7 +184,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
               className={styles.shareButton}
               aria-label="Compartilhar sala de espera via WhatsApp"
             >
-              <span aria-hidden="true">📲</span> Compartilhar no WhatsApp
+              <Share2 size={18} aria-hidden="true" /> Compartilhar no WhatsApp
             </Button>
             <Button
               variant="primary"

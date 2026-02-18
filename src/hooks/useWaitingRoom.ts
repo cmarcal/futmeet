@@ -1,18 +1,10 @@
 import { useEffect } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import type { Player } from '../types';
+import type { Player, PlayerListActions } from '../types';
 
-// Stable reference used as fallback before the room is initialised.
-// A new [] literal would produce a different reference on every render,
-// causing React's useSyncExternalStore to trigger an infinite loop.
 const EMPTY_PLAYERS: Player[] = [];
 
-interface UseWaitingRoomReturn {
-  players: Player[];
-  addPlayer: (name: string) => void;
-  removePlayer: (playerId: string) => void;
-  togglePriority: (playerId: string) => void;
-  reorderPlayers: (fromIndex: number, toIndex: number) => void;
+interface UseWaitingRoomReturn extends PlayerListActions {
   clearWaitingRoom: () => void;
   createGameFromWaitingRoom: () => void;
 }
