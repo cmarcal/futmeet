@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useGameStore } from '../../stores/gameStore';
 import ResultsPage from './ResultsPage';
+
+const VALID_GAME_ID = 'V1StGXR8_Z5jdHi6B-myT';
 
 const mockNavigate = vi.fn();
 
@@ -15,10 +17,13 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-const renderResultsPage = () => {
+const renderResultsPage = (gameId = VALID_GAME_ID) => {
   return render(
-    <MemoryRouter>
-      <ResultsPage />
+    <MemoryRouter initialEntries={[`/results/${gameId}`]}>
+      <Routes>
+        <Route path="/results/:gameId" element={<ResultsPage />} />
+        <Route path="/" element={<div>Home</div>} />
+      </Routes>
     </MemoryRouter>
   );
 };
@@ -26,7 +31,7 @@ const renderResultsPage = () => {
 describe('ResultsPage', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    useGameStore.getState().reset();
+    useGameStore.setState({ games: {} });
   });
 
   it('should render page title', () => {
@@ -42,9 +47,10 @@ describe('ResultsPage', () => {
   });
 
   it('should show player and team count after sort', () => {
-    useGameStore.getState().addPlayer('Alice');
-    useGameStore.getState().addPlayer('Bob');
-    useGameStore.getState().sortTeams();
+    useGameStore.getState().initGame(VALID_GAME_ID);
+    useGameStore.getState().addPlayer(VALID_GAME_ID, 'Alice');
+    useGameStore.getState().addPlayer(VALID_GAME_ID, 'Bob');
+    useGameStore.getState().sortTeams(VALID_GAME_ID);
 
     renderResultsPage();
 
@@ -63,21 +69,27 @@ describe('ResultsPage', () => {
     expect(screen.getByRole('button', { name: 'Back to Game' })).toBeInTheDocument();
   });
 
-  it('should navigate to / when New Game is clicked', async () => {
+  it('should navigate to a new game URL when New Game is clicked', async () => {
     const user = userEvent.setup();
     renderResultsPage();
 
     await user.click(screen.getByRole('button', { name: 'New Game' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
   });
 
-  it('should navigate to /game when Back to Game is clicked', async () => {
+  it('should navigate to /game/:gameId when Back to Game is clicked', async () => {
     const user = userEvent.setup();
     renderResultsPage();
 
     await user.click(screen.getByRole('button', { name: 'Back to Game' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/game');
+    expect(mockNavigate).toHaveBeenCalledWith(`/game/${VALID_GAME_ID}`);
+  });
+
+  it('should redirect to / when gameId is invalid', () => {
+    renderResultsPage('invalid-id');
+
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 });

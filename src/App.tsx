@@ -7,8 +7,8 @@ const App = () => {
     <ErrorBoundary>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/game" element={<GamePage />} />
-        <Route path="/results" element={<ResultsPage />} />
+        <Route path="/game/:gameId" element={<GamePage />} />
+        <Route path="/results/:gameId" element={<ResultsPage />} />
       </Routes>
     </ErrorBoundary>
   )

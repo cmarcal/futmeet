@@ -40,12 +40,12 @@ describe('HomePage', () => {
     expect(screen.getByRole('button', { name: 'Start Game' })).toBeInTheDocument();
   });
 
-  it('should navigate to /game when Start Game is clicked', async () => {
+  it('should navigate to /game/:gameId when Start Game is clicked', async () => {
     const user = userEvent.setup();
     renderHomePage();
 
     await user.click(screen.getByRole('button', { name: 'Start Game' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/game');
+    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
   });
 });
