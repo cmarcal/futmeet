@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { TeamCard } from '../TeamCard';
 import { Alert } from '../Alert';
 import type { Team } from '../../types';
@@ -9,7 +10,7 @@ export interface TeamListProps {
   emptyMessage?: string;
 }
 
-export const TeamList = ({
+export const TeamList = memo(({
   teams,
   showPlayerActions = false,
   emptyMessage = 'No teams available. Sort players to generate teams.',
@@ -31,4 +32,4 @@ export const TeamList = ({
       ))}
     </div>
   );
-};
+});
