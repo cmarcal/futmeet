@@ -44,8 +44,6 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
     const url = globalThis.location.href;
     const playerLabel = players.length === 1 ? 'confirmado' : 'confirmados';
 
-    // Build the full message with the URL embedded at the end.
-    // The URL must be on its own bare line so WhatsApp auto-detects it as a link.
     const lines: string[] = ['FutMeet - Sala de Espera', ''];
     if (players.length > 0) {
       players.forEach((p, i) => {
@@ -57,9 +55,11 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
 
     const shareText = lines.join('\n');
 
-    // Try the native share sheet (mobile). Pass everything as `text` so the
-    // full message — player list + URL — always reaches WhatsApp together.
-    if (globalThis.navigator?.share) {
+    // Use the native share sheet only on mobile (Android/iOS) where WhatsApp
+    // reliably appears as a share target. On desktop the OS share dialog
+    // (e.g. Windows) does not list WhatsApp, so skip straight to wa.me.
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(globalThis.navigator?.userAgent ?? '');
+    if (isMobile && globalThis.navigator?.share) {
       const shared = await globalThis.navigator
         .share({ text: shareText })
         .then(() => true)
@@ -67,7 +67,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
       if (shared) return;
     }
 
-    // Desktop fallback: WhatsApp Web pre-filled message
+    // Desktop and fallback: open WhatsApp Web with the pre-filled message
     globalThis.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer');
   };
 
