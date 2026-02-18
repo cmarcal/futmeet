@@ -192,10 +192,19 @@ export const useGameStore = create<GamesState>()(
               const game = state.games[gameId];
               game.teamCount = validateTeamCount(game.teamCount);
 
+              const fixTimestamp = (player: Player): Player => ({
+                ...player,
+                timestamp: player.timestamp instanceof Date ? player.timestamp : new Date(player.timestamp),
+              });
+
               if (game.players) {
-                game.players = game.players.map((player) => ({
-                  ...player,
-                  timestamp: player.timestamp instanceof Date ? player.timestamp : new Date(player.timestamp),
+                game.players = game.players.map(fixTimestamp);
+              }
+
+              if (game.teams) {
+                game.teams = game.teams.map((team) => ({
+                  ...team,
+                  players: team.players.map(fixTimestamp),
                 }));
               }
             });
