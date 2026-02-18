@@ -1,4 +1,4 @@
-/* Global CSS Reset and Base Styles */
+﻿/* Global CSS Reset and Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -36,9 +36,13 @@ body {
   flex-direction: column;
 }
 
-/* Better focus styles for accessibility */
+/* Focus management - WCAG 2.1 AA */
 *:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
 }

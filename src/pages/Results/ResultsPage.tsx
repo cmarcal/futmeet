@@ -1,4 +1,4 @@
-import { useNavigate, useParams, Navigate } from 'react-router-dom';
+﻿import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { TeamList } from '../../components/TeamList';
@@ -44,6 +44,12 @@ const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
           </p>
         </header>
 
+        <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+          {teams.length > 0
+            ? `${teams.length} ${teams.length === 1 ? 'team' : 'teams'} ready`
+            : 'Sorting teams...'}
+        </div>
+
         <section className={styles.teamsSection}>
           <TeamList teams={teams} showPlayerActions={false} />
         </section>
@@ -62,3 +68,4 @@ const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
 };
 
 export default ResultsPage;
+
