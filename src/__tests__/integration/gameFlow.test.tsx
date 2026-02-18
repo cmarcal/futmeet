@@ -43,7 +43,7 @@ describe('Game Flow Integration', () => {
       renderApp('/');
       await user.click(screen.getByRole('button', { name: 'Start Game' }));
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/)
+        expect.stringMatching(/^\/game\/[A-Za-z0-9]{21}$/)
       );
     });
   });

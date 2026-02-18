@@ -5,7 +5,9 @@ import { customAlphabet } from 'nanoid';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const nanoidAlphanumeric = customAlphabet(ALPHABET, 21);
 
-const GAME_ID_REGEX = /^[A-Za-z0-9]{21}$/;
+// Accepts both the new alphanumeric-only IDs and legacy IDs that may
+// contain _ or - (generated before the alphabet was restricted).
+const GAME_ID_REGEX = /^[A-Za-z0-9_-]{21}$/;
 
 export const generateGameId = (): string => nanoidAlphanumeric();
 
