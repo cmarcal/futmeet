@@ -1,3 +1,4 @@
+﻿import { SkipLink } from '../SkipLink';
 import styles from './Layout.module.css';
 
 export interface LayoutProps {
@@ -10,7 +11,10 @@ export const Layout = ({ children, className = '' }: LayoutProps) => {
 
   return (
     <div className={containerClasses}>
-      <div className={styles.content}>{children}</div>
+      <SkipLink />
+      <main id="main-content" className={styles.content}>
+        {children}
+      </main>
     </div>
   );
 };

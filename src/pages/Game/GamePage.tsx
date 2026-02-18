@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
@@ -93,6 +93,10 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
           <PlayerStatistics players={players} />
         </section>
 
+        <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+          {players.length} {players.length === 1 ? 'player' : 'players'} in the game
+        </div>
+
         <section className={styles.playerListSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Player List</h2>
@@ -130,3 +134,4 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
 };
 
 export default GamePage;
+
