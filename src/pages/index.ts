@@ -1,3 +1,3 @@
-export { default as HomePage } from './HomePage';
-export { default as GamePage } from './GamePage';
-export { default as ResultsPage } from './ResultsPage';
+export { default as HomePage } from './Home/HomePage';
+export { default as GamePage } from './Game/GamePage';
+export { default as ResultsPage } from './Results/ResultsPage';
