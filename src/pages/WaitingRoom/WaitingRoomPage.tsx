@@ -26,10 +26,12 @@ const WaitingRoomPage = () => {
   };
 
   const handleShareWhatsApp = () => {
-    const playerLines = players.map((p, i) => `${i + 1}. ${p.name}${p.priority ? ' ⭐' : ''}`).join('\n');
+    const waitingRoomUrl = `${globalThis.location.origin}/waiting-room`;
     const playerLabel = players.length === 1 ? 'confirmado' : 'confirmados';
-    const text = `⚽ *FutMeet - Sala de Espera*\n\nQuem vai jogar? (${players.length} ${playerLabel})\n\n${playerLines}\n\n_Confirme sua presença antes do jogo!_`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    const playerLines = players.map((p, i) => `${i + 1}. ${p.name}${p.priority ? ' ⭐' : ''}`).join('\n');
+    const confirmedLine = players.length > 0 ? `${playerLines}\n\n(${players.length} ${playerLabel})\n\n` : '';
+    const text = `⚽ *FutMeet - Sala de Espera*\n\n${confirmedLine}Adicione seu nome na lista e confirme sua presença:\n👉 ${waitingRoomUrl}`;
+    globalThis.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleClearRequest = () => {
@@ -145,9 +147,8 @@ const WaitingRoomPage = () => {
               variant="secondary"
               size="large"
               onClick={handleShareWhatsApp}
-              disabled={players.length === 0}
               className={styles.shareButton}
-              aria-label={`Compartilhar lista com ${players.length} jogadores via WhatsApp`}
+              aria-label="Compartilhar sala de espera via WhatsApp"
             >
               <span aria-hidden="true">📲</span> Compartilhar no WhatsApp
             </Button>
