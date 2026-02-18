@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { PlayerInput } from '../../components/PlayerInput';
@@ -7,13 +7,28 @@ import { PlayerList } from '../../components/PlayerList';
 import { PlayerStatistics } from '../../components/PlayerStatistics';
 import { TeamSettings } from '../../components/TeamSettings';
 import { Alert } from '../../components/Alert';
-import { useGameStore } from '../../stores/gameStore';
+import { useGame } from '../../hooks/useGame';
+import { generateGameId, isValidGameId } from '../../utils/gameId';
 import styles from './GamePage.module.css';
 
 const GamePage = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+
+  if (!gameId || !isValidGameId(gameId)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <GamePageContent gameId={gameId} />;
+};
+
+interface GamePageContentProps {
+  gameId: string;
+}
+
+const GamePageContent = ({ gameId }: GamePageContentProps) => {
   const navigate = useNavigate();
-  const { players, teamCount, gameStatus, addPlayer, removePlayer, togglePriority, reorderPlayers, setTeamCount, sortTeams, reset } =
-    useGameStore();
+  const { players, teamCount, gameStatus, addPlayer, removePlayer, togglePriority, reorderPlayers, setTeamCount, sortTeams } =
+    useGame(gameId);
   const [showMaxTeamsWarning, setShowMaxTeamsWarning] = useState(false);
 
   const handleAddPlayer = (name: string) => {
@@ -25,12 +40,12 @@ const GamePage = () => {
       return;
     }
     sortTeams();
-    navigate('/results');
+    navigate(`/results/${gameId}`);
   };
 
   const handleNewGame = () => {
-    reset();
-    navigate('/');
+    const newGameId = generateGameId();
+    navigate(`/game/${newGameId}`);
   };
 
   const handleMaxTeamsExceeded = () => {

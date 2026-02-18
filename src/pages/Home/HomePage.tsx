@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
+import { generateGameId } from '../../utils/gameId';
 import styles from './HomePage.module.css';
 
 const HomePage = () => {
   const navigate = useNavigate();
 
   const handleStartGame = () => {
-    navigate('/game');
+    const gameId = generateGameId();
+    navigate(`/game/${gameId}`);
   };
 
   return (

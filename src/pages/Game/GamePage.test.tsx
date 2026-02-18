@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useGameStore } from '../../stores/gameStore';
 import GamePage from './GamePage';
+
+const VALID_GAME_ID = 'V1StGXR8_Z5jdHi6B-myT';
 
 const mockNavigate = vi.fn();
 
@@ -15,10 +17,13 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-const renderGamePage = () => {
+const renderGamePage = (gameId = VALID_GAME_ID) => {
   return render(
-    <MemoryRouter>
-      <GamePage />
+    <MemoryRouter initialEntries={[`/game/${gameId}`]}>
+      <Routes>
+        <Route path="/game/:gameId" element={<GamePage />} />
+        <Route path="/" element={<div>Home</div>} />
+      </Routes>
     </MemoryRouter>
   );
 };
@@ -26,7 +31,7 @@ const renderGamePage = () => {
 describe('GamePage', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    useGameStore.getState().reset();
+    useGameStore.setState({ games: {} });
   });
 
   it('should render page title and subtitle', () => {
@@ -62,12 +67,18 @@ describe('GamePage', () => {
     expect(sortButton).toBeDisabled();
   });
 
-  it('should navigate to / when New Game is clicked', async () => {
+  it('should navigate to a new game URL when New Game is clicked', async () => {
     const user = userEvent.setup();
     renderGamePage();
 
     await user.click(screen.getByRole('button', { name: 'New Game' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
+  });
+
+  it('should redirect to / when gameId is invalid', () => {
+    renderGamePage('invalid-id');
+
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 });

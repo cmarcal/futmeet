@@ -1,21 +1,36 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { TeamList } from '../../components/TeamList';
-import { useGameStore } from '../../stores/gameStore';
+import { useGame } from '../../hooks/useGame';
+import { generateGameId, isValidGameId } from '../../utils/gameId';
 import styles from './ResultsPage.module.css';
 
 const ResultsPage = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+
+  if (!gameId || !isValidGameId(gameId)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <ResultsPageContent gameId={gameId} />;
+};
+
+interface ResultsPageContentProps {
+  gameId: string;
+}
+
+const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
   const navigate = useNavigate();
-  const { teams, players, reset } = useGameStore();
+  const { teams, players } = useGame(gameId);
 
   const handleNewGame = () => {
-    reset();
-    navigate('/');
+    const newGameId = generateGameId();
+    navigate(`/game/${newGameId}`);
   };
 
   const handleBackToGame = () => {
-    navigate('/game');
+    navigate(`/game/${gameId}`);
   };
 
   return (
@@ -24,8 +39,8 @@ const ResultsPage = () => {
         <header className={styles.header}>
           <h1 className={styles.title}>Team Results</h1>
           <p className={styles.subtitle}>
-            {players.length} player{players.length !== 1 ? 's' : ''} sorted into {teams.length} team
-            {teams.length !== 1 ? 's' : ''}
+            {players.length} player{players.length === 1 ? '' : 's'} sorted into {teams.length} team
+            {teams.length === 1 ? '' : 's'}
           </p>
         </header>
 

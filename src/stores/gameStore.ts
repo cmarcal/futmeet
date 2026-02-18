@@ -3,25 +3,30 @@ import { persist, devtools } from 'zustand/middleware';
 import type { Player, Team, GameStatus } from '../types';
 import { sortTeams as sortTeamsUtil } from '../utils/teamSorter';
 
-interface GameState {
+export interface GameData {
   players: Player[];
   teams: Team[];
   teamCount: number;
   gameStatus: GameStatus;
-  addPlayer: (name: string) => void;
-  removePlayer: (playerId: string) => void;
-  togglePriority: (playerId: string) => void;
-  reorderPlayers: (fromIndex: number, toIndex: number) => void;
-  setTeamCount: (count: number) => void;
-  sortTeams: () => void;
-  reset: () => void;
 }
 
-const initialState = {
-  players: [] as Player[],
-  teams: [] as Team[],
+interface GamesState {
+  games: Record<string, GameData>;
+
+  initGame: (gameId: string) => void;
+  addPlayer: (gameId: string, name: string) => void;
+  removePlayer: (gameId: string, playerId: string) => void;
+  togglePriority: (gameId: string, playerId: string) => void;
+  reorderPlayers: (gameId: string, fromIndex: number, toIndex: number) => void;
+  setTeamCount: (gameId: string, count: number) => void;
+  sortTeams: (gameId: string) => void;
+}
+
+export const initialGameData: GameData = {
+  players: [],
+  teams: [],
   teamCount: 2,
-  gameStatus: 'setup' as GameStatus,
+  gameStatus: 'setup',
 };
 
 const createPlayer = (name: string): Player => ({
@@ -35,101 +40,174 @@ const validateTeamCount = (count: number): number => {
   return Math.max(2, Math.min(10, Math.round(count)));
 };
 
-const filterPlayerById = (players: Player[], playerId: string): Player[] => {
-  return players.filter((p) => p.id !== playerId);
+const updateGame = (
+  games: Record<string, GameData>,
+  gameId: string,
+  updater: (game: GameData) => Partial<GameData>
+): Record<string, GameData> => {
+  const game = games[gameId];
+  if (!game) return games;
+  return {
+    ...games,
+    [gameId]: { ...game, ...updater(game) },
+  };
 };
 
-const togglePlayerPriority = (players: Player[], playerId: string): Player[] => {
-  return players.map((player) => (player.id === playerId ? { ...player, priority: !player.priority } : player));
-};
-
-const removePlayerFromTeams = (teams: Team[], playerId: string): Team[] => {
-  return teams.map((team) => ({
-    ...team,
-    players: team.players.filter((p) => p.id !== playerId),
-  }));
-};
-
-export const useGameStore = create<GameState>()(
+export const useGameStore = create<GamesState>()(
   devtools(
     persist(
       (set, get) => ({
-        ...initialState,
+        games: {},
 
-        addPlayer: (name: string) => {
-          const newPlayer = createPlayer(name);
-          set((state) => ({ players: [...state.players, newPlayer] }), false, 'addPlayer');
+        initGame: (gameId: string) => {
+          set(
+            (state) => {
+              if (state.games[gameId]) return state;
+              return {
+                games: {
+                  ...state.games,
+                  [gameId]: { ...initialGameData },
+                },
+              };
+            },
+            false,
+            'initGame'
+          );
         },
 
-        removePlayer: (playerId: string) => {
+        addPlayer: (gameId: string, name: string) => {
+          const newPlayer = createPlayer(name);
           set(
             (state) => ({
-              players: filterPlayerById(state.players, playerId),
-              teams: removePlayerFromTeams(state.teams, playerId),
+              games: updateGame(state.games, gameId, (game) => ({
+                players: [...game.players, newPlayer],
+              })),
+            }),
+            false,
+            'addPlayer'
+          );
+        },
+
+        removePlayer: (gameId: string, playerId: string) => {
+          set(
+            (state) => ({
+              games: updateGame(state.games, gameId, (game) => ({
+                players: game.players.filter((p) => p.id !== playerId),
+                teams: game.teams.map((team) => ({
+                  ...team,
+                  players: team.players.filter((p) => p.id !== playerId),
+                })),
+              })),
             }),
             false,
             'removePlayer'
           );
         },
 
-        togglePriority: (playerId: string) => {
-          set((state) => ({ players: togglePlayerPriority(state.players, playerId) }), false, 'togglePriority');
+        togglePriority: (gameId: string, playerId: string) => {
+          set(
+            (state) => ({
+              games: updateGame(state.games, gameId, (game) => ({
+                players: game.players.map((player) =>
+                  player.id === playerId ? { ...player, priority: !player.priority } : player
+                ),
+              })),
+            }),
+            false,
+            'togglePriority'
+          );
         },
 
-        reorderPlayers: (fromIndex: number, toIndex: number) => {
+        reorderPlayers: (gameId: string, fromIndex: number, toIndex: number) => {
           set(
-            (state) => {
-              const newPlayers = [...state.players];
-              const [movedPlayer] = newPlayers.splice(fromIndex, 1);
-              newPlayers.splice(toIndex, 0, movedPlayer);
-              return { players: newPlayers };
-            },
+            (state) => ({
+              games: updateGame(state.games, gameId, (game) => {
+                const newPlayers = [...game.players];
+                const [movedPlayer] = newPlayers.splice(fromIndex, 1);
+                newPlayers.splice(toIndex, 0, movedPlayer);
+                return { players: newPlayers };
+              }),
+            }),
             false,
             'reorderPlayers'
           );
         },
 
-        setTeamCount: (count: number) => {
+        setTeamCount: (gameId: string, count: number) => {
           const validCount = validateTeamCount(count);
-          set(() => ({ teamCount: validCount }), false, 'setTeamCount');
+          set(
+            (state) => ({
+              games: updateGame(state.games, gameId, () => ({
+                teamCount: validCount,
+              })),
+            }),
+            false,
+            'setTeamCount'
+          );
         },
 
-        sortTeams: () => {
-          const { players, teamCount } = get();
-          const validTeamCount = validateTeamCount(teamCount);
+        sortTeams: (gameId: string) => {
+          const game = get().games[gameId];
+          if (!game) return;
 
-          set(() => ({ gameStatus: 'sorting' as GameStatus }), false, 'sortTeams/start');
+          const validTeamCount = validateTeamCount(game.teamCount);
 
-          const teams = sortTeamsUtil(players, validTeamCount);
+          set(
+            (state) => ({
+              games: updateGame(state.games, gameId, () => ({
+                gameStatus: 'sorting' as GameStatus,
+              })),
+            }),
+            false,
+            'sortTeams/start'
+          );
 
-          set(() => ({ teams, gameStatus: 'complete' as GameStatus }), false, 'sortTeams/complete');
-        },
+          const teams = sortTeamsUtil(game.players, validTeamCount);
 
-        reset: () => {
-          set(initialState, false, 'reset');
+          set(
+            (state) => ({
+              games: updateGame(state.games, gameId, () => ({
+                teams,
+                gameStatus: 'complete' as GameStatus,
+              })),
+            }),
+            false,
+            'sortTeams/complete'
+          );
         },
       }),
       {
-        name: 'futmeet-game-storage',
+        name: 'futmeet-games-storage',
         partialize: (state) => ({
-          players: state.players,
-          teamCount: state.teamCount,
+          games: state.games,
         }),
         onRehydrateStorage: () => (state, error) => {
           if (error) {
-            console.warn('Failed to rehydrate game store:', error);
+            console.warn('Failed to rehydrate games store:', error);
             return;
           }
 
           if (state) {
-            state.teamCount = validateTeamCount(state.teamCount);
+            Object.keys(state.games).forEach((gameId) => {
+              const game = state.games[gameId];
+              game.teamCount = validateTeamCount(game.teamCount);
 
-            if (state.players) {
-              state.players = state.players.map((player) => ({
+              const fixTimestamp = (player: Player): Player => ({
                 ...player,
                 timestamp: player.timestamp instanceof Date ? player.timestamp : new Date(player.timestamp),
-              }));
-            }
+              });
+
+              if (game.players) {
+                game.players = game.players.map(fixTimestamp);
+              }
+
+              if (game.teams) {
+                game.teams = game.teams.map((team) => ({
+                  ...team,
+                  players: team.players.map(fixTimestamp),
+                }));
+              }
+            });
           }
         },
       }
