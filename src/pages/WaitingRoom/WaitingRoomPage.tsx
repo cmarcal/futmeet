@@ -40,18 +40,33 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
     navigate(`/game/${roomId}`);
   };
 
-  const handleShareWhatsApp = () => {
-    const waitingRoomUrl = globalThis.location.href;
+  const handleShareWhatsApp = async () => {
+    const url = globalThis.location.href;
     const playerLabel = players.length === 1 ? 'confirmado' : 'confirmados';
-    const playerLines = players.map((p, i) => `${i + 1}. ${p.name}${p.priority ? ' (prioridade)' : ''}`).join('\n');
-    const parts = [
-      'FutMeet - Sala de Espera',
-      '',
-      ...(players.length > 0 ? [playerLines, '', `(${players.length} ${playerLabel})`, ''] : []),
-      'Adicione seu nome na lista e confirme sua presenca:',
-      waitingRoomUrl,
-    ];
-    globalThis.open(`https://wa.me/?text=${encodeURIComponent(parts.join('\n'))}`, '_blank', 'noopener,noreferrer');
+
+    const lines: string[] = ['FutMeet - Sala de Espera', ''];
+    if (players.length > 0) {
+      players.forEach((p, i) => {
+        lines.push(`${i + 1}. ${p.name}${p.priority ? ' (prioridade)' : ''}`);
+      });
+      lines.push('', `${players.length} ${playerLabel}`, '');
+    }
+    lines.push('Adicione seu nome e confirme sua presenca:');
+
+    const shareText = lines.join('\n');
+
+    // Web Share API: native share sheet on mobile, URL is always a clickable link
+    if (globalThis.navigator?.share) {
+      const shared = await globalThis.navigator
+        .share({ title: 'FutMeet - Sala de Espera', text: shareText, url })
+        .then(() => true)
+        .catch(() => false);
+      if (shared) return;
+    }
+
+    // Desktop fallback: open WhatsApp Web with pre-filled message
+    const fullText = `${shareText}\n${url}`;
+    globalThis.open(`https://wa.me/?text=${encodeURIComponent(fullText)}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleClearRequest = () => {
