@@ -3,9 +3,18 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import postcssNesting from 'postcss-nesting'
 import postcssCustomMedia from 'postcss-custom-media'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    process.env.ANALYZE === 'true' &&
+      visualizer({
+        filename: 'dist/stats.html',
+        gzipSize: true,
+        brotliSize: true,
+      }),
+  ],
   css: {
     modules: {
       localsConvention: 'camelCase',
