@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { GripVertical, Star, X } from 'lucide-react';
 import type { Player } from '../../types';
 import styles from './PlayerCard.module.css';
@@ -18,7 +19,7 @@ export interface PlayerCardProps {
   isDragging?: boolean;
 }
 
-export const PlayerCard = ({
+export const PlayerCard = memo(({
   player,
   index,
   onTogglePriority,
@@ -122,4 +123,11 @@ export const PlayerCard = ({
       )}
     </div>
   );
-};
+}, (prev, next) =>
+  prev.player.id === next.player.id &&
+  prev.player.name === next.player.name &&
+  prev.player.priority === next.player.priority &&
+  prev.index === next.index &&
+  prev.showActions === next.showActions &&
+  prev.isDragging === next.isDragging
+);
