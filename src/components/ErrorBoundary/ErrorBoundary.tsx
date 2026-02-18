@@ -1,12 +1,12 @@
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
-import type { ReactNode } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 import { ErrorFallback } from './ErrorFallback';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
 }
 
-const handleError = (error: Error, errorInfo: { componentStack: string }) => {
+const handleError = (error: unknown, errorInfo: ErrorInfo) => {
   if (import.meta.env.DEV) {
     console.error('[ErrorBoundary] Caught error:', error);
     console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);

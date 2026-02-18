@@ -19,7 +19,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         <p className={styles.message}>{getErrorMessage(error)}</p>
         <div className={styles.details}>
           <p className={styles.errorType}>
-            <strong>Error:</strong> {error.name}
+            <strong>Error:</strong> {error instanceof Error ? error.name : 'UnknownError'}
           </p>
           <p className={styles.timestamp}>
             <strong>Time:</strong> {timestamp}
