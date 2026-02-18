@@ -179,7 +179,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
           <div className={styles.actionButtons}>
             <Button
               variant="secondary"
-              size="large"
+              size="small"
               onClick={handleShareWhatsApp}
               className={styles.shareButton}
               aria-label="Compartilhar sala de espera via WhatsApp"
@@ -188,7 +188,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
             </Button>
             <Button
               variant="primary"
-              size="large"
+              size="small"
               onClick={handleStartGame}
               disabled={players.length < 2}
               className={styles.startGameButton}
