@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import type { Player, Team, GameStatus } from '../types';
 import { sortTeams as sortTeamsUtil } from '../utils/teamSorter';
+import { generateGameId } from '../utils/gameId';
 
 export interface GameData {
   players: Player[];
@@ -12,6 +13,7 @@ export interface GameData {
 
 interface GamesState {
   games: Record<string, GameData>;
+  waitingRoomPlayers: Player[];
 
   initGame: (gameId: string) => void;
   addPlayer: (gameId: string, name: string) => void;
@@ -20,6 +22,13 @@ interface GamesState {
   reorderPlayers: (gameId: string, fromIndex: number, toIndex: number) => void;
   setTeamCount: (gameId: string, count: number) => void;
   sortTeams: (gameId: string) => void;
+
+  addWaitingRoomPlayer: (name: string) => void;
+  removeWaitingRoomPlayer: (playerId: string) => void;
+  toggleWaitingRoomPriority: (playerId: string) => void;
+  reorderWaitingRoomPlayers: (fromIndex: number, toIndex: number) => void;
+  clearWaitingRoom: () => void;
+  createGameFromWaitingRoom: () => string;
 }
 
 export const initialGameData: GameData = {
@@ -58,6 +67,7 @@ export const useGameStore = create<GamesState>()(
     persist(
       (set, get) => ({
         games: {},
+        waitingRoomPlayers: [],
 
         initGame: (gameId: string) => {
           set(
@@ -146,6 +156,71 @@ export const useGameStore = create<GamesState>()(
           );
         },
 
+        addWaitingRoomPlayer: (name: string) => {
+          const newPlayer = createPlayer(name);
+          set(
+            (state) => ({ waitingRoomPlayers: [...state.waitingRoomPlayers, newPlayer] }),
+            false,
+            'addWaitingRoomPlayer'
+          );
+        },
+
+        removeWaitingRoomPlayer: (playerId: string) => {
+          set(
+            (state) => ({
+              waitingRoomPlayers: state.waitingRoomPlayers.filter((p) => p.id !== playerId),
+            }),
+            false,
+            'removeWaitingRoomPlayer'
+          );
+        },
+
+        toggleWaitingRoomPriority: (playerId: string) => {
+          set(
+            (state) => ({
+              waitingRoomPlayers: state.waitingRoomPlayers.map((p) =>
+                p.id === playerId ? { ...p, priority: !p.priority } : p
+              ),
+            }),
+            false,
+            'toggleWaitingRoomPriority'
+          );
+        },
+
+        reorderWaitingRoomPlayers: (fromIndex: number, toIndex: number) => {
+          set(
+            (state) => {
+              const newPlayers = [...state.waitingRoomPlayers];
+              const [moved] = newPlayers.splice(fromIndex, 1);
+              newPlayers.splice(toIndex, 0, moved);
+              return { waitingRoomPlayers: newPlayers };
+            },
+            false,
+            'reorderWaitingRoomPlayers'
+          );
+        },
+
+        clearWaitingRoom: () => {
+          set({ waitingRoomPlayers: [] }, false, 'clearWaitingRoom');
+        },
+
+        createGameFromWaitingRoom: (): string => {
+          const gameId = generateGameId();
+          const { waitingRoomPlayers } = get();
+          const players = waitingRoomPlayers.map((p) => ({ ...p, timestamp: new Date() }));
+          set(
+            (state) => ({
+              games: {
+                ...state.games,
+                [gameId]: { ...initialGameData, players },
+              },
+            }),
+            false,
+            'createGameFromWaitingRoom'
+          );
+          return gameId;
+        },
+
         sortTeams: (gameId: string) => {
           const game = get().games[gameId];
           if (!game) return;
@@ -180,6 +255,7 @@ export const useGameStore = create<GamesState>()(
         name: 'futmeet-games-storage',
         partialize: (state) => ({
           games: state.games,
+          waitingRoomPlayers: state.waitingRoomPlayers,
         }),
         onRehydrateStorage: () => (state, error) => {
           if (error) {
@@ -188,6 +264,13 @@ export const useGameStore = create<GamesState>()(
           }
 
           if (state) {
+            if (state.waitingRoomPlayers) {
+              state.waitingRoomPlayers = state.waitingRoomPlayers.map((player: Player) => ({
+                ...player,
+                timestamp: player.timestamp instanceof Date ? player.timestamp : new Date(player.timestamp),
+              }));
+            }
+
             Object.keys(state.games).forEach((gameId) => {
               const game = state.games[gameId];
               game.teamCount = validateTeamCount(game.teamCount);
