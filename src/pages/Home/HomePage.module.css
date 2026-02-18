@@ -70,17 +70,3 @@
     outline-offset: 2px;
   }
 }
-
-.waitingRoomBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 var(--spacing-xs);
-  background-color: var(--color-accent);
-  color: #fff;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  border-radius: var(--radius-full);
-}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { PlayerInput } from '../../components/PlayerInput';
@@ -7,12 +7,27 @@ import { PlayerList } from '../../components/PlayerList';
 import { PlayerStatistics } from '../../components/PlayerStatistics';
 import { Alert } from '../../components/Alert';
 import { useWaitingRoom } from '../../hooks/useWaitingRoom';
+import { isValidGameId } from '../../utils/gameId';
 import styles from './WaitingRoomPage.module.css';
 
 const WaitingRoomPage = () => {
+  const { roomId } = useParams<{ roomId: string }>();
+
+  if (!roomId || !isValidGameId(roomId)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <WaitingRoomContent roomId={roomId} />;
+};
+
+interface WaitingRoomContentProps {
+  roomId: string;
+}
+
+const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
   const navigate = useNavigate();
   const { players, addPlayer, removePlayer, togglePriority, reorderPlayers, clearWaitingRoom, createGameFromWaitingRoom } =
-    useWaitingRoom();
+    useWaitingRoom(roomId);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const handleAddPlayer = (name: string) => {
@@ -21,12 +36,12 @@ const WaitingRoomPage = () => {
 
   const handleStartGame = () => {
     if (players.length === 0) return;
-    const gameId = createGameFromWaitingRoom();
-    navigate(`/game/${gameId}`);
+    createGameFromWaitingRoom();
+    navigate(`/game/${roomId}`);
   };
 
   const handleShareWhatsApp = () => {
-    const waitingRoomUrl = `${globalThis.location.origin}/waiting-room`;
+    const waitingRoomUrl = globalThis.location.href;
     const playerLabel = players.length === 1 ? 'confirmado' : 'confirmados';
     const playerLines = players.map((p, i) => `${i + 1}. ${p.name}${p.priority ? ' ⭐' : ''}`).join('\n');
     const confirmedLine = players.length > 0 ? `${playerLines}\n\n(${players.length} ${playerLabel})\n\n` : '';

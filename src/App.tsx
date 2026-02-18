@@ -16,7 +16,7 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/game/:gameId" element={<GamePage />} />
           <Route path="/results/:gameId" element={<ResultsPage />} />
-          <Route path="/waiting-room" element={<WaitingRoomPage />} />
+          <Route path="/waiting-room/:roomId" element={<WaitingRoomPage />} />
         </Routes>
       </Suspense>
     </ErrorBoundary>
