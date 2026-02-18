@@ -1,8 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import HomePage from './pages/HomePage'
-import GamePage from './pages/GamePage'
-import ResultsPage from './pages/ResultsPage'
+import { HomePage, GamePage, ResultsPage } from './pages'
 
 const App = () => {
   return (
