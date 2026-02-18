@@ -129,5 +129,8 @@ export const PlayerCard = memo(({
   prev.player.priority === next.player.priority &&
   prev.index === next.index &&
   prev.showActions === next.showActions &&
-  prev.isDragging === next.isDragging
+  prev.draggable === next.draggable &&
+  prev.isDragging === next.isDragging &&
+  prev.onTogglePriority === next.onTogglePriority &&
+  prev.onRemove === next.onRemove
 );
