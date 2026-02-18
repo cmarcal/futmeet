@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Users } from 'lucide-react';
 import { PlayerCard } from '../PlayerCard';
 import type { Team } from '../../types';
@@ -22,7 +23,7 @@ const teamColors = [
   '#E91E63',
 ];
 
-export const TeamCard = ({ team, showPlayerActions = false, teamColor }: TeamCardProps) => {
+export const TeamCard = memo(({ team, showPlayerActions = false, teamColor }: TeamCardProps) => {
   const colorIndex = parseInt(team.id.replace(/\D/g, '')) || 0;
   const cardColor = teamColor || teamColors[colorIndex % teamColors.length];
 
@@ -54,4 +55,4 @@ export const TeamCard = ({ team, showPlayerActions = false, teamColor }: TeamCar
       </section>
     </article>
   );
-};
+});

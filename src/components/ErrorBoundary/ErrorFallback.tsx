@@ -1,42 +1,46 @@
-import { useNavigate } from 'react-router-dom';
 import type { FallbackProps } from 'react-error-boundary';
+import { useNavigate } from 'react-router-dom';
+import { getErrorMessage } from '../../utils/errorMessages';
 import styles from './ErrorFallback.module.css';
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const navigate = useNavigate();
-  const isDevelopment = import.meta.env.DEV;
+  const timestamp = new Date().toLocaleTimeString();
 
   const handleGoHome = () => {
-    navigate('/');
     resetErrorBoundary();
+    navigate('/');
   };
 
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  const errorStack = error instanceof Error ? error.stack : undefined;
-
   return (
-    <div role="alert" className={styles.container}>
-      <div className={styles.content}>
-        <h1 className={styles.heading}>Something went wrong</h1>
-
-        {isDevelopment && (
-          <div className={styles.errorDetails}>
-            <p className={styles.errorMessage}>{errorMessage}</p>
-            {errorStack && <pre className={styles.errorStack}>{errorStack}</pre>}
-          </div>
-        )}
-
+    <div className={styles.container} role="alert">
+      <div className={styles.card}>
+        <h1 className={styles.title}>Something went wrong</h1>
+        <p className={styles.message}>{getErrorMessage(error)}</p>
+        <div className={styles.details}>
+          <p className={styles.errorType}>
+            <strong>Error:</strong> {error.name}
+          </p>
+          <p className={styles.timestamp}>
+            <strong>Time:</strong> {timestamp}
+          </p>
+        </div>
         <div className={styles.actions}>
-          <button type="button" onClick={resetErrorBoundary} className={styles.button} aria-label="Try again">
+          <button
+            type="button"
+            className={styles.primaryButton}
+            onClick={resetErrorBoundary}
+            aria-label="Try again"
+          >
             Try Again
           </button>
           <button
             type="button"
+            className={styles.secondaryButton}
             onClick={handleGoHome}
-            className={`${styles.button} ${styles.buttonSecondary}`}
             aria-label="Go to home page"
           >
-            Go Home
+            Go to Home
           </button>
         </div>
       </div>
@@ -44,4 +48,5 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   );
 };
 
+export { ErrorFallback };
 export default ErrorFallback;

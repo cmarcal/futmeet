@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Users } from 'lucide-react';
 import { useDragAndDrop } from '../../hooks/useDragAndDrop';
 import { DraggableListItem } from './DraggableListItem';
@@ -14,7 +15,7 @@ export interface PlayerListProps {
   emptySubMessage?: string;
 }
 
-export const PlayerList = ({
+export const PlayerList = memo(({
   players,
   onTogglePriority,
   onRemove,
@@ -109,4 +110,4 @@ export const PlayerList = ({
       })}
     </ul>
   );
-};
+});
