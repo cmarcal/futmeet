@@ -6,8 +6,10 @@ import { useGameStore } from '../../stores/gameStore';
 import HomePage from '../../pages/Home/HomePage';
 import GamePage from '../../pages/Game/GamePage';
 import ResultsPage from '../../pages/Results/ResultsPage';
+import WaitingRoomPage from '../../pages/WaitingRoom/WaitingRoomPage';
 
 const VALID_GAME_ID = 'V1StGXR8_Z5jdHi6B-myT';
+const VALID_ROOM_ID = 'V1StGXR8_Z5jdHi6B-myT';
 
 const mockNavigate = vi.fn();
 
@@ -26,6 +28,7 @@ const renderApp = (initialPath = '/') => {
         <Route path="/" element={<HomePage />} />
         <Route path="/game/:gameId" element={<GamePage />} />
         <Route path="/results/:gameId" element={<ResultsPage />} />
+        <Route path="/waiting-room/:roomId" element={<WaitingRoomPage />} />
       </Routes>
     </MemoryRouter>
   );
@@ -45,6 +48,51 @@ describe('Game Flow Integration', () => {
       expect(mockNavigate).toHaveBeenCalledWith(
         expect.stringMatching(/^\/game\/[A-Za-z0-9]{21}$/)
       );
+    });
+
+    it('should navigate to waiting room when Sala de Espera is clicked', async () => {
+      const user = userEvent.setup();
+      renderApp('/');
+      await user.click(screen.getByRole('button', { name: 'Sala de Espera' }));
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringMatching(/^\/waiting-room\/[A-Za-z0-9_-]{21}$/)
+      );
+    });
+  });
+
+  describe('WaitingRoomPage', () => {
+    beforeEach(() => {
+      useGameStore.setState({ waitingRooms: {} });
+    });
+
+    it('should redirect to / for invalid roomId', () => {
+      renderApp('/waiting-room/invalid');
+      expect(screen.getByText('Start Game')).toBeInTheDocument();
+    });
+
+    it('should initialize waiting room and show empty player list', () => {
+      renderApp(`/waiting-room/${VALID_ROOM_ID}`);
+      expect(screen.getByRole('heading', { name: 'Sala de Espera' })).toBeInTheDocument();
+      expect(screen.getByText('Nenhum jogador ainda. Adicione o primeiro!')).toBeInTheDocument();
+    });
+
+    it('should add a player and show it in the list', async () => {
+      const user = userEvent.setup();
+      renderApp(`/waiting-room/${VALID_ROOM_ID}`);
+      const input = screen.getByPlaceholderText('Nome do jogador...');
+      await user.type(input, 'Alice');
+      await user.keyboard('{Enter}');
+      expect(screen.getByText('Alice')).toBeInTheDocument();
+    });
+
+    it('should navigate to game when Create Game is clicked with enough players', async () => {
+      const user = userEvent.setup();
+      useGameStore.getState().initWaitingRoom(VALID_ROOM_ID);
+      useGameStore.getState().addWaitingRoomPlayer(VALID_ROOM_ID, 'Alice');
+      useGameStore.getState().addWaitingRoomPlayer(VALID_ROOM_ID, 'Bob');
+      renderApp(`/waiting-room/${VALID_ROOM_ID}`);
+      await user.click(screen.getByRole('button', { name: 'Criar partida com os jogadores da sala de espera' }));
+      expect(mockNavigate).toHaveBeenCalledWith(`/game/${VALID_ROOM_ID}`);
     });
   });
 
