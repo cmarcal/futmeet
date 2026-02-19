@@ -1,7 +1,10 @@
-import { nanoid } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 
-const NANOID_REGEX = /^[A-Za-z0-9_-]{21}$/;
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const nanoidAlphanumeric = customAlphabet(ALPHABET, 21);
 
-export const generateGameId = (): string => nanoid();
+const GAME_ID_REGEX = /^[A-Za-z0-9_-]{21}$/;
 
-export const isValidGameId = (id: string): boolean => NANOID_REGEX.test(id);
+export const generateGameId = (): string => nanoidAlphanumeric();
+
+export const isValidGameId = (id: string): boolean => GAME_ID_REGEX.test(id);

@@ -12,6 +12,11 @@ const HomePage = () => {
     navigate(`/game/${gameId}`);
   };
 
+  const handleOpenWaitingRoom = () => {
+    const roomId = generateGameId();
+    navigate(`/waiting-room/${roomId}`);
+  };
+
   return (
     <Layout>
       <div className={styles.container}>
@@ -20,6 +25,14 @@ const HomePage = () => {
         <Button variant="primary" size="large" onClick={handleStartGame}>
           Start Game
         </Button>
+        <button
+          type="button"
+          className={styles.waitingRoomLink}
+          onClick={handleOpenWaitingRoom}
+          aria-label="Sala de Espera"
+        >
+          ⏳ Sala de Espera
+        </button>
       </div>
     </Layout>
   );

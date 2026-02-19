@@ -48,4 +48,19 @@ describe('HomePage', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
   });
+
+  it('should render Sala de Espera link', () => {
+    renderHomePage();
+
+    expect(screen.getByRole('button', { name: 'Sala de Espera' })).toBeInTheDocument();
+  });
+
+  it('should navigate to /waiting-room/:roomId when Sala de Espera is clicked', async () => {
+    const user = userEvent.setup();
+    renderHomePage();
+
+    await user.click(screen.getByRole('button', { name: 'Sala de Espera' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/waiting-room\/[A-Za-z0-9_-]{21}$/));
+  });
 });

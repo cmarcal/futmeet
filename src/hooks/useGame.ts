@@ -1,16 +1,11 @@
 import { useEffect } from 'react';
 import { useGameStore, initialGameData } from '../stores/gameStore';
-import type { Player, Team, GameStatus } from '../types';
+import type { Team, GameStatus, PlayerListActions } from '../types';
 
-interface UseGameReturn {
-  players: Player[];
+interface UseGameReturn extends PlayerListActions {
   teams: Team[];
   teamCount: number;
   gameStatus: GameStatus;
-  addPlayer: (name: string) => void;
-  removePlayer: (playerId: string) => void;
-  togglePriority: (playerId: string) => void;
-  reorderPlayers: (fromIndex: number, toIndex: number) => void;
   setTeamCount: (count: number) => void;
   sortTeams: () => void;
 }

@@ -73,7 +73,7 @@ describe('GamePage', () => {
 
     await user.click(screen.getByRole('button', { name: 'New Game' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
+    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9]{21}$/));
   });
 
   it('should redirect to / when gameId is invalid', () => {

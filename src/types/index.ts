@@ -1,5 +1,3 @@
-// TypeScript type definitions for FutMeet
-
 export interface Player {
   id: string
   name: string
@@ -15,3 +13,11 @@ export interface Team {
 }
 
 export type GameStatus = 'setup' | 'sorting' | 'complete'
+
+export interface PlayerListActions {
+  players: Player[]
+  addPlayer: (name: string) => void
+  removePlayer: (playerId: string) => void
+  togglePriority: (playerId: string) => void
+  reorderPlayers: (fromIndex: number, toIndex: number) => void
+}
