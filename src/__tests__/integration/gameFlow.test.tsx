@@ -62,7 +62,7 @@ describe('Game Flow Integration', () => {
 
   describe('WaitingRoomPage', () => {
     beforeEach(() => {
-      useGameStore.setState({ waitingRooms: {} });
+      useGameStore.setState({ waitingRooms: {}, games: {} });
     });
 
     it('should redirect to / for invalid roomId', () => {

@@ -36,7 +36,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
   };
 
   const handleStartGame = () => {
-    if (players.length === 0) return;
+    if (players.length < 2) return;
     createGameFromWaitingRoom();
     navigate(`/game/${roomId}`);
   };
@@ -52,7 +52,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
       });
       lines.push('', `${players.length} ${playerLabel}`, '');
     }
-    lines.push('Adicione seu nome e confirme sua presenca:', url);
+    lines.push('Adicione seu nome e confirme sua presença:', url);
 
     const shareText = lines.join('\n');
 
@@ -153,8 +153,6 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
                 className={styles.clearButton}
                 onClick={handleClearRequest}
                 aria-label="Limpar lista de jogadores"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && handleClearRequest()}
               >
                 Limpar lista
               </button>
@@ -171,7 +169,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
         </section>
 
         <section className={styles.actionsSection} aria-label="Ações">
-          {players.length === 0 && (
+          {players.length < 2 && (
             <Alert variant="warning" className={styles.warningAlert}>
               Adicione ao menos 2 jogadores para iniciar uma partida.
             </Alert>

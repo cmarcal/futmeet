@@ -23,7 +23,7 @@ beforeEach(() => {
   mockNavigate.mockClear();
   mockOpen.mockClear();
   mockShare.mockClear();
-  useGameStore.setState({ waitingRooms: {} });
+  useGameStore.setState({ waitingRooms: {}, games: {} });
   Object.defineProperty(globalThis, 'open', { value: mockOpen, writable: true });
   Object.defineProperty(globalThis.navigator, 'share', {
     value: mockShare,
@@ -44,11 +44,6 @@ const renderWaitingRoomPage = (roomId = VALID_ROOM_ID) => {
 };
 
 describe('WaitingRoomPage', () => {
-  beforeEach(() => {
-    mockNavigate.mockClear();
-    useGameStore.setState({ waitingRooms: {} });
-  });
-
   it('should render page title and subtitle', () => {
     renderWaitingRoomPage();
 

@@ -7,7 +7,7 @@ const VALID_ROOM_ID = 'V1StGXR8_Z5jdHi6B-myT';
 
 describe('useWaitingRoom', () => {
   beforeEach(() => {
-    useGameStore.setState({ waitingRooms: {} });
+    useGameStore.setState({ waitingRooms: {}, games: {} });
   });
 
   describe('initial state', () => {

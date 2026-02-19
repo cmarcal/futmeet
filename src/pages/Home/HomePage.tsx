@@ -30,8 +30,6 @@ const HomePage = () => {
           className={styles.waitingRoomLink}
           onClick={handleOpenWaitingRoom}
           aria-label="Sala de Espera"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleOpenWaitingRoom()}
         >
           ⏳ Sala de Espera
         </button>
