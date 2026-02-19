@@ -53,23 +53,23 @@ describe('ErrorBoundary', () => {
   it('should render error fallback when an error is thrown', () => {
     renderWithError();
     expect(screen.getByRole('alert')).toBeInTheDocument();
-    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(screen.getByText('Algo deu errado')).toBeInTheDocument();
   });
 
   it('should display Try Again button', () => {
     renderWithError();
-    expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
   });
 
   it('should display Go to Home button', () => {
     renderWithError();
-    expect(screen.getByRole('button', { name: 'Go to home page' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ir para a página inicial' })).toBeInTheDocument();
   });
 
   it('should navigate to / when Go to Home is clicked', async () => {
     const user = userEvent.setup();
     renderWithError();
-    await user.click(screen.getByRole('button', { name: 'Go to home page' }));
+    await user.click(screen.getByRole('button', { name: 'Ir para a página inicial' }));
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 });

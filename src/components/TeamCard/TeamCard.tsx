@@ -36,13 +36,13 @@ export const TeamCard = memo(({ team, showPlayerActions = false, teamColor }: Te
           </div>
           <div className={styles.titleInfo}>
             <h3 className={styles.title}>{team.name}</h3>
-            <span className={styles.count}>{team.players.length} player{team.players.length !== 1 ? 's' : ''}</span>
+            <span className={styles.count}>{team.players.length} jogador{team.players.length !== 1 ? 'es' : ''}</span>
           </div>
         </div>
       </header>
       <section className={styles.players}>
         {team.players.length === 0 ? (
-          <p className={styles.emptyMessage}>No players assigned</p>
+          <p className={styles.emptyMessage}>Nenhum jogador atribuído</p>
         ) : (
           <ul className={styles.playersList}>
             {team.players.map((player, index) => (

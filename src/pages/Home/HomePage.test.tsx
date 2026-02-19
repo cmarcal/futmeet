@@ -31,20 +31,20 @@ describe('HomePage', () => {
     renderHomePage();
 
     expect(screen.getByRole('heading', { name: 'FutMeet' })).toBeInTheDocument();
-    expect(screen.getByText('Organize your pickup games')).toBeInTheDocument();
+    expect(screen.getByText('Organize suas peladas')).toBeInTheDocument();
   });
 
   it('should render Start Game button', () => {
     renderHomePage();
 
-    expect(screen.getByRole('button', { name: 'Start Game' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Iniciar Partida' })).toBeInTheDocument();
   });
 
   it('should navigate to /game/:gameId when Start Game is clicked', async () => {
     const user = userEvent.setup();
     renderHomePage();
 
-    await user.click(screen.getByRole('button', { name: 'Start Game' }));
+    await user.click(screen.getByRole('button', { name: 'Iniciar Partida' }));
 
     expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
   });

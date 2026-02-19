@@ -1,4 +1,4 @@
-﻿import { useNavigate, useParams, Navigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { TeamList } from '../../components/TeamList';
@@ -37,17 +37,17 @@ const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
     <Layout>
       <div className={styles.container}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Team Results</h1>
+          <h1 className={styles.title}>Resultado dos Times</h1>
           <p className={styles.subtitle}>
-            {players.length} player{players.length === 1 ? '' : 's'} sorted into {teams.length} team
+            {players.length} jogador{players.length === 1 ? '' : 'es'} sorteados em {teams.length} time
             {teams.length === 1 ? '' : 's'}
           </p>
         </header>
 
         <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
           {teams.length > 0
-            ? `${teams.length} ${teams.length === 1 ? 'team' : 'teams'} ready`
-            : 'Sorting teams...'}
+            ? `${teams.length} ${teams.length === 1 ? 'time' : 'times'} pronto${teams.length === 1 ? '' : 's'}`
+            : 'Sorteando times...'}
         </div>
 
         <section className={styles.teamsSection}>
@@ -56,10 +56,10 @@ const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
 
         <div className={styles.actions}>
           <Button variant="primary" size="large" onClick={handleNewGame} className={styles.button}>
-            New Game
+            Nova Partida
           </Button>
           <Button variant="secondary" size="large" onClick={handleBackToGame} className={styles.button}>
-            Back to Game
+            Voltar ao Jogo
           </Button>
         </div>
       </div>

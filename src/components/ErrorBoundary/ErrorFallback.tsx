@@ -15,14 +15,14 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   return (
     <div className={styles.container} role="alert">
       <div className={styles.card}>
-        <h1 className={styles.title}>Something went wrong</h1>
+        <h1 className={styles.title}>Algo deu errado</h1>
         <p className={styles.message}>{getErrorMessage(error)}</p>
         <div className={styles.details}>
           <p className={styles.errorType}>
-            <strong>Error:</strong> {error instanceof Error ? error.name : 'UnknownError'}
+            <strong>Erro:</strong> {error instanceof Error ? error.name : 'UnknownError'}
           </p>
           <p className={styles.timestamp}>
-            <strong>Time:</strong> {timestamp}
+            <strong>Horário:</strong> {timestamp}
           </p>
         </div>
         <div className={styles.actions}>
@@ -30,17 +30,17 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
             type="button"
             className={styles.primaryButton}
             onClick={resetErrorBoundary}
-            aria-label="Try again"
+            aria-label="Tentar novamente"
           >
-            Try Again
+            Tentar Novamente
           </button>
           <button
             type="button"
             className={styles.secondaryButton}
             onClick={handleGoHome}
-            aria-label="Go to home page"
+            aria-label="Ir para a página inicial"
           >
-            Go to Home
+            Ir para Início
           </button>
         </div>
       </div>

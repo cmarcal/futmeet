@@ -14,7 +14,7 @@ const createPlayer = (id: string, name: string, priority = false): Player => ({
 describe('PlayerList', () => {
   it('should render empty message when no players', () => {
     render(<PlayerList players={[]} />);
-    expect(screen.getByText('No players yet')).toBeInTheDocument();
+    expect(screen.getByText('Nenhum jogador ainda')).toBeInTheDocument();
   });
 
   it('should render custom empty message', () => {
@@ -41,7 +41,7 @@ describe('PlayerList', () => {
     const handleTogglePriority = vi.fn();
     render(<PlayerList players={players} onTogglePriority={handleTogglePriority} />);
 
-    const priorityButton = screen.getByLabelText(/priority/i);
+    const priorityButton = screen.getByLabelText(/prioridade/i);
     const user = userEvent.setup();
     await user.click(priorityButton);
     expect(handleTogglePriority).toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe('PlayerList', () => {
     const handleRemove = vi.fn();
     render(<PlayerList players={players} onRemove={handleRemove} />);
 
-    const removeButton = screen.getByLabelText(/remove/i);
+    const removeButton = screen.getByLabelText(/remover/i);
     const user = userEvent.setup();
     await user.click(removeButton);
     expect(handleRemove).toHaveBeenCalled();
@@ -61,6 +61,6 @@ describe('PlayerList', () => {
   it('should not show actions when showActions is false', () => {
     const players = [createPlayer('1', 'Player 1')];
     const { container } = render(<PlayerList players={players} showActions={false} />);
-    expect(container.querySelector('[aria-label*="priority"]')).not.toBeInTheDocument();
+    expect(container.querySelector('[aria-label*="prioridade"]')).not.toBeInTheDocument();
   });
 });

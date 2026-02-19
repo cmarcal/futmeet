@@ -52,7 +52,7 @@ export const TeamSettings = ({
       <div className={styles.header}>
         <Users size={20} aria-hidden="true" />
         <label htmlFor="team-count" className={styles.label}>
-          Number of Teams
+          Número de Times
         </label>
       </div>
       <div className={styles.controls}>
@@ -61,7 +61,7 @@ export const TeamSettings = ({
           onClick={handleDecrement}
           disabled={disabled || teamCount <= minTeams}
           className={styles.button}
-          aria-label="Decrease team count"
+          aria-label="Diminuir número de times"
         >
           −
         </button>
@@ -74,14 +74,14 @@ export const TeamSettings = ({
           max={maxTeams}
           disabled={disabled}
           className={styles.input}
-          aria-label="Team count"
+          aria-label="Número de times"
         />
         <button
           type="button"
           onClick={handleIncrement}
           disabled={disabled || teamCount >= maxTeams}
           className={styles.button}
-          aria-label="Increase team count"
+          aria-label="Aumentar número de times"
         >
           +
         </button>

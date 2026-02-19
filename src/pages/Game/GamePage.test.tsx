@@ -37,33 +37,33 @@ describe('GamePage', () => {
   it('should render page title and subtitle', () => {
     renderGamePage();
 
-    expect(screen.getByRole('heading', { name: 'Players' })).toBeInTheDocument();
-    expect(screen.getByText('Manage your game roster')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Jogadores' })).toBeInTheDocument();
+    expect(screen.getByText('Gerencie sua lista de jogadores')).toBeInTheDocument();
   });
 
   it('should render New Game button', () => {
     renderGamePage();
 
-    expect(screen.getByRole('button', { name: 'New Game' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Nova Partida' })).toBeInTheDocument();
   });
 
   it('should render Add New Player section', () => {
     renderGamePage();
 
-    expect(screen.getByRole('heading', { name: 'Add New Player' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Adicionar Novo Jogador' })).toBeInTheDocument();
   });
 
   it('should render Player List section', () => {
     renderGamePage();
 
-    expect(screen.getByRole('heading', { name: 'Player List' })).toBeInTheDocument();
-    expect(screen.getByText('Arrival order')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Lista de Jogadores' })).toBeInTheDocument();
+    expect(screen.getByText('Ordem de chegada')).toBeInTheDocument();
   });
 
   it('should render Sort Teams button disabled when not enough players', () => {
     renderGamePage();
 
-    const sortButton = screen.getByRole('button', { name: 'Sort Teams' });
+    const sortButton = screen.getByRole('button', { name: 'Sortear Times' });
     expect(sortButton).toBeDisabled();
   });
 
@@ -71,7 +71,7 @@ describe('GamePage', () => {
     const user = userEvent.setup();
     renderGamePage();
 
-    await user.click(screen.getByRole('button', { name: 'New Game' }));
+    await user.click(screen.getByRole('button', { name: 'Nova Partida' }));
 
     expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9]{21}$/));
   });

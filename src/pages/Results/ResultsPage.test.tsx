@@ -37,13 +37,13 @@ describe('ResultsPage', () => {
   it('should render page title', () => {
     renderResultsPage();
 
-    expect(screen.getByRole('heading', { name: 'Team Results' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Resultado dos Times' })).toBeInTheDocument();
   });
 
   it('should show 0 players and 0 teams when store is empty', () => {
     renderResultsPage();
 
-    expect(screen.getByText('0 players sorted into 0 teams')).toBeInTheDocument();
+    expect(screen.getByText('0 jogadores sorteados em 0 times')).toBeInTheDocument();
   });
 
   it('should show player and team count after sort', () => {
@@ -54,26 +54,26 @@ describe('ResultsPage', () => {
 
     renderResultsPage();
 
-    expect(screen.getByText('2 players sorted into 2 teams')).toBeInTheDocument();
+    expect(screen.getByText('2 jogadores sorteados em 2 times')).toBeInTheDocument();
   });
 
   it('should render New Game button', () => {
     renderResultsPage();
 
-    expect(screen.getByRole('button', { name: 'New Game' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Nova Partida' })).toBeInTheDocument();
   });
 
   it('should render Back to Game button', () => {
     renderResultsPage();
 
-    expect(screen.getByRole('button', { name: 'Back to Game' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Voltar ao Jogo' })).toBeInTheDocument();
   });
 
   it('should navigate to a new game URL when New Game is clicked', async () => {
     const user = userEvent.setup();
     renderResultsPage();
 
-    await user.click(screen.getByRole('button', { name: 'New Game' }));
+    await user.click(screen.getByRole('button', { name: 'Nova Partida' }));
 
     expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
   });
@@ -82,7 +82,7 @@ describe('ResultsPage', () => {
     const user = userEvent.setup();
     renderResultsPage();
 
-    await user.click(screen.getByRole('button', { name: 'Back to Game' }));
+    await user.click(screen.getByRole('button', { name: 'Voltar ao Jogo' }));
 
     expect(mockNavigate).toHaveBeenCalledWith(`/game/${VALID_GAME_ID}`);
   });

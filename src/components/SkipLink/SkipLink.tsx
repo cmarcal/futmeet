@@ -1,9 +1,9 @@
-﻿import styles from './SkipLink.module.css';
+import styles from './SkipLink.module.css';
 
 export const SkipLink = () => {
   return (
     <a href="#main-content" className={styles.skipLink}>
-      Skip to main content
+      Pular para o conteúdo principal
     </a>
   );
 };

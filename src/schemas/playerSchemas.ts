@@ -4,11 +4,11 @@ export const addPlayerSchema = z.object({
   name: z
     .string()
     .transform((val) => val.trim())
-    .pipe(z.string().min(1, 'Name is required').max(50, 'Name must be at most 50 characters')),
+    .pipe(z.string().min(1, 'Nome é obrigatório').max(50, 'O nome deve ter no máximo 50 caracteres')),
 });
 
 export const teamSettingsSchema = z.object({
-  teamCount: z.number().int('Team count must be an integer').min(2, 'Minimum 2 teams').max(10, 'Maximum 10 teams'),
+  teamCount: z.number().int('O número de times deve ser um número inteiro').min(2, 'Mínimo de 2 times').max(10, 'Máximo de 10 times'),
 });
 
 export type AddPlayerInput = z.infer<typeof addPlayerSchema>;

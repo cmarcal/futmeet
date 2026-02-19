@@ -73,7 +73,7 @@ export const PlayerCard = memo(({
         <button
           type="button"
           className={styles.reorderHandle}
-          aria-label="Drag to reorder player"
+          aria-label="Arrastar para reordenar jogador"
           tabIndex={-1}
           draggable={false}
           onMouseDown={handleButtonMouseDown}
@@ -97,7 +97,7 @@ export const PlayerCard = memo(({
               onClick={handleTogglePriority}
               onMouseDown={handleButtonMouseDown}
               className={`${styles.priorityButton} ${player.priority ? styles.priorityButtonActive : ''}`}
-              aria-label={player.priority ? 'Remove priority' : 'Mark as priority'}
+              aria-label={player.priority ? 'Remover prioridade' : 'Marcar como prioridade'}
               aria-pressed={player.priority}
             >
               <Star
@@ -114,7 +114,7 @@ export const PlayerCard = memo(({
               onClick={handleRemove}
               onMouseDown={handleButtonMouseDown}
               className={styles.removeButton}
-              aria-label={`Remove ${player.name}`}
+              aria-label={`Remover ${player.name}`}
             >
               <X size={20} aria-hidden="true" />
             </button>

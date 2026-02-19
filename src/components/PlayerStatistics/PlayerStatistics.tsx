@@ -27,7 +27,7 @@ export const PlayerStatistics = ({ players }: PlayerStatisticsProps) => {
         </div>
         <div className={styles.content}>
           <span className={styles.number}>{priorityPlayers}</span>
-          <span className={styles.label}>Priority</span>
+          <span className={styles.label}>Prioridade</span>
         </div>
       </div>
     </div>
