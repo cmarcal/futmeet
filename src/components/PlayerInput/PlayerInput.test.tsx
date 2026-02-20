@@ -90,4 +90,18 @@ describe('PlayerInput', () => {
     render(<PlayerInput onSubmit={handleSubmit} placeholder="Enter name here" />);
     expect(screen.getByPlaceholderText('Enter name here')).toBeInTheDocument();
   });
+
+  it('should reject name with < or > (XSS defense-in-depth)', async () => {
+    const handleSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(<PlayerInput onSubmit={handleSubmit} />);
+    await user.type(screen.getByLabelText('Nome do jogador'), '<script>alert(1)</script>');
+    await user.click(screen.getByRole('button', { name: /adicionar jogador/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/não pode conter os caracteres/i)).toBeInTheDocument();
+    });
+    expect(handleSubmit).not.toHaveBeenCalled();
+  });
 });
