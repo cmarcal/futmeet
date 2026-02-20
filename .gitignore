@@ -13,6 +13,9 @@ dist/
 dist-ssr/
 *.local
 
+# Turbo
+.turbo/
+
 # Vite
 .vite/
 
@@ -41,10 +44,11 @@ Thumbs.db
 .env.mcp
 mcp.json
 
-# Cursor specific (keep .cursor but ignore secrets)
+# Cursor specific (keep .cursor but ignore secrets and local plans)
 .cursor/mcp.json
 .cursor/*.pat
 .cursor/*.token
+.cursor/plans/
 
 # Logs
 logs
