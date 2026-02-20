@@ -35,7 +35,7 @@ export const sortTeams = (players: Player[], teamCount: number): Team[] => {
 const createEmptyTeams = (teamCount: number): Team[] => {
   return Array.from({ length: teamCount }, (_, index) => ({
     id: crypto.randomUUID(),
-    name: `Team ${index + 1}`,
+    name: `Time ${index + 1}`,
     players: [],
   }));
 };

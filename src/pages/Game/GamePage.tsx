@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
@@ -60,25 +60,25 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <h1 className={styles.title}>Players</h1>
-            <p className={styles.subtitle}>Manage your game roster</p>
+            <h1 className={styles.title}>Jogadores</h1>
+            <p className={styles.subtitle}>Gerencie sua lista de jogadores</p>
           </div>
           <Button variant="secondary" size="small" onClick={handleNewGame} className={styles.newGameButton}>
-            New Game
+            Nova Partida
           </Button>
         </header>
 
         <section className={styles.addPlayerSection}>
           <div className={styles.addPlayerCard}>
-            <h2 className={styles.sectionTitle}>Add New Player</h2>
-            <PlayerInput onSubmit={handleAddPlayer} disabled={gameStatus === 'sorting'} placeholder="Enter player name..." />
+            <h2 className={styles.sectionTitle}>Adicionar Novo Jogador</h2>
+            <PlayerInput onSubmit={handleAddPlayer} disabled={gameStatus === 'sorting'} placeholder="Digite o nome do jogador..." />
           </div>
         </section>
 
         <section className={styles.teamSettingsSection}>
           {showMaxTeamsWarning && (
             <Alert variant="warning" className={styles.teamWarningAlert}>
-              Maximum number of teams is 10.
+              O número máximo de times é 10.
             </Alert>
           )}
           <TeamSettings
@@ -94,13 +94,13 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
         </section>
 
         <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
-          {players.length} {players.length === 1 ? 'player' : 'players'} in the game
+          {players.length} {players.length === 1 ? 'jogador' : 'jogadores'} no jogo
         </div>
 
         <section className={styles.playerListSection}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Player List</h2>
-            <span className={styles.sortIndicator}>Arrival order</span>
+            <h2 className={styles.sectionTitle}>Lista de Jogadores</h2>
+            <span className={styles.sortIndicator}>Ordem de chegada</span>
           </div>
           <PlayerList
             players={players}
@@ -108,24 +108,24 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
             onRemove={removePlayer}
             onReorder={reorderPlayers}
             showActions={gameStatus !== 'sorting'}
-            emptyMessage="No players yet"
+            emptyMessage="Nenhum jogador ainda"
           />
         </section>
 
         <section className={styles.actionsSection}>
           {!canSort && players.length > 0 && (
             <Alert variant="warning" className={styles.warningAlert}>
-              Add at least {teamCount} players to sort into teams.
+              Adicione pelo menos {teamCount} jogadores para sortear os times.
             </Alert>
           )}
           <Button
             variant="primary"
-            size="large"
+            size="medium"
             onClick={handleViewResults}
             disabled={!canSort}
             className={styles.sortButton}
           >
-            Sort Teams
+            Sortear Times
           </Button>
         </section>
       </div>

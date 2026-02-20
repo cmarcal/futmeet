@@ -13,7 +13,7 @@ export interface TeamListProps {
 export const TeamList = memo(({
   teams,
   showPlayerActions = false,
-  emptyMessage = 'No teams available. Sort players to generate teams.',
+  emptyMessage = 'Nenhum time disponível. Sorteie os jogadores para gerar os times.',
 }: TeamListProps) => {
   if (teams.length === 0) {
     return (

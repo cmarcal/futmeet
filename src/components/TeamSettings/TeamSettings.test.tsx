@@ -7,8 +7,8 @@ describe('TeamSettings', () => {
   it('should render team count input', () => {
     const handleChange = vi.fn();
     render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} />);
-    expect(screen.getByLabelText('Team count')).toBeInTheDocument();
-    expect(screen.getByLabelText('Team count')).toHaveValue(2);
+    expect(screen.getByLabelText('Número de times')).toBeInTheDocument();
+    expect(screen.getByLabelText('Número de times')).toHaveValue(2);
   });
 
   it('should call onTeamCountChange when increment button is clicked', async () => {
@@ -16,7 +16,7 @@ describe('TeamSettings', () => {
     const user = userEvent.setup();
 
     render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} />);
-    await user.click(screen.getByLabelText('Increase team count'));
+    await user.click(screen.getByLabelText('Aumentar número de times'));
 
     expect(handleChange).toHaveBeenCalledWith(3);
   });
@@ -26,7 +26,7 @@ describe('TeamSettings', () => {
     const user = userEvent.setup();
 
     render(<TeamSettings teamCount={3} onTeamCountChange={handleChange} />);
-    await user.click(screen.getByLabelText('Decrease team count'));
+    await user.click(screen.getByLabelText('Diminuir número de times'));
 
     expect(handleChange).toHaveBeenCalledWith(2);
   });
@@ -34,13 +34,13 @@ describe('TeamSettings', () => {
   it('should disable decrement button when at minimum', () => {
     const handleChange = vi.fn();
     render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} minTeams={2} />);
-    expect(screen.getByLabelText('Decrease team count')).toBeDisabled();
+    expect(screen.getByLabelText('Diminuir número de times')).toBeDisabled();
   });
 
   it('should disable increment button when at maximum', () => {
     const handleChange = vi.fn();
     render(<TeamSettings teamCount={10} onTeamCountChange={handleChange} maxTeams={10} />);
-    expect(screen.getByLabelText('Increase team count')).toBeDisabled();
+    expect(screen.getByLabelText('Aumentar número de times')).toBeDisabled();
   });
 
   it('should call onTeamCountChange when input value changes', async () => {
@@ -48,7 +48,7 @@ describe('TeamSettings', () => {
     const user = userEvent.setup();
 
     render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} />);
-    const input = screen.getByLabelText('Team count');
+    const input = screen.getByLabelText('Número de times');
     await user.clear(input);
     await user.type(input, '5');
 
@@ -60,7 +60,7 @@ describe('TeamSettings', () => {
     const user = userEvent.setup();
 
     render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} minTeams={2} />);
-    const input = screen.getByLabelText('Team count') as HTMLInputElement;
+    const input = screen.getByLabelText('Número de times') as HTMLInputElement;
     await user.clear(input);
     await user.type(input, '1');
     await user.tab(); // Blur to trigger onChange
@@ -75,7 +75,7 @@ describe('TeamSettings', () => {
     const user = userEvent.setup();
 
     render(<TeamSettings teamCount={5} onTeamCountChange={handleChange} maxTeams={10} />);
-    const input = screen.getByLabelText('Team count');
+    const input = screen.getByLabelText('Número de times');
     await user.clear(input);
     await user.type(input, '15');
 
@@ -85,9 +85,9 @@ describe('TeamSettings', () => {
   it('should disable all controls when disabled prop is true', () => {
     const handleChange = vi.fn();
     render(<TeamSettings teamCount={2} onTeamCountChange={handleChange} disabled />);
-    expect(screen.getByLabelText('Team count')).toBeDisabled();
-    expect(screen.getByLabelText('Decrease team count')).toBeDisabled();
-    expect(screen.getByLabelText('Increase team count')).toBeDisabled();
+    expect(screen.getByLabelText('Número de times')).toBeDisabled();
+    expect(screen.getByLabelText('Diminuir número de times')).toBeDisabled();
+    expect(screen.getByLabelText('Aumentar número de times')).toBeDisabled();
   });
 
 });

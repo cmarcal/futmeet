@@ -7,8 +7,8 @@ describe('PlayerInput', () => {
   it('should render input and button', () => {
     const handleSubmit = vi.fn();
     render(<PlayerInput onSubmit={handleSubmit} />);
-    expect(screen.getByLabelText('Player name')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /add player/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Nome do jogador')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /adicionar jogador/i })).toBeInTheDocument();
   });
 
   it('should call onSubmit with player name when form is submitted', async () => {
@@ -16,8 +16,8 @@ describe('PlayerInput', () => {
     const user = userEvent.setup();
 
     render(<PlayerInput onSubmit={handleSubmit} />);
-    await user.type(screen.getByLabelText('Player name'), 'John Doe');
-    await user.click(screen.getByRole('button', { name: /add player/i }));
+    await user.type(screen.getByLabelText('Nome do jogador'), 'John Doe');
+    await user.click(screen.getByRole('button', { name: /adicionar jogador/i }));
 
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledWith('John Doe');
@@ -29,9 +29,9 @@ describe('PlayerInput', () => {
     const user = userEvent.setup();
 
     render(<PlayerInput onSubmit={handleSubmit} />);
-    const input = screen.getByLabelText('Player name');
+    const input = screen.getByLabelText('Nome do jogador');
     await user.type(input, 'John Doe');
-    await user.click(screen.getByRole('button', { name: /add player/i }));
+    await user.click(screen.getByRole('button', { name: /adicionar jogador/i }));
 
     await waitFor(() => {
       expect(input).toHaveValue('');
@@ -43,7 +43,7 @@ describe('PlayerInput', () => {
     const user = userEvent.setup();
 
     render(<PlayerInput onSubmit={handleSubmit} />);
-    const input = screen.getByLabelText('Player name');
+    const input = screen.getByLabelText('Nome do jogador');
     await user.type(input, 'John Doe{Enter}');
 
     await waitFor(() => {
@@ -56,10 +56,10 @@ describe('PlayerInput', () => {
     const user = userEvent.setup();
 
     render(<PlayerInput onSubmit={handleSubmit} />);
-    await user.click(screen.getByRole('button', { name: /add player/i }));
+    await user.click(screen.getByRole('button', { name: /adicionar jogador/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/nome é obrigatório/i)).toBeInTheDocument();
     });
     expect(handleSubmit).not.toHaveBeenCalled();
   });
@@ -69,11 +69,11 @@ describe('PlayerInput', () => {
     const user = userEvent.setup();
 
     render(<PlayerInput onSubmit={handleSubmit} />);
-    await user.type(screen.getByLabelText('Player name'), '   ');
-    await user.click(screen.getByRole('button', { name: /add player/i }));
+    await user.type(screen.getByLabelText('Nome do jogador'), '   ');
+    await user.click(screen.getByRole('button', { name: /adicionar jogador/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/nome é obrigatório/i)).toBeInTheDocument();
     });
     expect(handleSubmit).not.toHaveBeenCalled();
   });
@@ -81,8 +81,8 @@ describe('PlayerInput', () => {
   it('should be disabled when disabled prop is true', () => {
     const handleSubmit = vi.fn();
     render(<PlayerInput onSubmit={handleSubmit} disabled />);
-    expect(screen.getByLabelText('Player name')).toBeDisabled();
-    expect(screen.getByRole('button', { name: /add player/i })).toBeDisabled();
+    expect(screen.getByLabelText('Nome do jogador')).toBeDisabled();
+    expect(screen.getByRole('button', { name: /adicionar jogador/i })).toBeDisabled();
   });
 
   it('should use custom placeholder', () => {

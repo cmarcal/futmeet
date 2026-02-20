@@ -21,9 +21,9 @@ const HomePage = () => {
     <Layout>
       <div className={styles.container}>
         <h1 className={styles.title}>FutMeet</h1>
-        <p className={styles.subtitle}>Organize your pickup games</p>
+        <p className={styles.subtitle}>Organize suas peladas</p>
         <Button variant="primary" size="large" onClick={handleStartGame}>
-          Start Game
+          Iniciar Partida
         </Button>
         <button
           type="button"

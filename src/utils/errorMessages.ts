@@ -1,9 +1,9 @@
 export const ERROR_MESSAGES = {
-  STORAGE_ERROR: 'Unable to save your data. Please try again.',
-  VALIDATION_ERROR: 'Please check your input and try again.',
-  UNKNOWN_ERROR: 'Something went wrong. Please refresh the page.',
-  GAME_NOT_FOUND: 'This game session could not be found.',
-  NETWORK_ERROR: 'A network error occurred. Please check your connection.',
+  STORAGE_ERROR: 'Não foi possível salvar seus dados. Tente novamente.',
+  VALIDATION_ERROR: 'Verifique suas informações e tente novamente.',
+  UNKNOWN_ERROR: 'Algo deu errado. Atualize a página.',
+  GAME_NOT_FOUND: 'Esta sessão de jogo não foi encontrada.',
+  NETWORK_ERROR: 'Ocorreu um erro de conexão. Verifique sua conexão.',
 } as const;
 
 export type ErrorMessageKey = keyof typeof ERROR_MESSAGES;

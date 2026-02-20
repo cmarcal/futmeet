@@ -27,7 +27,7 @@ describe('PlayerCard', () => {
   it('should show priority button with active state when player has priority', () => {
     const player = createPlayer('1', 'Priority Player', true);
     render(<PlayerCard player={player} index={0} onTogglePriority={() => {}} />);
-    const priorityButton = screen.getByLabelText('Remove priority');
+    const priorityButton = screen.getByLabelText('Remover prioridade');
     expect(priorityButton).toBeInTheDocument();
     expect(priorityButton).toHaveAttribute('aria-pressed', 'true');
   });
@@ -35,7 +35,7 @@ describe('PlayerCard', () => {
   it('should show priority button with inactive state when player does not have priority', () => {
     const player = createPlayer('1', 'Regular Player', false);
     render(<PlayerCard player={player} index={0} onTogglePriority={() => {}} />);
-    const priorityButton = screen.getByLabelText('Mark as priority');
+    const priorityButton = screen.getByLabelText('Marcar como prioridade');
     expect(priorityButton).toBeInTheDocument();
     expect(priorityButton).toHaveAttribute('aria-pressed', 'false');
   });
@@ -46,7 +46,7 @@ describe('PlayerCard', () => {
     const user = userEvent.setup();
 
     render(<PlayerCard player={player} index={0} onTogglePriority={handleTogglePriority} />);
-    await user.click(screen.getByLabelText('Mark as priority'));
+    await user.click(screen.getByLabelText('Marcar como prioridade'));
 
     expect(handleTogglePriority).toHaveBeenCalledWith('1');
   });
@@ -57,7 +57,7 @@ describe('PlayerCard', () => {
     const user = userEvent.setup();
 
     render(<PlayerCard player={player} index={0} onRemove={handleRemove} />);
-    await user.click(screen.getByLabelText('Remove Player 1'));
+    await user.click(screen.getByLabelText('Remover Player 1'));
 
     expect(handleRemove).toHaveBeenCalledWith('1');
   });
@@ -65,8 +65,8 @@ describe('PlayerCard', () => {
   it('should not show actions when showActions is false', () => {
     const player = createPlayer('1', 'Player 1');
     render(<PlayerCard player={player} index={0} showActions={false} />);
-    expect(screen.queryByLabelText('Mark as priority')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Remove Player 1')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Marcar como prioridade')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Remover Player 1')).not.toBeInTheDocument();
   });
 
   it('should not display notes when provided (notes feature removed)', () => {
@@ -84,6 +84,6 @@ describe('PlayerCard', () => {
   it('should have correct aria-label for priority button when player has priority', () => {
     const player = createPlayer('1', 'Player 1', true);
     render(<PlayerCard player={player} index={0} onTogglePriority={() => {}} />);
-    expect(screen.getByLabelText('Remove priority')).toBeInTheDocument();
+    expect(screen.getByLabelText('Remover prioridade')).toBeInTheDocument();
   });
 });

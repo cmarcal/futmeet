@@ -24,19 +24,19 @@ describe('TeamCard', () => {
   it('should display player count', () => {
     const team = createTeam('1', 'Team 1', 3);
     render(<TeamCard team={team} />);
-    expect(screen.getByText(/3 players/i)).toBeInTheDocument();
+    expect(screen.getByText(/3 jogadores/i)).toBeInTheDocument();
   });
 
   it('should display singular "player" for one player', () => {
     const team = createTeam('1', 'Team 1', 1);
     render(<TeamCard team={team} />);
-    expect(screen.getByText(/1 player$/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 jogador$/i)).toBeInTheDocument();
   });
 
   it('should show empty message when no players', () => {
     const team = createTeam('1', 'Team 1', 0);
     render(<TeamCard team={team} />);
-    expect(screen.getByText('No players assigned')).toBeInTheDocument();
+    expect(screen.getByText('Nenhum jogador atribuído')).toBeInTheDocument();
   });
 
   it('should render players list when players exist', () => {

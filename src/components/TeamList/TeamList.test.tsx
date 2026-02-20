@@ -17,7 +17,7 @@ const createTeam = (id: string, name: string, playerCount: number): Team => ({
 describe('TeamList', () => {
   it('should render empty message when no teams', () => {
     render(<TeamList teams={[]} />);
-    expect(screen.getByText(/no teams available/i)).toBeInTheDocument();
+    expect(screen.getByText(/nenhum time disponível/i)).toBeInTheDocument();
   });
 
   it('should render custom empty message', () => {

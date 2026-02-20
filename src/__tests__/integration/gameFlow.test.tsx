@@ -44,7 +44,7 @@ describe('Game Flow Integration', () => {
     it('should navigate to a new game URL when Start Game is clicked', async () => {
       const user = userEvent.setup();
       renderApp('/');
-      await user.click(screen.getByRole('button', { name: 'Start Game' }));
+      await user.click(screen.getByRole('button', { name: 'Iniciar Partida' }));
       expect(mockNavigate).toHaveBeenCalledWith(
         expect.stringMatching(/^\/game\/[A-Za-z0-9]{21}$/)
       );
@@ -67,7 +67,7 @@ describe('Game Flow Integration', () => {
 
     it('should redirect to / for invalid roomId', () => {
       renderApp('/waiting-room/invalid');
-      expect(screen.getByText('Start Game')).toBeInTheDocument();
+      expect(screen.getByText('Iniciar Partida')).toBeInTheDocument();
     });
 
     it('should initialize waiting room and show empty player list', () => {
@@ -99,19 +99,19 @@ describe('Game Flow Integration', () => {
   describe('GamePage', () => {
     it('should redirect to / for invalid gameId', () => {
       renderApp('/game/invalid');
-      expect(screen.getByText('Start Game')).toBeInTheDocument();
+      expect(screen.getByText('Iniciar Partida')).toBeInTheDocument();
     });
 
     it('should initialize game and show empty player list', () => {
       renderApp(`/game/${VALID_GAME_ID}`);
-      expect(screen.getByRole('heading', { name: 'Players' })).toBeInTheDocument();
-      expect(screen.getByText('No players yet')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Jogadores' })).toBeInTheDocument();
+      expect(screen.getByText('Nenhum jogador ainda')).toBeInTheDocument();
     });
 
     it('should add a player and show it in the list', async () => {
       const user = userEvent.setup();
       renderApp(`/game/${VALID_GAME_ID}`);
-      const input = screen.getByPlaceholderText('Enter player name...');
+      const input = screen.getByPlaceholderText('Digite o nome do jogador...');
       await user.type(input, 'Alice');
       await user.keyboard('{Enter}');
       expect(screen.getByText('Alice')).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe('Game Flow Integration', () => {
     it('should persist player to store', async () => {
       const user = userEvent.setup();
       renderApp(`/game/${VALID_GAME_ID}`);
-      const input = screen.getByPlaceholderText('Enter player name...');
+      const input = screen.getByPlaceholderText('Digite o nome do jogador...');
       await user.type(input, 'Bob');
       await user.keyboard('{Enter}');
       const game = useGameStore.getState().games[VALID_GAME_ID];
@@ -133,7 +133,7 @@ describe('Game Flow Integration', () => {
       useGameStore.getState().addPlayer(VALID_GAME_ID, 'Alice');
       useGameStore.getState().addPlayer(VALID_GAME_ID, 'Bob');
       renderApp(`/game/${VALID_GAME_ID}`);
-      await user.click(screen.getByRole('button', { name: 'Sort Teams' }));
+      await user.click(screen.getByRole('button', { name: 'Sortear Times' }));
       expect(mockNavigate).toHaveBeenCalledWith(`/results/${VALID_GAME_ID}`);
     });
   });
@@ -145,14 +145,14 @@ describe('Game Flow Integration', () => {
       useGameStore.getState().addPlayer(VALID_GAME_ID, 'Bob');
       useGameStore.getState().sortTeams(VALID_GAME_ID);
       renderApp(`/results/${VALID_GAME_ID}`);
-      expect(screen.getByRole('heading', { name: 'Team Results' })).toBeInTheDocument();
-      expect(screen.getByText('2 players sorted into 2 teams')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Resultado dos Times' })).toBeInTheDocument();
+      expect(screen.getByText('2 jogadores sorteados em 2 times')).toBeInTheDocument();
     });
 
     it('should navigate back to game when Back to Game is clicked', async () => {
       const user = userEvent.setup();
       renderApp(`/results/${VALID_GAME_ID}`);
-      await user.click(screen.getByRole('button', { name: 'Back to Game' }));
+      await user.click(screen.getByRole('button', { name: 'Voltar ao Jogo' }));
       expect(mockNavigate).toHaveBeenCalledWith(`/game/${VALID_GAME_ID}`);
     });
   });

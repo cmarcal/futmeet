@@ -13,7 +13,7 @@ export interface PlayerInputProps {
   placeholder?: string;
 }
 
-export const PlayerInput = ({ onSubmit, disabled = false, placeholder = 'Enter player name' }: PlayerInputProps) => {
+export const PlayerInput = ({ onSubmit, disabled = false, placeholder = 'Digite o nome do jogador' }: PlayerInputProps) => {
   const {
     register,
     handleSubmit,
@@ -48,7 +48,7 @@ export const PlayerInput = ({ onSubmit, disabled = false, placeholder = 'Enter p
           error={!!errors.name}
           errorMessage={errors.name?.message}
           onKeyDown={handleKeyDown}
-          aria-label="Player name"
+          aria-label="Nome do jogador"
           autoComplete="off"
           className={styles.input}
         />
@@ -59,7 +59,7 @@ export const PlayerInput = ({ onSubmit, disabled = false, placeholder = 'Enter p
         size="medium"
         disabled={disabled || isSubmitting}
         className={styles.submitButton}
-        aria-label="Add player"
+        aria-label="Adicionar jogador"
       >
         <Plus size={20} aria-hidden="true" />
       </Button>

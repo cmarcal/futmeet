@@ -21,8 +21,8 @@ export const PlayerList = memo(({
   onRemove,
   onReorder,
   showActions = true,
-  emptyMessage = 'No players yet',
-  emptySubMessage = 'Add your first player to get started',
+  emptyMessage = 'Nenhum jogador ainda',
+  emptySubMessage = 'Adicione o primeiro jogador para começar',
 }: PlayerListProps) => {
   const dragAndDrop = useDragAndDrop({
     itemCount: players.length,
