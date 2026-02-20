@@ -1,10 +1,21 @@
 import { z } from 'zod';
 
+/** Characters that could be used in HTML/script injection; rejected for defense-in-depth. */
+const DISALLOWED_NAME_CHARS = /[<>]/;
+
 export const addPlayerSchema = z.object({
   name: z
     .string()
     .transform((val) => val.trim())
-    .pipe(z.string().min(1, 'Nome é obrigatório').max(50, 'O nome deve ter no máximo 50 caracteres')),
+    .pipe(
+      z
+        .string()
+        .min(1, 'Nome é obrigatório')
+        .max(50, 'O nome deve ter no máximo 50 caracteres')
+        .refine((val) => !DISALLOWED_NAME_CHARS.test(val), {
+          message: 'O nome não pode conter os caracteres < ou >',
+        })
+    ),
 });
 
 export const teamSettingsSchema = z.object({
