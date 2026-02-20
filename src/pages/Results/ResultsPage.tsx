@@ -55,10 +55,10 @@ const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
         </section>
 
         <div className={styles.actions}>
-          <Button variant="primary" size="large" onClick={handleNewGame} className={styles.button}>
+          <Button variant="primary" size="small" onClick={handleNewGame} className={styles.button}>
             Nova Partida
           </Button>
-          <Button variant="secondary" size="large" onClick={handleBackToGame} className={styles.button}>
+          <Button variant="secondary" size="small" onClick={handleBackToGame} className={styles.button}>
             Voltar ao Jogo
           </Button>
         </div>

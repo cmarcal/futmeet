@@ -120,7 +120,7 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
           )}
           <Button
             variant="primary"
-            size="large"
+            size="medium"
             onClick={handleViewResults}
             disabled={!canSort}
             className={styles.sortButton}
