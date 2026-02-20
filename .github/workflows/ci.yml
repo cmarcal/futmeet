@@ -28,7 +28,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npm run lint
+        run: npx turbo run lint --filter=@futmeet/web
 
   test:
     name: Test
@@ -47,7 +47,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test
+        run: npx turbo run test --filter=@futmeet/web
 
   build:
     name: Build
@@ -67,4 +67,4 @@ jobs:
         run: npm ci
 
       - name: Build application
-        run: npm run build
+        run: npx turbo run build --filter=@futmeet/web
