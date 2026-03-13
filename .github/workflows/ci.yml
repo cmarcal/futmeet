@@ -24,11 +24,19 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Install dependencies
         run: npm ci
 
       - name: Run ESLint
-        run: npx turbo run lint --filter=@futmeet/web
+        run: npx turbo run lint
 
   test:
     name: Test
@@ -43,11 +51,19 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Install dependencies
         run: npm ci
 
       - name: Run tests
-        run: npx turbo run test --filter=@futmeet/web
+        run: npx turbo run test
 
   build:
     name: Build
@@ -63,8 +79,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Install dependencies
         run: npm ci
 
       - name: Build application
-        run: npx turbo run build --filter=@futmeet/web
+        run: npx turbo run build

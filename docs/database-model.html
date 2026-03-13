@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FutMeet — Database Model v1</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-hover: #222632;
+    --border: #2a2e3a;
+    --border-highlight: #3b82f6;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --pk: #f59e0b;
+    --fk: #8b5cf6;
+    --nn: #ef4444;
+    --unique: #06b6d4;
+    --default-tag: #22c55e;
+    --check-tag: #f97316;
+    --type-color: #38bdf8;
+    --relation-line: #475569;
+    --relation-line-active: #3b82f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  .header {
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #13151f 0%, var(--bg) 100%);
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .header h1 span { color: var(--border-highlight); }
+  .header p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  .legend-bar {
+    display: flex;
+    gap: 20px;
+    padding: 14px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .canvas {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  .section-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+
+  .tables-row {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 320px;
+    max-width: 420px;
+    flex: 1;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .table-card:hover {
+    border-color: var(--border-highlight);
+    box-shadow: 0 0 0 1px var(--border-highlight), 0 8px 32px rgba(59,130,246,0.08);
+  }
+
+  .table-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .table-badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(59,130,246,0.12);
+    color: var(--border-highlight);
+  }
+
+  .columns {
+    padding: 6px 0;
+  }
+  .col-row {
+    display: grid;
+    grid-template-columns: 30px 1fr auto auto;
+    align-items: center;
+    gap: 0;
+    padding: 7px 18px;
+    font-size: 13px;
+    transition: background 0.15s;
+  }
+  .col-row:hover {
+    background: var(--surface-hover);
+  }
+
+  .col-icon {
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .col-icon.pk { background: rgba(245,158,11,0.15); color: var(--pk); }
+  .col-icon.fk { background: rgba(139,92,246,0.15); color: var(--fk); }
+  .col-icon.col-normal { background: transparent; color: transparent; }
+
+  .col-name {
+    font-weight: 500;
+    color: var(--text);
+    padding-left: 4px;
+  }
+  .col-name.is-fk { color: var(--fk); }
+
+  .col-type {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 11.5px;
+    color: var(--type-color);
+    padding: 2px 8px;
+    background: rgba(56,189,248,0.08);
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .col-tags {
+    display: flex;
+    gap: 4px;
+    padding-left: 8px;
+  }
+  .tag {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+  .tag.nn { background: rgba(239,68,68,0.12); color: var(--nn); }
+  .tag.uq { background: rgba(6,182,212,0.12); color: var(--unique); }
+  .tag.def { background: rgba(34,197,94,0.12); color: var(--default-tag); }
+  .tag.chk { background: rgba(249,115,22,0.12); color: var(--check-tag); }
+  .tag.idx { background: rgba(139,92,246,0.08); color: var(--fk); }
+
+  .table-footer {
+    padding: 10px 18px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .table-footer strong {
+    color: var(--text-muted);
+  }
+
+  .relations-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .relations-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .rel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+  .rel-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    transition: border-color 0.2s;
+  }
+  .rel-card:hover { border-color: var(--fk); }
+
+  .rel-arrow {
+    color: var(--fk);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .rel-entity {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .rel-desc {
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .rel-cardinality {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--pk);
+    background: rgba(245,158,11,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .notes-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .notes-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .note-card {
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .note-card h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--border-highlight);
+  }
+  .note-card p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .note-card code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(56,189,248,0.08);
+    color: var(--type-color);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .sql-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .sql-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sql-block {
+    padding: 20px 28px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .sql-block .kw { color: var(--fk); font-weight: 600; }
+  .sql-block .tbl { color: var(--pk); }
+  .sql-block .tp { color: var(--type-color); }
+  .sql-block .str { color: var(--default-tag); }
+  .sql-block .cm { color: var(--text-dim); font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>FutMeet</span> — Database Model v1</h1>
+  <p>Normalized Postgres schema for the REST API (Phase 1). Six tables covering rooms, games, players, and team assignments. All IDs use nanoid (21-char) for rooms/games and UUID for child entities.</p>
+</div>
+
+<div class="legend-bar">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--pk)"></div> Primary Key</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--fk)"></div> Foreign Key</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--nn)"></div> NOT NULL</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--unique)"></div> UNIQUE</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--default-tag)"></div> DEFAULT</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--check-tag)"></div> CHECK</div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(139,92,246,0.5)"></div> INDEX</div>
+</div>
+
+<div class="canvas">
+
+  <!-- ==================== ROOM CONTEXT ==================== -->
+  <div>
+    <div class="section-label">Room Context</div>
+    <div class="tables-row">
+
+      <!-- ROOMS -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-name">rooms</span>
+          <span class="table-badge">Parent</span>
+        </div>
+        <div class="columns">
+          <div class="col-row">
+            <div class="col-icon pk">PK</div>
+            <span class="col-name">id</span>
+            <span class="col-type">VARCHAR(21)</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">created_at</span>
+            <span class="col-type">TIMESTAMPTZ</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">NOW()</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">updated_at</span>
+            <span class="col-type">TIMESTAMPTZ</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">NOW()</span></div>
+          </div>
+        </div>
+        <div class="table-footer">
+          <strong>Purpose:</strong> Waiting room. Players join before a game starts.<br>
+          <strong>ID strategy:</strong> nanoid 21-char, generated server-side on POST /rooms.
+        </div>
+      </div>
+
+      <!-- ROOM_PLAYERS -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-name">room_players</span>
+          <span class="table-badge">Child</span>
+        </div>
+        <div class="columns">
+          <div class="col-row">
+            <div class="col-icon pk">PK</div>
+            <span class="col-name">id</span>
+            <span class="col-type">UUID</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">gen_random_uuid()</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon fk">FK</div>
+            <span class="col-name is-fk">room_id</span>
+            <span class="col-type">VARCHAR(21)</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag idx">IDX</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">name</span>
+            <span class="col-type">VARCHAR(50)</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">priority</span>
+            <span class="col-type">BOOLEAN</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">FALSE</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">position</span>
+            <span class="col-type">INTEGER</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">notes</span>
+            <span class="col-type">TEXT</span>
+            <div class="col-tags"></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">created_at</span>
+            <span class="col-type">TIMESTAMPTZ</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">NOW()</span></div>
+          </div>
+        </div>
+        <div class="table-footer">
+          <strong>FK:</strong> room_id → rooms.id (ON DELETE CASCADE)<br>
+          <strong>Index:</strong> room_id (for fast lookup of all players in a room)<br>
+          <strong>Unique:</strong> (room_id, position) — no duplicate positions per room
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== GAME CONTEXT ==================== -->
+  <div>
+    <div class="section-label">Game Context</div>
+    <div class="tables-row">
+
+      <!-- GAMES -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-name">games</span>
+          <span class="table-badge">Parent</span>
+        </div>
+        <div class="columns">
+          <div class="col-row">
+            <div class="col-icon pk">PK</div>
+            <span class="col-name">id</span>
+            <span class="col-type">VARCHAR(21)</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon fk">FK</div>
+            <span class="col-name is-fk">room_id</span>
+            <span class="col-type">VARCHAR(21)</span>
+            <div class="col-tags"><span class="tag uq">UQ</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">team_count</span>
+            <span class="col-type">INTEGER</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">2</span><span class="tag chk">2..10</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">game_status</span>
+            <span class="col-type">VARCHAR(20)</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">'setup'</span><span class="tag chk">ENUM</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">created_at</span>
+            <span class="col-type">TIMESTAMPTZ</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">NOW()</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">updated_at</span>
+            <span class="col-type">TIMESTAMPTZ</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">NOW()</span></div>
+          </div>
+        </div>
+        <div class="table-footer">
+          <strong>FK:</strong> room_id → rooms.id (ON DELETE SET NULL) — nullable; NULL when game created directly via "Nova Partida"<br>
+          <strong>CHECK:</strong> game_status IN ('setup', 'sorting', 'complete')<br>
+          <strong>CHECK:</strong> team_count BETWEEN 2 AND 10<br>
+          <strong>UNIQUE:</strong> room_id — one game per room
+        </div>
+      </div>
+
+      <!-- GAME_PLAYERS -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-name">game_players</span>
+          <span class="table-badge">Child</span>
+        </div>
+        <div class="columns">
+          <div class="col-row">
+            <div class="col-icon pk">PK</div>
+            <span class="col-name">id</span>
+            <span class="col-type">UUID</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">gen_random_uuid()</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon fk">FK</div>
+            <span class="col-name is-fk">game_id</span>
+            <span class="col-type">VARCHAR(21)</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag idx">IDX</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">name</span>
+            <span class="col-type">VARCHAR(50)</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">priority</span>
+            <span class="col-type">BOOLEAN</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">FALSE</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">position</span>
+            <span class="col-type">INTEGER</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">notes</span>
+            <span class="col-type">TEXT</span>
+            <div class="col-tags"></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">created_at</span>
+            <span class="col-type">TIMESTAMPTZ</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">NOW()</span></div>
+          </div>
+        </div>
+        <div class="table-footer">
+          <strong>FK:</strong> game_id → games.id (ON DELETE CASCADE)<br>
+          <strong>Index:</strong> game_id (for fast lookup of all players in a game)<br>
+          <strong>Unique:</strong> (game_id, position) — no duplicate positions per game
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== TEAM CONTEXT ==================== -->
+  <div>
+    <div class="section-label">Team Context (populated after sort)</div>
+    <div class="tables-row">
+
+      <!-- TEAMS -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-name">teams</span>
+          <span class="table-badge">Parent</span>
+        </div>
+        <div class="columns">
+          <div class="col-row">
+            <div class="col-icon pk">PK</div>
+            <span class="col-name">id</span>
+            <span class="col-type">UUID</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">gen_random_uuid()</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon fk">FK</div>
+            <span class="col-name is-fk">game_id</span>
+            <span class="col-type">VARCHAR(21)</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag idx">IDX</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">name</span>
+            <span class="col-type">VARCHAR(50)</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">position</span>
+            <span class="col-type">INTEGER</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+        </div>
+        <div class="table-footer">
+          <strong>FK:</strong> game_id → games.id (ON DELETE CASCADE)<br>
+          <strong>Unique:</strong> (game_id, position) — ordered teams per game<br>
+          <strong>Note:</strong> Created when POST /games/:gameId/sort runs. Name auto-generated as "Time 1", "Time 2", etc.
+        </div>
+      </div>
+
+      <!-- TEAM_PLAYERS -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-name">team_players</span>
+          <span class="table-badge">Junction</span>
+        </div>
+        <div class="columns">
+          <div class="col-row">
+            <div class="col-icon pk">PK</div>
+            <span class="col-name">id</span>
+            <span class="col-type">UUID</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag def">gen_random_uuid()</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon fk">FK</div>
+            <span class="col-name is-fk">team_id</span>
+            <span class="col-type">UUID</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag idx">IDX</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon fk">FK</div>
+            <span class="col-name is-fk">game_player_id</span>
+            <span class="col-type">UUID</span>
+            <div class="col-tags"><span class="tag nn">NN</span><span class="tag uq">UQ</span></div>
+          </div>
+          <div class="col-row">
+            <div class="col-icon col-normal">&nbsp;</div>
+            <span class="col-name">position</span>
+            <span class="col-type">INTEGER</span>
+            <div class="col-tags"><span class="tag nn">NN</span></div>
+          </div>
+        </div>
+        <div class="table-footer">
+          <strong>FK:</strong> team_id → teams.id (ON DELETE CASCADE)<br>
+          <strong>FK:</strong> game_player_id → game_players.id (ON DELETE CASCADE)<br>
+          <strong>UNIQUE:</strong> game_player_id — each player belongs to exactly one team<br>
+          <strong>Unique:</strong> (team_id, position) — ordered players per team
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== RELATIONSHIPS ==================== -->
+  <div class="relations-section">
+    <h3>Relationships</h3>
+    <div class="rel-grid">
+
+      <div class="rel-card">
+        <span class="rel-entity">rooms</span>
+        <span class="rel-arrow">→</span>
+        <span class="rel-entity">room_players</span>
+        <span class="rel-cardinality">1 : N</span>
+        <span class="rel-desc">A room has many players</span>
+      </div>
+
+      <div class="rel-card">
+        <span class="rel-entity">rooms</span>
+        <span class="rel-arrow">→</span>
+        <span class="rel-entity">games</span>
+        <span class="rel-cardinality">1 : 0..1</span>
+        <span class="rel-desc">A room can produce one game</span>
+      </div>
+
+      <div class="rel-card">
+        <span class="rel-entity">games</span>
+        <span class="rel-arrow">→</span>
+        <span class="rel-entity">game_players</span>
+        <span class="rel-cardinality">1 : N</span>
+        <span class="rel-desc">A game has many players</span>
+      </div>
+
+      <div class="rel-card">
+        <span class="rel-entity">games</span>
+        <span class="rel-arrow">→</span>
+        <span class="rel-entity">teams</span>
+        <span class="rel-cardinality">1 : N</span>
+        <span class="rel-desc">A game has many teams (after sort)</span>
+      </div>
+
+      <div class="rel-card">
+        <span class="rel-entity">teams</span>
+        <span class="rel-arrow">→</span>
+        <span class="rel-entity">team_players</span>
+        <span class="rel-cardinality">1 : N</span>
+        <span class="rel-desc">A team has many player assignments</span>
+      </div>
+
+      <div class="rel-card">
+        <span class="rel-entity">game_players</span>
+        <span class="rel-arrow">→</span>
+        <span class="rel-entity">team_players</span>
+        <span class="rel-cardinality">1 : 0..1</span>
+        <span class="rel-desc">A game player is in at most one team</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== DESIGN NOTES ==================== -->
+  <div class="notes-section">
+    <h3>Design Decisions & Notes</h3>
+    <div class="notes-grid">
+
+      <div class="note-card">
+        <h4>ID Strategy</h4>
+        <p>Rooms and games use <code>nanoid</code> (21-char alphanumeric + <code>_-</code>) as primary keys, matching the existing frontend pattern in <code>gameId.ts</code>. Child entities (players, teams, assignments) use Postgres-native <code>UUID</code> via <code>gen_random_uuid()</code>.</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Normalized vs JSON</h4>
+        <p>Fully normalized tables (not JSON columns) for players and teams. This allows efficient queries for individual player operations (add, remove, reorder, toggle priority) without rewriting entire JSON arrays. Better for Phase 2 real-time broadcasts.</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Position Column</h4>
+        <p>All ordered entities use a <code>position INTEGER</code> column to preserve insertion/drag order. On reorder, the API updates affected positions in a transaction. A unique constraint on <code>(parent_id, position)</code> prevents duplicates — use deferred constraints or gap strategy.</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Room → Game Flow</h4>
+        <p><code>POST /rooms/:roomId/start</code> creates a game row (with <code>room_id</code> FK) and copies <code>room_players</code> into <code>game_players</code>. The room persists so the link remains shareable. Games can also be created independently (<code>POST /games</code> with <code>room_id = NULL</code>).</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Cascade Deletes</h4>
+        <p>All child FKs use <code>ON DELETE CASCADE</code> so removing a room/game/team automatically cleans up its children. The <code>games.room_id</code> FK uses <code>ON DELETE SET NULL</code> so a game survives if its source room is deleted.</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Game Status</h4>
+        <p>Stored as <code>VARCHAR(20)</code> with a <code>CHECK</code> constraint instead of Postgres ENUM to simplify migrations when new statuses are added. Values: <code>'setup'</code> (default), <code>'sorting'</code> (during sort), <code>'complete'</code> (teams assigned).</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Team Count Validation</h4>
+        <p>Database-level <code>CHECK (team_count BETWEEN 2 AND 10)</code> matches the frontend Zod schema. The API also validates before reaching the DB, but the constraint acts as a safety net.</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Timestamps</h4>
+        <p>All tables use <code>TIMESTAMPTZ</code> (timestamp with time zone). The API returns ISO 8601 strings. Parent tables (<code>rooms</code>, <code>games</code>) include <code>updated_at</code> for cache invalidation. Child tables omit it for simplicity (only <code>created_at</code>).</p>
+      </div>
+
+      <div class="note-card">
+        <h4>Indexes</h4>
+        <p>Foreign key columns (<code>room_id</code>, <code>game_id</code>, <code>team_id</code>) are indexed for fast JOINs and lookups. Postgres does NOT auto-index FKs (unlike MySQL), so explicit indexes are essential.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== SQL DDL ==================== -->
+  <div class="sql-section">
+    <h3>SQL DDL (ready for migration)</h3>
+    <div class="sql-block"><span class="cm">-- ============================================</span>
+<span class="cm">-- FutMeet Database Schema v1</span>
+<span class="cm">-- Postgres 15+</span>
+<span class="cm">-- ============================================</span>
+
+<span class="cm">-- 1. ROOMS</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">rooms</span> (
+    id          <span class="tp">VARCHAR(21)</span>     <span class="kw">PRIMARY KEY</span>,
+    created_at  <span class="tp">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">NOW()</span>,
+    updated_at  <span class="tp">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">NOW()</span>
+);
+
+<span class="cm">-- 2. ROOM PLAYERS</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">room_players</span> (
+    id          <span class="tp">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> <span class="str">gen_random_uuid()</span>,
+    room_id     <span class="tp">VARCHAR(21)</span>     <span class="kw">NOT NULL REFERENCES</span> <span class="tbl">rooms</span>(id) <span class="kw">ON DELETE CASCADE</span>,
+    name        <span class="tp">VARCHAR(50)</span>     <span class="kw">NOT NULL</span>,
+    priority    <span class="tp">BOOLEAN</span>         <span class="kw">NOT NULL DEFAULT</span> <span class="str">FALSE</span>,
+    position    <span class="tp">INTEGER</span>         <span class="kw">NOT NULL</span>,
+    notes       <span class="tp">TEXT</span>,
+    created_at  <span class="tp">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">NOW()</span>,
+
+    <span class="kw">UNIQUE</span> (room_id, position)
+);
+
+<span class="kw">CREATE INDEX</span> idx_room_players_room_id <span class="kw">ON</span> <span class="tbl">room_players</span> (room_id);
+
+<span class="cm">-- 3. GAMES</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">games</span> (
+    id           <span class="tp">VARCHAR(21)</span>     <span class="kw">PRIMARY KEY</span>,
+    room_id      <span class="tp">VARCHAR(21)</span>     <span class="kw">UNIQUE REFERENCES</span> <span class="tbl">rooms</span>(id) <span class="kw">ON DELETE SET NULL</span>,
+    team_count   <span class="tp">INTEGER</span>         <span class="kw">NOT NULL DEFAULT</span> <span class="str">2</span>,
+    game_status  <span class="tp">VARCHAR(20)</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">'setup'</span>,
+    created_at   <span class="tp">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">NOW()</span>,
+    updated_at   <span class="tp">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">NOW()</span>,
+
+    <span class="kw">CONSTRAINT</span> chk_game_status <span class="kw">CHECK</span> (game_status <span class="kw">IN</span> (<span class="str">'setup'</span>, <span class="str">'sorting'</span>, <span class="str">'complete'</span>)),
+    <span class="kw">CONSTRAINT</span> chk_team_count  <span class="kw">CHECK</span> (team_count <span class="kw">BETWEEN</span> <span class="str">2</span> <span class="kw">AND</span> <span class="str">10</span>)
+);
+
+<span class="cm">-- 4. GAME PLAYERS</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">game_players</span> (
+    id          <span class="tp">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> <span class="str">gen_random_uuid()</span>,
+    game_id     <span class="tp">VARCHAR(21)</span>     <span class="kw">NOT NULL REFERENCES</span> <span class="tbl">games</span>(id) <span class="kw">ON DELETE CASCADE</span>,
+    name        <span class="tp">VARCHAR(50)</span>     <span class="kw">NOT NULL</span>,
+    priority    <span class="tp">BOOLEAN</span>         <span class="kw">NOT NULL DEFAULT</span> <span class="str">FALSE</span>,
+    position    <span class="tp">INTEGER</span>         <span class="kw">NOT NULL</span>,
+    notes       <span class="tp">TEXT</span>,
+    created_at  <span class="tp">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="str">NOW()</span>,
+
+    <span class="kw">UNIQUE</span> (game_id, position)
+);
+
+<span class="kw">CREATE INDEX</span> idx_game_players_game_id <span class="kw">ON</span> <span class="tbl">game_players</span> (game_id);
+
+<span class="cm">-- 5. TEAMS</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">teams</span> (
+    id          <span class="tp">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> <span class="str">gen_random_uuid()</span>,
+    game_id     <span class="tp">VARCHAR(21)</span>     <span class="kw">NOT NULL REFERENCES</span> <span class="tbl">games</span>(id) <span class="kw">ON DELETE CASCADE</span>,
+    name        <span class="tp">VARCHAR(50)</span>     <span class="kw">NOT NULL</span>,
+    position    <span class="tp">INTEGER</span>         <span class="kw">NOT NULL</span>,
+
+    <span class="kw">UNIQUE</span> (game_id, position)
+);
+
+<span class="kw">CREATE INDEX</span> idx_teams_game_id <span class="kw">ON</span> <span class="tbl">teams</span> (game_id);
+
+<span class="cm">-- 6. TEAM PLAYERS (junction)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">team_players</span> (
+    id              <span class="tp">UUID</span>        <span class="kw">PRIMARY KEY DEFAULT</span> <span class="str">gen_random_uuid()</span>,
+    team_id         <span class="tp">UUID</span>        <span class="kw">NOT NULL REFERENCES</span> <span class="tbl">teams</span>(id) <span class="kw">ON DELETE CASCADE</span>,
+    game_player_id  <span class="tp">UUID</span>        <span class="kw">NOT NULL UNIQUE REFERENCES</span> <span class="tbl">game_players</span>(id) <span class="kw">ON DELETE CASCADE</span>,
+    position        <span class="tp">INTEGER</span>     <span class="kw">NOT NULL</span>,
+
+    <span class="kw">UNIQUE</span> (team_id, position)
+);
+
+<span class="kw">CREATE INDEX</span> idx_team_players_team_id <span class="kw">ON</span> <span class="tbl">team_players</span> (team_id);
+
+<span class="cm">-- ============================================</span>
+<span class="cm">-- TRIGGER: auto-update updated_at on rooms and games</span>
+<span class="cm">-- ============================================</span>
+
+<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="tbl">trigger_set_updated_at</span>()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+    NEW.updated_at = <span class="str">NOW()</span>;
+    <span class="kw">RETURN</span> NEW;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;
+
+<span class="kw">CREATE TRIGGER</span> set_rooms_updated_at
+    <span class="kw">BEFORE UPDATE ON</span> <span class="tbl">rooms</span>
+    <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> <span class="tbl">trigger_set_updated_at</span>();
+
+<span class="kw">CREATE TRIGGER</span> set_games_updated_at
+    <span class="kw">BEFORE UPDATE ON</span> <span class="tbl">games</span>
+    <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> <span class="tbl">trigger_set_updated_at</span>();
+</div>
+  </div>
+
+</div>
+
+</body>
+</html>
