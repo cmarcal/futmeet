@@ -7,7 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "lint": "oxlint -c ../../packages/oxlint-config/node.json --deny-warnings src/",
+    "lint": "oxlint-node src/",
     "test": "vitest run --passWithNoTests"
   },
   "devDependencies": {

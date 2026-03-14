@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "oxlint -c ../../packages/oxlint-config/web.json --deny-warnings src/",
+    "lint": "oxlint-web src/",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
