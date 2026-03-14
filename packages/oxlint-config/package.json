@@ -1,0 +1,14 @@
+{
+  "name": "@futmeet/oxlint-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "bin": {
+    "oxlint-web": "./bin/web.js",
+    "oxlint-node": "./bin/node.js"
+  },
+  "exports": {
+    "./web.json": "./web.json",
+    "./node.json": "./node.json"
+  }
+}

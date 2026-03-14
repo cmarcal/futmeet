@@ -1,4 +1,4 @@
-﻿import { SkipLink } from '../SkipLink';
+import { SkipLink } from '../SkipLink';
 import styles from './Layout.module.css';
 
 export interface LayoutProps {
