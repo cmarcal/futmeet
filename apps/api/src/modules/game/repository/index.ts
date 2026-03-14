@@ -1,5 +1,9 @@
-import type { DbPool } from '@core/framework/postgres/index.js';
+import type { DbPool, DbClient } from '@core/framework/postgres/index.js';
 import type { Player, Team, Game } from '@futmeet/shared/types';
+
+type CreateFromRoomError = { ok: false; reason: 'room_not_found' | 'room_already_started' };
+type CreateFromRoomOk = { ok: true; data: Game };
+export type CreateFromRoomResult = CreateFromRoomOk | CreateFromRoomError;
 import type { GameRow, GamePlayerRow, TeamRow, TeamPlayerRow } from '@modules/game/entity/index.js';
 import { generateGameId, generatePlayerId, sortTeams } from '@futmeet/shared/utils';
 
@@ -15,11 +19,13 @@ export class GameRepository {
     return rowToGame(result.rows[0]!, [], []);
   }
 
-  async createFromRoom(roomId: string, players: Player[]): Promise<Game> {
+  async createFromRoom(roomId: string, players: Player[]): Promise<CreateFromRoomResult> {
     const id = generateGameId();
     const client = await this.db.connect();
     try {
       await client.query('BEGIN');
+      const guard = await this.lockRoomForStart(client, roomId);
+      if (guard) { await client.query('ROLLBACK'); return guard; }
       const gameResult = await client.query<GameRow>(
         'INSERT INTO games (id, room_id) VALUES ($1, $2) RETURNING id, room_id, team_count, game_status, created_at',
         [id, roomId]
@@ -35,13 +41,27 @@ export class GameRepository {
       }
 
       await client.query('COMMIT');
-      return rowToGame(game, players, []);
+      return { ok: true, data: rowToGame(game, players, []) };
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;
     } finally {
       client.release();
     }
+  }
+
+  private async lockRoomForStart(client: DbClient, roomId: string): Promise<CreateFromRoomError | null> {
+    const roomResult = await client.query(
+      'SELECT id FROM rooms WHERE id = $1 FOR UPDATE',
+      [roomId]
+    );
+    if (!roomResult.rows[0]) return { ok: false, reason: 'room_not_found' };
+    const gameResult = await client.query(
+      'SELECT id FROM games WHERE room_id = $1',
+      [roomId]
+    );
+    if (gameResult.rows[0]) return { ok: false, reason: 'room_already_started' };
+    return null;
   }
 
   async findById(gameId: string): Promise<Game | null> {

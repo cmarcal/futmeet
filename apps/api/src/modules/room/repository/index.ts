@@ -1,7 +1,14 @@
-import type { DbPool } from '@core/framework/postgres/index.js';
+import type { DbPool, DbClient } from '@core/framework/postgres/index.js';
 import type { Player, Room } from '@futmeet/shared/types';
 import type { RoomRow, RoomPlayerRow } from '@modules/room/entity/index.js';
 import { generateGameId, generatePlayerId } from '@futmeet/shared/utils';
+
+type WriteError = {
+  ok: false;
+  reason: 'room_not_found' | 'room_already_started' | 'player_not_found' | 'invalid_indices';
+};
+type WriteOk<T> = { ok: true; data: T };
+export type WriteResult<T> = WriteOk<T> | WriteError;
 
 export class RoomRepository {
   constructor(private readonly db: DbPool) {}
@@ -26,11 +33,13 @@ export class RoomRepository {
     return { id: roomResult.rows[0].id, players, createdAt: roomResult.rows[0].created_at };
   }
 
-  async addPlayer(roomId: string, name: string, notes?: string): Promise<Player> {
+  async addPlayer(roomId: string, name: string, notes?: string): Promise<WriteResult<Player>> {
     const id = generatePlayerId();
     const client = await this.db.connect();
     try {
       await client.query('BEGIN');
+      const guard = await this.lockRoom(client, roomId);
+      if (guard) { await client.query('ROLLBACK'); return guard; }
       const posResult = await client.query<{ max: number | null }>(
         'SELECT MAX(position) as max FROM room_players WHERE room_id = $1',
         [roomId]
@@ -43,7 +52,7 @@ export class RoomRepository {
         [id, roomId, name, notes ?? null, position]
       );
       await client.query('COMMIT');
-      return rowToPlayer(result.rows[0]!);
+      return { ok: true, data: rowToPlayer(result.rows[0]!) };
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;
@@ -52,17 +61,19 @@ export class RoomRepository {
     }
   }
 
-  async removePlayer(roomId: string, playerId: string): Promise<boolean> {
+  async removePlayer(roomId: string, playerId: string): Promise<WriteResult<void>> {
     const client = await this.db.connect();
     try {
       await client.query('BEGIN');
+      const guard = await this.lockRoom(client, roomId);
+      if (guard) { await client.query('ROLLBACK'); return guard; }
       const deleted = await client.query<RoomPlayerRow>(
         'DELETE FROM room_players WHERE id = $1 AND room_id = $2 RETURNING position',
         [playerId, roomId]
       );
       if (!deleted.rows[0]) {
         await client.query('ROLLBACK');
-        return false;
+        return { ok: false, reason: 'player_not_found' };
       }
       const deletedPos = deleted.rows[0].position;
       await client.query(
@@ -70,7 +81,7 @@ export class RoomRepository {
         [roomId, deletedPos]
       );
       await client.query('COMMIT');
-      return true;
+      return { ok: true, data: undefined };
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;
@@ -79,20 +90,35 @@ export class RoomRepository {
     }
   }
 
-  async setPriority(roomId: string, playerId: string, priority: boolean): Promise<Player | null> {
-    const result = await this.db.query<RoomPlayerRow>(
-      `UPDATE room_players SET priority = $1
-       WHERE id = $2 AND room_id = $3
-       RETURNING id, room_id, name, priority, notes, position, created_at`,
-      [priority, playerId, roomId]
-    );
-    return result.rows[0] ? rowToPlayer(result.rows[0]) : null;
-  }
-
-  async reorder(roomId: string, fromIndex: number, toIndex: number): Promise<boolean> {
+  async setPriority(roomId: string, playerId: string, priority: boolean): Promise<WriteResult<Player>> {
     const client = await this.db.connect();
     try {
       await client.query('BEGIN');
+      const guard = await this.lockRoom(client, roomId);
+      if (guard) { await client.query('ROLLBACK'); return guard; }
+      const result = await client.query<RoomPlayerRow>(
+        `UPDATE room_players SET priority = $1
+         WHERE id = $2 AND room_id = $3
+         RETURNING id, room_id, name, priority, notes, position, created_at`,
+        [priority, playerId, roomId]
+      );
+      await client.query('COMMIT');
+      if (!result.rows[0]) return { ok: false, reason: 'player_not_found' };
+      return { ok: true, data: rowToPlayer(result.rows[0]) };
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
+  }
+
+  async reorder(roomId: string, fromIndex: number, toIndex: number): Promise<WriteResult<void>> {
+    const client = await this.db.connect();
+    try {
+      await client.query('BEGIN');
+      const guard = await this.lockRoom(client, roomId);
+      if (guard) { await client.query('ROLLBACK'); return guard; }
       const players = await client.query<RoomPlayerRow>(
         'SELECT id, position FROM room_players WHERE room_id = $1 ORDER BY position',
         [roomId]
@@ -100,12 +126,10 @@ export class RoomRepository {
       const rows = players.rows;
       if (fromIndex < 0 || fromIndex >= rows.length || toIndex < 0 || toIndex >= rows.length) {
         await client.query('ROLLBACK');
-        return false;
+        return { ok: false, reason: 'invalid_indices' };
       }
-
       const moved = rows.splice(fromIndex, 1)[0]!;
       rows.splice(toIndex, 0, moved);
-
       for (let i = 0; i < rows.length; i++) {
         await client.query(
           'UPDATE room_players SET position = $1 WHERE id = $2',
@@ -113,7 +137,7 @@ export class RoomRepository {
         );
       }
       await client.query('COMMIT');
-      return true;
+      return { ok: true, data: undefined };
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;
@@ -122,8 +146,21 @@ export class RoomRepository {
     }
   }
 
-  async clearPlayers(roomId: string): Promise<void> {
-    await this.db.query('DELETE FROM room_players WHERE room_id = $1', [roomId]);
+  async clearPlayers(roomId: string): Promise<WriteResult<void>> {
+    const client = await this.db.connect();
+    try {
+      await client.query('BEGIN');
+      const guard = await this.lockRoom(client, roomId);
+      if (guard) { await client.query('ROLLBACK'); return guard; }
+      await client.query('DELETE FROM room_players WHERE room_id = $1', [roomId]);
+      await client.query('COMMIT');
+      return { ok: true, data: undefined };
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
   }
 
   async hasGame(roomId: string): Promise<boolean> {
@@ -140,6 +177,20 @@ export class RoomRepository {
       [roomId]
     );
     return result.rows.map(rowToPlayer);
+  }
+
+  private async lockRoom(client: DbClient, roomId: string): Promise<WriteError | null> {
+    const roomResult = await client.query(
+      'SELECT id FROM rooms WHERE id = $1 FOR UPDATE',
+      [roomId]
+    );
+    if (!roomResult.rows[0]) return { ok: false, reason: 'room_not_found' };
+    const gameResult = await client.query(
+      'SELECT id FROM games WHERE room_id = $1',
+      [roomId]
+    );
+    if (gameResult.rows[0]) return { ok: false, reason: 'room_already_started' };
+    return null;
   }
 }
 

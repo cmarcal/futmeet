@@ -1,5 +1,5 @@
 import type { Room, Player } from '@futmeet/shared/types';
-import type { RoomRepository } from '@modules/room/repository/index.js';
+import type { RoomRepository, WriteResult } from '@modules/room/repository/index.js';
 import type { GameRepository } from '@modules/game/repository/index.js';
 import {
   RoomNotFound,
@@ -25,56 +25,53 @@ export class RoomService {
   }
 
   async addPlayer(roomId: string, name: string, notes?: string): Promise<Player> {
-    await this.assertRoomExists(roomId);
-    await this.assertNotStarted(roomId);
-    return this.roomRepo.addPlayer(roomId, name, notes);
+    const result = await this.roomRepo.addPlayer(roomId, name, notes);
+    return this.unwrapRoomResult(result, roomId);
   }
 
   async removePlayer(roomId: string, playerId: string): Promise<void> {
-    await this.assertRoomExists(roomId);
-    await this.assertNotStarted(roomId);
-    const ok = await this.roomRepo.removePlayer(roomId, playerId);
-    if (!ok) throw new RoomPlayerNotFound(playerId);
+    const result = await this.roomRepo.removePlayer(roomId, playerId);
+    this.unwrapRoomResult(result, roomId, playerId);
   }
 
   async togglePriority(roomId: string, playerId: string): Promise<Player> {
-    await this.assertRoomExists(roomId);
-    await this.assertNotStarted(roomId);
     const room = await this.roomRepo.findById(roomId);
-    const current = room!.players.find((p) => p.id === playerId);
+    if (!room) throw new RoomNotFound(roomId);
+    const current = room.players.find((p) => p.id === playerId);
     if (!current) throw new RoomPlayerNotFound(playerId);
-    const updated = await this.roomRepo.setPriority(roomId, playerId, !current.priority);
-    if (!updated) throw new RoomPlayerNotFound(playerId);
-    return updated;
+    const result = await this.roomRepo.setPriority(roomId, playerId, !current.priority);
+    return this.unwrapRoomResult(result, roomId, playerId);
   }
 
   async reorderPlayers(roomId: string, fromIndex: number, toIndex: number): Promise<Room> {
-    await this.assertRoomExists(roomId);
-    await this.assertNotStarted(roomId);
-    const ok = await this.roomRepo.reorder(roomId, fromIndex, toIndex);
-    if (!ok) throw new InvalidReorderIndices();
+    const result = await this.roomRepo.reorder(roomId, fromIndex, toIndex);
+    this.unwrapRoomResult(result, roomId);
     return this.roomRepo.findById(roomId) as Promise<Room>;
   }
 
   async clearPlayers(roomId: string): Promise<void> {
-    await this.assertRoomExists(roomId);
-    await this.assertNotStarted(roomId);
-    await this.roomRepo.clearPlayers(roomId);
+    const result = await this.roomRepo.clearPlayers(roomId);
+    this.unwrapRoomResult(result, roomId);
   }
 
   async startGame(roomId: string) {
     const room = await this.roomRepo.findById(roomId);
     if (!room) throw new RoomNotFound(roomId);
-    return this.gameRepo.createFromRoom(roomId, room.players);
+    const result = await this.gameRepo.createFromRoom(roomId, room.players);
+    if (!result.ok) {
+      if (result.reason === 'room_not_found') throw new RoomNotFound(roomId);
+      throw new RoomAlreadyStarted(roomId);
+    }
+    return result.data;
   }
 
-  private async assertRoomExists(roomId: string): Promise<void> {
-    const exists = await this.roomRepo.findById(roomId);
-    if (!exists) throw new RoomNotFound(roomId);
-  }
-
-  private async assertNotStarted(roomId: string): Promise<void> {
-    const started = await this.roomRepo.hasGame(roomId);
-    if (started) throw new RoomAlreadyStarted(roomId);
+  private unwrapRoomResult<T>(result: WriteResult<T>, roomId: string, playerId?: string): T {
+    if (!result.ok) {
+      if (result.reason === 'room_not_found') throw new RoomNotFound(roomId);
+      if (result.reason === 'room_already_started') throw new RoomAlreadyStarted(roomId);
+      if (result.reason === 'invalid_indices') throw new InvalidReorderIndices();
+      throw new RoomPlayerNotFound(playerId ?? '');
+    }
+    return result.data;
   }
 }

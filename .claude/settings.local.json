@@ -1,9 +1,9 @@
 {
-    "includeCoAuthoredBy": false,
   "attribution": {
     "commit": "",
     "pr": ""
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(cd:*)",
@@ -18,7 +18,9 @@
       "Bash(cd /c/Users/roberto/futmeet/packages/shared && npm run lint 2>&1)",
       "Bash(cd /c/Users/roberto/futmeet && npx turbo run test 2>&1)",
       "Bash(cd /c/Users/roberto/futmeet && git push -u origin docs/db-schema-adr 2>&1)",
-      "Bash(cd /c/Users/roberto/futmeet && git rebase main --exec 'git commit --amend --no-edit -m \"$\\(git log -1 --format=%B | grep -v \"^Co-Authored-By:\" | sed \"/^$/N;/^\\\\n$/d\"\\)\"' 2>&1)"
+      "Bash(cd /c/Users/roberto/futmeet && git rebase main --exec 'git commit --amend --no-edit -m \"$\\(git log -1 --format=%B | grep -v \"^Co-Authored-By:\" | sed \"/^$/N;/^\\\\n$/d\"\\)\"' 2>&1)",
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)"
     ]
   }
 }
