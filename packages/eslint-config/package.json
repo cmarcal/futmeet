@@ -1,0 +1,20 @@
+{
+  "name": "@futmeet/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./base": "./base.js",
+    "./web": "./web.js",
+    "./node": "./node.js"
+  },
+  "dependencies": {
+    "@eslint/compat": "^1.2.4",
+    "@eslint/js": "^9.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "globals": "^15.14.0"
+  }
+}

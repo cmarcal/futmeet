@@ -1,0 +1,21 @@
+{
+  "name": "@futmeet/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@futmeet/eslint-config": "*",
+    "@futmeet/tsconfig": "*",
+    "eslint": "^9.16.0",
+    "tsx": "^4",
+    "typescript": "^5",
+    "vitest": "^2"
+  }
+}
