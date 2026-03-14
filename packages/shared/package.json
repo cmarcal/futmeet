@@ -1,0 +1,30 @@
+{
+  "name": "@futmeet/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./types": {
+      "import": "./src/types/index.ts",
+      "default": "./src/types/index.ts"
+    },
+    "./utils": {
+      "import": "./src/utils/index.ts",
+      "default": "./src/utils/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint-node src/",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "nanoid": "^5"
+  },
+  "devDependencies": {
+    "@futmeet/oxlint-config": "*",
+    "@futmeet/tsconfig": "*",
+    "oxlint": "^0.16.0",
+    "typescript": "^5",
+    "vitest": "^2"
+  }
+}
