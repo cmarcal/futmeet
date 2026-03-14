@@ -1,9 +1,24 @@
 {
+    "includeCoAuthoredBy": false,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(cd:*)",
       "Bash(echo:*)",
-      "Bash(tail:*)"
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "mcp__claude_ai_Excalidraw__read_me",
+      "Bash(cd /c/Users/roberto/futmeet && git checkout -b docs/db-schema-adr 2>&1)",
+      "mcp__claude_ai_Excalidraw__create_view",
+      "mcp__claude_ai_Excalidraw__export_to_excalidraw",
+      "Bash(cd /c/Users/roberto/futmeet/apps/api && npm run lint 2>&1)",
+      "Bash(cd /c/Users/roberto/futmeet/packages/shared && npm run lint 2>&1)",
+      "Bash(cd /c/Users/roberto/futmeet && npx turbo run test 2>&1)",
+      "Bash(cd /c/Users/roberto/futmeet && git push -u origin docs/db-schema-adr 2>&1)",
+      "Bash(cd /c/Users/roberto/futmeet && git rebase main --exec 'git commit --amend --no-edit -m \"$\\(git log -1 --format=%B | grep -v \"^Co-Authored-By:\" | sed \"/^$/N;/^\\\\n$/d\"\\)\"' 2>&1)"
     ]
   }
 }

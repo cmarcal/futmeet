@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RoomController } from '../index.js';
 
-const makeReply = () => ({
-  status: vi.fn().mockReturnThis(),
-  send: vi.fn().mockReturnThis(),
-});
+const makeReply = () =>
+  ({
+    status: vi.fn().mockReturnThis(),
+    send: vi.fn().mockReturnThis(),
+  }) as any;
 
 const makeRequest = (overrides: Record<string, unknown> = {}) =>
   ({ params: {}, body: {}, ...overrides }) as any;
