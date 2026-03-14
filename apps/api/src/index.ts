@@ -35,7 +35,7 @@ const start = async (): Promise<void> => {
   const roomService = new RoomService(roomRepository, gameRepository);
   const roomController = new RoomController(roomService);
 
-  const gameService = new GameService(gameRepository, roomRepository);
+  const gameService = new GameService(gameRepository);
   const gameController = new GameController(gameService);
 
   // Routes

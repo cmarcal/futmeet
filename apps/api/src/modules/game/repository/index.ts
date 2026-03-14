@@ -1,8 +1,7 @@
 import type { DbPool } from '@core/framework/postgres/index.js';
-import type { Player, Team, Game, ServerGameStatus } from '@futmeet/shared/types';
+import type { Player, Team, Game } from '@futmeet/shared/types';
 import type { GameRow, GamePlayerRow, TeamRow, TeamPlayerRow } from '@modules/game/entity/index.js';
-import { generateGameId, generatePlayerId } from '@futmeet/shared/utils';
-import { sortTeams } from '@futmeet/shared/utils';
+import { generateGameId, generatePlayerId, sortTeams } from '@futmeet/shared/utils';
 
 export class GameRepository {
   constructor(private readonly db: DbPool) {}

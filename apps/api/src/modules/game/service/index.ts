@@ -1,6 +1,5 @@
 import type { Game, Player } from '@futmeet/shared/types';
 import type { GameRepository } from '@modules/game/repository/index.js';
-import type { RoomRepository } from '@modules/room/repository/index.js';
 import {
   GameNotFound,
   GamePlayerNotFound,
@@ -9,10 +8,7 @@ import {
 } from '@modules/game/error/index.js';
 
 export class GameService {
-  constructor(
-    private readonly gameRepo: GameRepository,
-    private readonly roomRepo: RoomRepository
-  ) {}
+  constructor(private readonly gameRepo: GameRepository) {}
 
   async createGame(): Promise<Game> {
     return this.gameRepo.create();
