@@ -1,14 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GameQuery } from '../index.js';
+import { GameQuery } from '@modules/game/query/index.js';
 
 const mockDb = { query: vi.fn() };
 const q = new GameQuery(mockDb as any);
 
 beforeEach(() => vi.clearAllMocks());
-
-// ---------------------------------------------------------------------------
-// Fixtures
-// ---------------------------------------------------------------------------
 
 const gameRow = {
   id: 'game-1',
@@ -38,10 +34,6 @@ const player = {
 
 const teamRow = { id: 'team-1', game_id: 'game-1', name: 'Team A', position: 1 };
 
-// ---------------------------------------------------------------------------
-// insertGame
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.insertGame', () => {
   it('executes INSERT and returns the raw GameRow', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [gameRow] });
@@ -68,10 +60,6 @@ describe('GameQuery.insertGame', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// findById
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.findById', () => {
   it('returns null when game row is not found', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [] });
@@ -83,30 +71,24 @@ describe('GameQuery.findById', () => {
   });
 
   it('queries game, players and teams in order and returns assembled Game', async () => {
-    // 1. SELECT game
     mockDb.query.mockResolvedValueOnce({ rows: [gameRow] });
-    // 2. SELECT players (via selectPlayersByGame)
     mockDb.query.mockResolvedValueOnce({ rows: [playerRow] });
-    // 3. SELECT teams (via selectTeamsWithPlayers — teams query)
-    mockDb.query.mockResolvedValueOnce({ rows: [] }); // no teams → short-circuits
+    mockDb.query.mockResolvedValueOnce({ rows: [] });
 
     const result = await q.findById('game-1');
 
     expect(mockDb.query).toHaveBeenCalledTimes(3);
 
-    // First call: fetch game
     expect(mockDb.query).toHaveBeenNthCalledWith(
       1,
       'SELECT id, room_id, team_count, game_status, created_at FROM games WHERE id = $1',
       ['game-1']
     );
-    // Second call: fetch players
     expect(mockDb.query).toHaveBeenNthCalledWith(
       2,
       'SELECT id, game_id, name, priority, notes, position, created_at FROM game_players WHERE game_id = $1 ORDER BY position',
       ['game-1']
     );
-    // Third call: fetch teams
     expect(mockDb.query).toHaveBeenNthCalledWith(
       3,
       'SELECT id, game_id, name, position FROM teams WHERE game_id = $1 ORDER BY position',
@@ -138,10 +120,6 @@ describe('GameQuery.findById', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// selectRoomForUpdate
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.selectRoomForUpdate', () => {
   it('returns the row when the room exists', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [{ id: 'room-1' }] });
@@ -164,10 +142,6 @@ describe('GameQuery.selectRoomForUpdate', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// checkRoomHasGame
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.checkRoomHasGame', () => {
   it('returns true when a game row exists for the room', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [{ id: 'game-1' }] });
@@ -189,10 +163,6 @@ describe('GameQuery.checkRoomHasGame', () => {
     expect(result).toBe(false);
   });
 });
-
-// ---------------------------------------------------------------------------
-// selectPlayersByGame
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.selectPlayersByGame', () => {
   it('returns mapped Player array ordered by position', async () => {
@@ -232,10 +202,6 @@ describe('GameQuery.selectPlayersByGame', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// maxPlayerPosition
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.maxPlayerPosition', () => {
   it('returns the max position when players exist', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [{ max: 4 }] });
@@ -266,10 +232,6 @@ describe('GameQuery.maxPlayerPosition', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// insertPlayer
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.insertPlayer', () => {
   it('executes INSERT and returns a mapped Player', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [playerRow] });
@@ -283,10 +245,6 @@ describe('GameQuery.insertPlayer', () => {
     expect(result).toEqual(player);
   });
 });
-
-// ---------------------------------------------------------------------------
-// deletePlayer
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.deletePlayer', () => {
   it('returns the deleted row position when found', async () => {
@@ -310,10 +268,6 @@ describe('GameQuery.deletePlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// decrementPlayerPositions
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.decrementPlayerPositions', () => {
   it('executes UPDATE with correct gameId and afterPosition', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [] });
@@ -326,10 +280,6 @@ describe('GameQuery.decrementPlayerPositions', () => {
     );
   });
 });
-
-// ---------------------------------------------------------------------------
-// updatePlayerPriority
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.updatePlayerPriority', () => {
   it('returns mapped Player when the row is found', async () => {
@@ -352,10 +302,6 @@ describe('GameQuery.updatePlayerPriority', () => {
     expect(result).toBeNull();
   });
 });
-
-// ---------------------------------------------------------------------------
-// selectPlayersForReorder
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.selectPlayersForReorder', () => {
   it('returns id+position pairs ordered by position', async () => {
@@ -383,10 +329,6 @@ describe('GameQuery.selectPlayersForReorder', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// updatePlayerPosition
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.updatePlayerPosition', () => {
   it('executes UPDATE with position and playerId', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [] });
@@ -399,10 +341,6 @@ describe('GameQuery.updatePlayerPosition', () => {
     );
   });
 });
-
-// ---------------------------------------------------------------------------
-// updateTeamCount
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.updateTeamCount', () => {
   it('returns updated GameRow when game exists', async () => {
@@ -427,10 +365,6 @@ describe('GameQuery.updateTeamCount', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// updateGameStatus
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.updateGameStatus', () => {
   it('executes UPDATE with status and gameId', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [] });
@@ -443,10 +377,6 @@ describe('GameQuery.updateGameStatus', () => {
     );
   });
 });
-
-// ---------------------------------------------------------------------------
-// deleteTeamsByGame
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.deleteTeamsByGame', () => {
   it('executes DELETE for the given gameId', async () => {
@@ -461,10 +391,6 @@ describe('GameQuery.deleteTeamsByGame', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// insertTeam
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.insertTeam', () => {
   it('executes INSERT with all team fields', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [] });
@@ -478,10 +404,6 @@ describe('GameQuery.insertTeam', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// insertTeamPlayer
-// ---------------------------------------------------------------------------
-
 describe('GameQuery.insertTeamPlayer', () => {
   it('executes INSERT into team_players junction table', async () => {
     mockDb.query.mockResolvedValueOnce({ rows: [] });
@@ -494,10 +416,6 @@ describe('GameQuery.insertTeamPlayer', () => {
     );
   });
 });
-
-// ---------------------------------------------------------------------------
-// selectTeamsWithPlayers
-// ---------------------------------------------------------------------------
 
 describe('GameQuery.selectTeamsWithPlayers', () => {
   it('returns empty array when no teams exist', async () => {

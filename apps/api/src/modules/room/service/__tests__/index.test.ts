@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RoomService } from '../index.js';
+import { RoomService } from '@modules/room/service/index.js';
 import {
   RoomNotFound,
   RoomPlayerNotFound,
   RoomAlreadyStarted,
   InvalidReorderIndices,
-} from '../../error/index.js';
+} from '@modules/room/error/index.js';
 
 const mockRoom = { id: 'room123', players: [], createdAt: new Date() };
 const mockPlayer = { id: crypto.randomUUID(), name: 'Alice', priority: false, timestamp: new Date() };
@@ -13,16 +13,16 @@ const mockPlayer = { id: crypto.randomUUID(), name: 'Alice', priority: false, ti
 const mockRoomRepo = {
   create: vi.fn(),
   findById: vi.fn(),
-  addPlayer: vi.fn(),    // returns WriteResult<Player>
-  removePlayer: vi.fn(), // returns WriteResult<void>
-  setPriority: vi.fn(),  // returns WriteResult<Player>
-  reorder: vi.fn(),      // returns WriteResult<void>
-  clearPlayers: vi.fn(), // returns WriteResult<void>
-  hasGame: vi.fn(),      // kept in mock; service no longer calls it
+  addPlayer: vi.fn(),
+  removePlayer: vi.fn(),
+  setPriority: vi.fn(),
+  reorder: vi.fn(),
+  clearPlayers: vi.fn(),
+  hasGame: vi.fn(),
 };
 
 const mockGameRepo = {
-  createFromRoom: vi.fn(), // returns { ok: true, data: game } | { ok: false, reason: ... }
+  createFromRoom: vi.fn(),
 };
 
 const service = new RoomService(mockRoomRepo as any, mockGameRepo as any);
@@ -31,9 +31,6 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-// ---------------------------------------------------------------------------
-// createRoom
-// ---------------------------------------------------------------------------
 describe('RoomService.createRoom', () => {
   it('calls roomRepo.create() and returns its result', async () => {
     mockRoomRepo.create.mockResolvedValue(mockRoom);
@@ -45,9 +42,6 @@ describe('RoomService.createRoom', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// getRoom
-// ---------------------------------------------------------------------------
 describe('RoomService.getRoom', () => {
   it('returns the room when findById resolves a room', async () => {
     mockRoomRepo.findById.mockResolvedValue(mockRoom);
@@ -65,9 +59,6 @@ describe('RoomService.getRoom', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// addPlayer
-// ---------------------------------------------------------------------------
 describe('RoomService.addPlayer', () => {
   it('calls roomRepo.addPlayer with correct args and returns the player on success', async () => {
     mockRoomRepo.addPlayer.mockResolvedValue({ ok: true, data: mockPlayer });
@@ -91,9 +82,6 @@ describe('RoomService.addPlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// removePlayer
-// ---------------------------------------------------------------------------
 describe('RoomService.removePlayer', () => {
   it('resolves successfully when removePlayer returns { ok: true }', async () => {
     mockRoomRepo.removePlayer.mockResolvedValue({ ok: true, data: undefined });
@@ -122,9 +110,6 @@ describe('RoomService.removePlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// togglePriority
-// ---------------------------------------------------------------------------
 describe('RoomService.togglePriority', () => {
   it('calls setPriority with toggled value (false→true) and returns the updated player', async () => {
     const playerWithPriorityFalse = { ...mockPlayer, priority: false };
@@ -180,9 +165,6 @@ describe('RoomService.togglePriority', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// reorderPlayers
-// ---------------------------------------------------------------------------
 describe('RoomService.reorderPlayers', () => {
   it('calls roomRepo.reorder and returns updated room on success', async () => {
     const reorderedRoom = { ...mockRoom, players: [mockPlayer] };
@@ -219,9 +201,6 @@ describe('RoomService.reorderPlayers', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// clearPlayers
-// ---------------------------------------------------------------------------
 describe('RoomService.clearPlayers', () => {
   it('resolves successfully when clearPlayers returns { ok: true }', async () => {
     mockRoomRepo.clearPlayers.mockResolvedValue({ ok: true, data: undefined });
@@ -244,9 +223,6 @@ describe('RoomService.clearPlayers', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// startGame
-// ---------------------------------------------------------------------------
 describe('RoomService.startGame', () => {
   it('calls gameRepo.createFromRoom with roomId and players, and returns the game', async () => {
     const roomWithPlayers = { ...mockRoom, players: [mockPlayer] };

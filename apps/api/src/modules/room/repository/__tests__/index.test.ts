@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RoomRepository } from '../index.js';
+import { RoomRepository } from '@modules/room/repository/index.js';
 
 const mockQuery = {
   insertRoom: vi.fn(),
@@ -36,9 +36,6 @@ beforeEach(() => {
   mockClient.release.mockReturnValue(undefined);
 });
 
-// ---------------------------------------------------------------------------
-// create
-// ---------------------------------------------------------------------------
 describe('RoomRepository.create', () => {
   it('calls insertRoom with a generated id and returns the room', async () => {
     mockQuery.insertRoom.mockResolvedValue(mockRoom);
@@ -53,9 +50,6 @@ describe('RoomRepository.create', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// findById
-// ---------------------------------------------------------------------------
 describe('RoomRepository.findById', () => {
   it('delegates to queryFactory(db).findById(roomId)', async () => {
     mockQuery.findById.mockResolvedValue(mockRoom);
@@ -75,9 +69,6 @@ describe('RoomRepository.findById', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// hasGame
-// ---------------------------------------------------------------------------
 describe('RoomRepository.hasGame', () => {
   it('delegates to queryFactory(db).checkRoomHasGame(roomId)', async () => {
     mockQuery.checkRoomHasGame.mockResolvedValue(true);
@@ -89,9 +80,6 @@ describe('RoomRepository.hasGame', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// addPlayer
-// ---------------------------------------------------------------------------
 describe('RoomRepository.addPlayer', () => {
   it('returns { ok: true, data: player } on success', async () => {
     mockQuery.selectRoomForUpdate.mockResolvedValue({ id: 'room-abc' });
@@ -174,9 +162,6 @@ describe('RoomRepository.addPlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// removePlayer
-// ---------------------------------------------------------------------------
 describe('RoomRepository.removePlayer', () => {
   it('returns { ok: true, data: undefined } on success', async () => {
     mockQuery.selectRoomForUpdate.mockResolvedValue({ id: 'room-abc' });
@@ -233,9 +218,6 @@ describe('RoomRepository.removePlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// setPriority
-// ---------------------------------------------------------------------------
 describe('RoomRepository.setPriority', () => {
   it('returns { ok: true, data: player } on success', async () => {
     const updatedPlayer = { ...mockPlayer, priority: true };
@@ -279,9 +261,6 @@ describe('RoomRepository.setPriority', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// reorder
-// ---------------------------------------------------------------------------
 describe('RoomRepository.reorder', () => {
   it('returns { ok: true, data: undefined } on success and calls updatePlayerPosition for each row', async () => {
     const rows = [
@@ -297,7 +276,6 @@ describe('RoomRepository.reorder', () => {
     const result = await repo.reorder('room-abc', 0, 2);
 
     expect(mockQuery.selectPlayersForReorder).toHaveBeenCalledWith('room-abc');
-    // p1 moved from index 0 to index 2: expected order is p2, p3, p1
     expect(mockQuery.updatePlayerPosition).toHaveBeenCalledTimes(3);
     expect(mockQuery.updatePlayerPosition).toHaveBeenNthCalledWith(1, 'p2', 0);
     expect(mockQuery.updatePlayerPosition).toHaveBeenNthCalledWith(2, 'p3', 1);
@@ -350,9 +328,6 @@ describe('RoomRepository.reorder', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// clearPlayers
-// ---------------------------------------------------------------------------
 describe('RoomRepository.clearPlayers', () => {
   it('returns { ok: true, data: undefined } on success', async () => {
     mockQuery.selectRoomForUpdate.mockResolvedValue({ id: 'room-abc' });

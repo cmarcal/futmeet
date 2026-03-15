@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RoomQuery } from '../index.js';
+import { RoomQuery } from '@modules/room/query/index.js';
 
 const mockDb = { query: vi.fn() };
 const q = new RoomQuery(mockDb as any);
@@ -7,10 +7,6 @@ const q = new RoomQuery(mockDb as any);
 beforeEach(() => {
   vi.clearAllMocks();
 });
-
-// ---------------------------------------------------------------------------
-// Shared fixtures
-// ---------------------------------------------------------------------------
 
 const roomRow = { id: 'room-1', created_at: new Date('2024-01-01T00:00:00Z') };
 
@@ -38,8 +34,6 @@ const expectedRoom = {
   createdAt: roomRow.created_at,
 };
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.insertRoom', () => {
   it('executes INSERT and returns a Room with empty players array', async () => {
     mockDb.query.mockResolvedValue({ rows: [roomRow] });
@@ -54,13 +48,11 @@ describe('RoomQuery.insertRoom', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.findById', () => {
   it('returns assembled Room when room exists', async () => {
     mockDb.query
-      .mockResolvedValueOnce({ rows: [roomRow] })         // SELECT room
-      .mockResolvedValueOnce({ rows: [playerRow] });      // SELECT players
+      .mockResolvedValueOnce({ rows: [roomRow] })
+      .mockResolvedValueOnce({ rows: [playerRow] });
 
     const result = await q.findById('room-1');
 
@@ -87,8 +79,6 @@ describe('RoomQuery.findById', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.selectRoomForUpdate', () => {
   it('returns { id } when room exists', async () => {
     mockDb.query.mockResolvedValue({ rows: [{ id: 'room-1' }] });
@@ -111,8 +101,6 @@ describe('RoomQuery.selectRoomForUpdate', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.checkRoomHasGame', () => {
   it('returns true when count > 0', async () => {
     mockDb.query.mockResolvedValue({ rows: [{ count: '1' }] });
@@ -134,8 +122,6 @@ describe('RoomQuery.checkRoomHasGame', () => {
     expect(result).toBe(false);
   });
 });
-
-// ---------------------------------------------------------------------------
 
 describe('RoomQuery.selectPlayersByRoom', () => {
   it('returns mapped Player array ordered by position', async () => {
@@ -160,8 +146,6 @@ describe('RoomQuery.selectPlayersByRoom', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.maxPlayerPosition', () => {
   it('returns the max position when players exist', async () => {
     mockDb.query.mockResolvedValue({ rows: [{ max: 3 }] });
@@ -184,8 +168,6 @@ describe('RoomQuery.maxPlayerPosition', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.insertPlayer', () => {
   it('executes INSERT and returns mapped Player', async () => {
     mockDb.query.mockResolvedValue({ rows: [playerRow] });
@@ -201,8 +183,6 @@ describe('RoomQuery.insertPlayer', () => {
     expect(result).toEqual(expectedPlayer);
   });
 });
-
-// ---------------------------------------------------------------------------
 
 describe('RoomQuery.deletePlayer', () => {
   it('returns { position } when the player was deleted', async () => {
@@ -226,8 +206,6 @@ describe('RoomQuery.deletePlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.decrementPlayerPositions', () => {
   it('executes UPDATE to decrement positions after the given position', async () => {
     mockDb.query.mockResolvedValue({ rows: [] });
@@ -240,8 +218,6 @@ describe('RoomQuery.decrementPlayerPositions', () => {
     );
   });
 });
-
-// ---------------------------------------------------------------------------
 
 describe('RoomQuery.updatePlayerPriority', () => {
   it('returns mapped Player when the player was updated', async () => {
@@ -269,8 +245,6 @@ describe('RoomQuery.updatePlayerPriority', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.selectPlayersForReorder', () => {
   it('returns id and position pairs ordered by position', async () => {
     const rows = [
@@ -289,8 +263,6 @@ describe('RoomQuery.selectPlayersForReorder', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-
 describe('RoomQuery.updatePlayerPosition', () => {
   it('executes UPDATE with new position for the given player', async () => {
     mockDb.query.mockResolvedValue({ rows: [] });
@@ -303,8 +275,6 @@ describe('RoomQuery.updatePlayerPosition', () => {
     );
   });
 });
-
-// ---------------------------------------------------------------------------
 
 describe('RoomQuery.deleteAllPlayers', () => {
   it('executes DELETE for all players in the given room', async () => {

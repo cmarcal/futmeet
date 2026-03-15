@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GameRepository } from '../index.js';
+import { GameRepository } from '@modules/game/repository/index.js';
 
 const mockQuery = {
   insertGame: vi.fn(),
@@ -32,10 +32,6 @@ beforeEach(() => {
   mockClient.query.mockResolvedValue(undefined);
   mockClient.release.mockReturnValue(undefined);
 });
-
-// ---------------------------------------------------------------------------
-// create
-// ---------------------------------------------------------------------------
 
 describe('GameRepository.create', () => {
   it('calls insertGame with a generated id and null roomId, returns Game with empty players/teams', async () => {
@@ -85,10 +81,6 @@ describe('GameRepository.create', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// findById
-// ---------------------------------------------------------------------------
-
 describe('GameRepository.findById', () => {
   it('delegates to queryFactory(db).findById and returns the result', async () => {
     const now = new Date();
@@ -118,10 +110,6 @@ describe('GameRepository.findById', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// createFromRoom
-// ---------------------------------------------------------------------------
-
 describe('GameRepository.createFromRoom', () => {
   const players = [
     { id: 'p1', name: 'Alice', priority: false, timestamp: new Date() },
@@ -148,7 +136,6 @@ describe('GameRepository.createFromRoom', () => {
     expect(mockQuery.insertGame).toHaveBeenCalledWith(expect.any(String), 'room-1');
     expect(mockQuery.insertPlayer).toHaveBeenCalledTimes(2);
 
-    // First player call: index 0, priority false, notes null
     expect(mockQuery.insertPlayer).toHaveBeenNthCalledWith(
       1,
       expect.any(String),
@@ -158,7 +145,6 @@ describe('GameRepository.createFromRoom', () => {
       null,
       0
     );
-    // Second player call: index 1, priority true, notes 'captain'
     expect(mockQuery.insertPlayer).toHaveBeenNthCalledWith(
       2,
       expect.any(String),
@@ -202,10 +188,6 @@ describe('GameRepository.createFromRoom', () => {
     expect(mockQuery.insertGame).not.toHaveBeenCalled();
   });
 });
-
-// ---------------------------------------------------------------------------
-// addPlayer
-// ---------------------------------------------------------------------------
 
 describe('GameRepository.addPlayer', () => {
   it('gets max position, inserts player at position+1, returns the inserted player', async () => {
@@ -258,10 +240,6 @@ describe('GameRepository.addPlayer', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// removePlayer
-// ---------------------------------------------------------------------------
-
 describe('GameRepository.removePlayer', () => {
   it('success: deletes player, decrements positions, returns true', async () => {
     mockQuery.deletePlayer.mockResolvedValue({ position: 1 });
@@ -283,10 +261,6 @@ describe('GameRepository.removePlayer', () => {
     expect(mockQuery.decrementPlayerPositions).not.toHaveBeenCalled();
   });
 });
-
-// ---------------------------------------------------------------------------
-// setPriority
-// ---------------------------------------------------------------------------
 
 describe('GameRepository.setPriority', () => {
   it('delegates to queryFactory(db).updatePlayerPriority and returns the result', async () => {
@@ -315,10 +289,6 @@ describe('GameRepository.setPriority', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// reorder
-// ---------------------------------------------------------------------------
-
 describe('GameRepository.reorder', () => {
   it('success: splices rows, updates positions for each, returns true', async () => {
     mockQuery.selectPlayersForReorder.mockResolvedValue([
@@ -332,7 +302,6 @@ describe('GameRepository.reorder', () => {
 
     expect(result).toBe(true);
     expect(mockQuery.updatePlayerPosition).toHaveBeenCalledTimes(3);
-    // After moving index 0 → index 2: [p2, p3, p1]
     expect(mockQuery.updatePlayerPosition).toHaveBeenNthCalledWith(1, 'p2', 0);
     expect(mockQuery.updatePlayerPosition).toHaveBeenNthCalledWith(2, 'p3', 1);
     expect(mockQuery.updatePlayerPosition).toHaveBeenNthCalledWith(3, 'p1', 2);
@@ -370,10 +339,6 @@ describe('GameRepository.reorder', () => {
     expect(result).toBe(false);
   });
 });
-
-// ---------------------------------------------------------------------------
-// setTeamCount
-// ---------------------------------------------------------------------------
 
 describe('GameRepository.setTeamCount', () => {
   it('success: updates team count, fetches players and teams, returns assembled Game', async () => {
@@ -418,10 +383,6 @@ describe('GameRepository.setTeamCount', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// sort
-// ---------------------------------------------------------------------------
-
 describe('GameRepository.sort', () => {
   it('success: calls findById, applies sortTeams, writes inside transaction, returns game with gameStatus "complete"', async () => {
     const now = new Date();
@@ -453,7 +414,6 @@ describe('GameRepository.sort', () => {
     expect(result!.gameStatus).toBe('complete');
     expect(result!.id).toBe('game-1');
     expect(Array.isArray(result!.teams)).toBe(true);
-    // Each team should have players assigned
     const allTeamPlayers = result!.teams.flatMap((t) => t.players);
     expect(allTeamPlayers.length).toBe(2);
   });
@@ -493,7 +453,6 @@ describe('GameRepository.sort', () => {
     expect(result!.gameStatus).toBe('complete');
     expect(result!.teams.length).toBe(2);
     expect(mockQuery.insertTeam).toHaveBeenCalledTimes(2);
-    // Total insertTeamPlayer calls should match total number of players across all teams
     const totalPlayers = result!.teams.reduce((sum, t) => sum + t.players.length, 0);
     expect(mockQuery.insertTeamPlayer).toHaveBeenCalledTimes(totalPlayers);
   });
