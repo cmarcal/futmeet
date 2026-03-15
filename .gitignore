@@ -64,3 +64,5 @@ yarn-error.log*
 
 # Documentation and planning files
 PHASE_*.md
+
+*settings.local.json

@@ -8,11 +8,24 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "oxlint-node src/",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "migrate": "node-pg-migrate up --migration-file-language sql"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10",
+    "@fastify/swagger": "^9",
+    "@fastify/swagger-ui": "^5",
+    "@futmeet/shared": "*",
+    "fastify": "^5",
+    "node-pg-migrate": "^7",
+    "pg": "^8",
+    "pino": "^9",
+    "pino-pretty": "^13"
   },
   "devDependencies": {
     "@futmeet/oxlint-config": "*",
     "@futmeet/tsconfig": "*",
+    "@types/pg": "^8",
     "oxlint": "^0.16.0",
     "tsx": "^4",
     "typescript": "^5",
