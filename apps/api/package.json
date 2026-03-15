@@ -9,7 +9,14 @@
     "start": "node dist/index.js",
     "lint": "oxlint-node src/",
     "test": "vitest run --passWithNoTests",
-    "migrate": "node-pg-migrate up --migration-file-language sql"
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:latest --knexfile knexfile.ts",
+    "db:rollback": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:rollback --knexfile knexfile.ts",
+    "db:reset": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:rollback --all --knexfile knexfile.ts && node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:latest --knexfile knexfile.ts",
+    "db:seed": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js seed:run --knexfile knexfile.ts",
+    "db:fresh": "npm run db:reset && npm run db:seed",
+    "db:status": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:status --knexfile knexfile.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10",
@@ -17,7 +24,7 @@
     "@fastify/swagger-ui": "^5",
     "@futmeet/shared": "*",
     "fastify": "^5",
-    "node-pg-migrate": "^7",
+    "knex": "^3.1.0",
     "pg": "^8",
     "pino": "^9",
     "pino-pretty": "^13"
