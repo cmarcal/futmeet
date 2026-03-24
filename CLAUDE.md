@@ -72,7 +72,7 @@ Each module (`room/`, `game/`) owns its full vertical slice under `src/modules/`
 
 ### Key patterns
 
-**WriteResult\<T\>** — Repository write methods return `{ ok: true; data: T } | { ok: false; reason: string }` instead of throwing. Services call `unwrapRoomResult` / `unwrapGameResult` to convert to HTTP errors.
+**WriteResult\<T\>** — Repository write methods return `{ ok: true; data: T } | { ok: false; reason: string }` instead of throwing. The room service uses a private `unwrapRoomResult` helper to convert failures to HTTP errors; the game service checks the discriminant inline.
 
 **Pessimistic locking** — All write operations use `SELECT ... FOR UPDATE` inside a transaction via a `lockRoom` / `lockGame` private helper in the repository. This prevents TOCTOU race conditions. The service layer does NOT do pre-check reads.
 
