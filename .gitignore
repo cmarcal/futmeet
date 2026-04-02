@@ -43,6 +43,7 @@ Thumbs.db
 *.secret
 .env.mcp
 mcp.json
+.mcp.json
 
 # Cursor specific (keep .cursor but ignore secrets and local plans)
 .cursor/mcp.json
