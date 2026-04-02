@@ -1,5 +1,21 @@
 {
   "enabledPlugins": {
     "github@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "npm run lint && npm run test && npm run build",
+            "timeout": 120,
+            "statusMessage": "Running pre-commit checks (lint, test, build)..."
+          }
+        ]
+      }
+    ]
   }
 }
