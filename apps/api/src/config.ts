@@ -8,5 +8,6 @@ export const config = {
   port: parseInt(process.env['PORT'] ?? '3001', 10),
   nodeEnv: process.env['NODE_ENV'] ?? 'development',
   databaseUrl: requireEnv('DATABASE_URL'),
-  corsOrigin: process.env['CORS_ORIGIN'] ?? 'http://localhost:5173',
+  corsOrigins: (process.env['ALLOWED_ORIGINS'] ?? 'http://localhost:5173').split(','),
+  apiKey: requireEnv('API_KEY'),
 } as const;
