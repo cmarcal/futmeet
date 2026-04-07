@@ -6,4 +6,9 @@ export type DbPool = InstanceType<typeof Pool>;
 export type DbClient = pg.PoolClient;
 
 export const createPool = (connectionString: string): DbPool =>
-  new Pool({ connectionString, max: 10 });
+  new Pool({
+    connectionString,
+    max: 10,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 5_000,
+  });

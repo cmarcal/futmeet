@@ -48,6 +48,16 @@ const start = async (): Promise<void> => {
   await fastify.register(gameRoutes(gameController), { prefix: '/api/v1/games' });
 
   await fastify.listen({ port: config.port, host: '0.0.0.0' });
+
+  const shutdown = async (signal: string): Promise<void> => {
+    fastify.log.info({ signal }, 'Shutting down');
+    await fastify.close();
+    await db.end();
+    process.exit(0);
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 };
 
 start().catch((err: unknown) => {
