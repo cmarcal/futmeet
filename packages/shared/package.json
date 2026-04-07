@@ -5,15 +5,16 @@
   "type": "module",
   "exports": {
     "./types": {
-      "import": "./src/types/index.ts",
-      "default": "./src/types/index.ts"
+      "import": "./dist/types/index.js",
+      "default": "./dist/types/index.js"
     },
     "./utils": {
-      "import": "./src/utils/index.ts",
-      "default": "./src/utils/index.ts"
+      "import": "./dist/utils/index.js",
+      "default": "./dist/utils/index.js"
     }
   },
   "scripts": {
+    "build": "tsc",
     "lint": "oxlint-node src/",
     "test": "vitest run --passWithNoTests"
   },
