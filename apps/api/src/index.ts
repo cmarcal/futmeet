@@ -49,15 +49,34 @@ const start = async (): Promise<void> => {
 
   await fastify.listen({ port: config.port, host: '0.0.0.0' });
 
+  let shutdownPromise: Promise<void> | null = null;
+
   const shutdown = async (signal: string): Promise<void> => {
-    fastify.log.info({ signal }, 'Shutting down');
-    await fastify.close();
-    await db.end();
-    process.exit(0);
+    if (shutdownPromise) {
+      fastify.log.info({ signal }, 'Shutdown already in progress');
+      return shutdownPromise;
+    }
+    shutdownPromise = (async () => {
+      fastify.log.info({ signal }, 'Shutting down');
+      await fastify.close();
+      await db.end();
+      process.exit(0);
+    })();
+    return shutdownPromise;
   };
 
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => {
+    shutdown('SIGTERM').catch((err: unknown) => {
+      fastify.log.error({ err, signal: 'SIGTERM' }, 'Error during shutdown');
+      process.exitCode = 1;
+    });
+  });
+  process.on('SIGINT', () => {
+    shutdown('SIGINT').catch((err: unknown) => {
+      fastify.log.error({ err, signal: 'SIGINT' }, 'Error during shutdown');
+      process.exitCode = 1;
+    });
+  });
 };
 
 start().catch((err: unknown) => {

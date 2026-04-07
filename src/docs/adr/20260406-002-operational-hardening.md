@@ -28,11 +28,11 @@ Chosen option: **Option A — application-level signal handling**, because it gi
 
 * In-flight requests complete before the process exits on SIGTERM/SIGINT
 * Idle database connections are released after 30 s, reducing load on the database server
-* A 5 s connection timeout makes startup failures immediately visible in logs
+* A 5 s connection timeout makes database connectivity failures visible quickly on the first connection attempt
 
 ### Negative Consequences
 
-* `process.exit(0)` is called explicitly — any uncaught error in the shutdown path would silently succeed
+* Explicit `process.exit(...)` requires care — if async shutdown steps such as `fastify.close()` or `db.end()` fail, the success exit path may be skipped and the process may instead surface an unhandled rejection unless shutdown errors are caught and mapped to a non-zero exit code (addressed by the idempotency + `.catch()` guard)
 
 ## Pros and Cons of the Options
 
