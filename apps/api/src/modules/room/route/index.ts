@@ -1,11 +1,13 @@
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import type { RoomController } from '@modules/room/controller/index.js';
 
+const ROOM_ID_SCHEMA = { type: 'string', pattern: '^[A-Za-z0-9]{21}$' } as const;
+
 const roomIdParam = {
   type: 'object',
   required: ['roomId'],
   properties: {
-    roomId: { type: 'string', minLength: 1, maxLength: 21 },
+    roomId: ROOM_ID_SCHEMA,
   },
 } as const;
 
@@ -13,7 +15,7 @@ const playerIdParam = {
   type: 'object',
   required: ['roomId', 'playerId'],
   properties: {
-    roomId: { type: 'string', minLength: 1, maxLength: 21 },
+    roomId: ROOM_ID_SCHEMA,
     playerId: { type: 'string', format: 'uuid' },
   },
 } as const;

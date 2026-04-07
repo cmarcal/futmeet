@@ -28,7 +28,9 @@ async function buildApp() {
 }
 
 const VALID_UUID = '550e8400-e29b-41d4-a716-446655440000';
+const VALID_ROOM_ID = 'a'.repeat(21);
 const TOO_LONG_ID = 'a'.repeat(22);
+const WRONG_FORMAT_ID = 'short';
 
 // ---------------------------------------------------------------------------
 // GET /rooms/:roomId
@@ -41,9 +43,15 @@ describe('GET /rooms/:roomId param validation', () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it('passes when roomId is within 21 characters', async () => {
+  it('returns 400 when roomId does not match alphanumeric pattern', async () => {
     const app = await buildApp();
-    const res = await app.inject({ method: 'GET', url: '/rooms/valid-room-id' });
+    const res = await app.inject({ method: 'GET', url: `/rooms/${WRONG_FORMAT_ID}` });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('passes when roomId is a valid 21-char alphanumeric id', async () => {
+    const app = await buildApp();
+    const res = await app.inject({ method: 'GET', url: `/rooms/${VALID_ROOM_ID}` });
     expect(res.statusCode).not.toBe(400);
   });
 });
@@ -64,11 +72,22 @@ describe('POST /rooms/:roomId/players param validation', () => {
     expect(res.statusCode).toBe(400);
   });
 
+  it('returns 400 when roomId does not match alphanumeric pattern', async () => {
+    const app = await buildApp();
+    const res = await app.inject({
+      method: 'POST',
+      url: `/rooms/${WRONG_FORMAT_ID}/players`,
+      headers: { 'content-type': 'application/json' },
+      payload: { name: 'Alice' },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
   it('passes with a valid roomId and required body', async () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'POST',
-      url: '/rooms/room123/players',
+      url: `/rooms/${VALID_ROOM_ID}/players`,
       headers: { 'content-type': 'application/json' },
       payload: { name: 'Alice' },
     });
@@ -85,7 +104,7 @@ describe('PATCH /rooms/:roomId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'PATCH',
-      url: '/rooms/room123/players/not-a-uuid',
+      url: `/rooms/${VALID_ROOM_ID}/players/not-a-uuid`,
     });
     expect(res.statusCode).toBe(400);
   });
@@ -94,7 +113,7 @@ describe('PATCH /rooms/:roomId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'PATCH',
-      url: `/rooms/room123/players/${VALID_UUID}`,
+      url: `/rooms/${VALID_ROOM_ID}/players/${VALID_UUID}`,
     });
     expect(res.statusCode).not.toBe(400);
   });
@@ -118,7 +137,7 @@ describe('DELETE /rooms/:roomId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'DELETE',
-      url: '/rooms/room123/players/not-a-uuid',
+      url: `/rooms/${VALID_ROOM_ID}/players/not-a-uuid`,
     });
     expect(res.statusCode).toBe(400);
   });
@@ -127,7 +146,7 @@ describe('DELETE /rooms/:roomId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'DELETE',
-      url: `/rooms/room123/players/${VALID_UUID}`,
+      url: `/rooms/${VALID_ROOM_ID}/players/${VALID_UUID}`,
     });
     expect(res.statusCode).not.toBe(400);
   });
@@ -146,7 +165,7 @@ describe('DELETE /rooms/:roomId/players param validation', () => {
 
   it('passes with a valid roomId', async () => {
     const app = await buildApp();
-    const res = await app.inject({ method: 'DELETE', url: '/rooms/room123/players' });
+    const res = await app.inject({ method: 'DELETE', url: `/rooms/${VALID_ROOM_ID}/players` });
     expect(res.statusCode).not.toBe(400);
   });
 });
@@ -164,7 +183,7 @@ describe('POST /rooms/:roomId/start param validation', () => {
 
   it('passes with a valid roomId', async () => {
     const app = await buildApp();
-    const res = await app.inject({ method: 'POST', url: '/rooms/room123/start' });
+    const res = await app.inject({ method: 'POST', url: `/rooms/${VALID_ROOM_ID}/start` });
     expect(res.statusCode).not.toBe(400);
   });
 });
