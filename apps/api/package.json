@@ -16,7 +16,10 @@
     "db:reset": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:rollback --all --knexfile knexfile.ts && node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:latest --knexfile knexfile.ts",
     "db:seed": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js seed:run --knexfile knexfile.ts",
     "db:fresh": "npm run db:reset && npm run db:seed",
-    "db:status": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:status --knexfile knexfile.ts"
+    "db:status": "node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:status --knexfile knexfile.ts",
+    "docker:dev": "docker compose --profile dev up -d",
+    "docker:deploy": "docker compose --profile deploy up -d",
+    "docker:down": "docker compose --profile deploy down"
   },
   "dependencies": {
     "@fastify/cors": "^10",
