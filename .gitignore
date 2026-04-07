@@ -67,3 +67,6 @@ yarn-error.log*
 PHASE_*.md
 
 *settings.local.json
+
+# Git worktrees
+.worktrees/
