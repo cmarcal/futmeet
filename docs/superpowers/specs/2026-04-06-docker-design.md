@@ -23,15 +23,18 @@ The Dockerfile build context is the **monorepo root** (`../..` from `apps/api/`)
 
 ## Dockerfile (multi-stage)
 
-Three stages:
+Four stages:
 
 | Stage | Base | Purpose |
 |-------|------|---------|
 | `deps` | `node:22-alpine` | `npm ci` — installs all node_modules |
 | `build` | `node:22-alpine` | Copies deps + source, runs `tsc` → `dist/` |
-| `runtime` | `node:22-alpine` | Copies `dist/` + `node_modules`, exposes port 3001, runs `node dist/index.js` |
+| `migrate` | `node:22-alpine` | Copies deps + source (keeps `tsx`), runs `knex migrate:latest` via `tsx` |
+| `runtime` | `node:22-alpine` | Copies `dist/` + production `node_modules`, exposes port 3001, runs `node dist/index.js` |
 
-The runtime image contains no source code — only the compiled output and dependencies.
+The `migrate` stage keeps the full `src/` and `node_modules` (including `tsx`) because `knexfile.ts` is not compiled by `tsc` (`tsconfig.json` has `"include": ["src"]` and `"rootDir": "src"`). Migrations run exactly as they do locally — via `tsx`.
+
+The `runtime` stage contains no source code — only compiled output and dependencies.
 
 ## docker-compose.yml
 
@@ -43,8 +46,8 @@ The runtime image contains no source code — only the compiled output and depen
 - Persists data in named volume `pgdata`
 
 **`migrate`** (profile: `deploy` only)
-- Built from the same Dockerfile as `api`
-- Runs `node --import tsx/esm node_modules/knex/bin/cli.js migrate:latest --knexfile dist/knexfile.js`
+- Built from the `migrate` stage of the Dockerfile (has `src/` + `tsx`)
+- Runs `node --env-file=.env --import tsx/esm node_modules/knex/bin/cli.js migrate:latest --knexfile knexfile.ts` (same as local `db:migrate`)
 - `depends_on: db` with `condition: service_healthy`
 - `restart: on-failure` — retries if DB isn't ready yet
 - Exits after migrations complete
@@ -98,7 +101,7 @@ docker compose --profile deploy run --rm migrate
 
 ## knexfile consideration
 
-The `migrate` service runs against `dist/knexfile.js`. This means `knexfile.ts` must be included in the `tsc` compilation output. Verify that `tsconfig.json` does not exclude it (e.g., via `exclude` or `include` patterns that skip root-level files).
+`knexfile.ts` lives at `apps/api/` root and is excluded from `tsc` compilation (`tsconfig.json` sets `"include": ["src"]`). It also references `./src/migrations` with `.ts` extensions. For this reason, the `migrate` Docker service uses the dedicated `migrate` stage (which retains `src/` and `tsx`) and runs migrations exactly as the local `db:migrate` script does — no changes to `knexfile.ts` required.
 
 ## Out of scope
 
