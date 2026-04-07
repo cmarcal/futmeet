@@ -121,3 +121,42 @@ Uses **oxlint** (Rust-based, replaces ESLint). Config packages expose `oxlint-no
 - No comments in test files
 - Use path aliases (`@modules/...`) in test imports, not relative paths
 - Mock the query factory to test repository logic without a database
+
+### REQUIRED: Write tests for every file you create or modify
+
+Every code change must be accompanied by unit tests in the same commit. No exceptions.
+
+| Layer | What to test | How |
+|---|---|---|
+| **Route** | Param validation rejects invalid input (400); valid input passes | Build a Fastify instance with `inject()`, use a mock controller, register `ajvFormats as never` |
+| **Controller** | Calls correct service method; maps service result to HTTP status/body | Mock the service, call the handler directly |
+| **Service** | Business rules, error branches | Mock the repository via `queryFactory` |
+| **Repository** | Correct SQL is executed; result is mapped to domain type | Mock the query factory |
+| **Core plugins** | Plugin registration; hook/handler behaviour | Mock the Fastify instance via `vi.fn()` |
+| **Framework utilities** | Constructor arguments; return value | Mock dependencies with `vi.hoisted()` + `vi.mock()` |
+
+**Route test pattern** (for param/body validation):
+```ts
+import Fastify from 'fastify';
+import ajvFormats from 'ajv-formats';
+import { myRoutes } from '../index.js';
+
+async function buildApp() {
+  const fastify = Fastify({ logger: false, ajv: { plugins: [ajvFormats as never] } });
+  await fastify.register(myRoutes(mockController as never), { prefix: '/prefix' });
+  await fastify.ready();
+  return fastify;
+}
+
+it('returns 400 when param is invalid', async () => {
+  const app = await buildApp();
+  const res = await app.inject({ method: 'GET', url: '/prefix/invalid-value' });
+  expect(res.statusCode).toBe(400);
+});
+```
+
+**Module mock pattern** (for classes that wrap third-party constructors):
+```ts
+const { MockClass } = vi.hoisted(() => ({ MockClass: vi.fn() }));
+vi.mock('third-party', () => ({ default: { ClassName: MockClass } }));
+```
