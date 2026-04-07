@@ -1,10 +1,11 @@
 import Fastify from 'fastify';
-import cors from '@fastify/cors';
+import ajvFormats from 'ajv-formats';
 import { config } from './config.js';
 import { logger } from '@core/logger/index.js';
 import { createPool } from '@core/framework/postgres/index.js';
 import { registerDbDecorator } from '@core/decorator/index.js';
 import { registerErrorHandler } from '@core/error/index.js';
+import { registerSecurity } from '@core/security/index.js';
 import { registerSwagger } from '@core/documentation/swagger/index.js';
 import { roomRoutes } from '@modules/room/route/index.js';
 import { gameRoutes } from '@modules/game/route/index.js';
@@ -18,13 +19,17 @@ import { GameController } from '@modules/game/controller/index.js';
 const start = async (): Promise<void> => {
   const db = createPool(config.databaseUrl);
 
-  const fastify = Fastify({ logger });
+  const fastify = Fastify({
+    logger,
+    ajv: { plugins: [ajvFormats as never] },
+    genReqId: () => crypto.randomUUID(),
+  });
 
   // Core
   registerDbDecorator(fastify, db);
   registerErrorHandler(fastify);
-  await fastify.register(cors, { origin: config.corsOrigin, methods: ['GET', 'POST', 'PATCH', 'DELETE'] });
-  await registerSwagger(fastify);
+  await registerSecurity(fastify);
+  if (config.nodeEnv !== 'production') await registerSwagger(fastify);
 
   // Health
   fastify.get('/health', async () => ({ status: 'ok' }));
