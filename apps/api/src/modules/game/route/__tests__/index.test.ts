@@ -28,7 +28,9 @@ async function buildApp() {
 }
 
 const VALID_UUID = '550e8400-e29b-41d4-a716-446655440000';
+const VALID_GAME_ID = 'a'.repeat(21);
 const TOO_LONG_ID = 'a'.repeat(22);
+const WRONG_FORMAT_ID = 'short';
 
 // ---------------------------------------------------------------------------
 // GET /games/:gameId
@@ -41,9 +43,15 @@ describe('GET /games/:gameId param validation', () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it('passes when gameId is within 21 characters', async () => {
+  it('returns 400 when gameId does not match alphanumeric pattern', async () => {
     const app = await buildApp();
-    const res = await app.inject({ method: 'GET', url: '/games/valid-game-id' });
+    const res = await app.inject({ method: 'GET', url: `/games/${WRONG_FORMAT_ID}` });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('passes when gameId is a valid 21-char alphanumeric id', async () => {
+    const app = await buildApp();
+    const res = await app.inject({ method: 'GET', url: `/games/${VALID_GAME_ID}` });
     expect(res.statusCode).not.toBe(400);
   });
 });
@@ -64,11 +72,22 @@ describe('POST /games/:gameId/players param validation', () => {
     expect(res.statusCode).toBe(400);
   });
 
+  it('returns 400 when gameId does not match alphanumeric pattern', async () => {
+    const app = await buildApp();
+    const res = await app.inject({
+      method: 'POST',
+      url: `/games/${WRONG_FORMAT_ID}/players`,
+      headers: { 'content-type': 'application/json' },
+      payload: { name: 'Alice' },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
   it('passes with a valid gameId and required body', async () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'POST',
-      url: '/games/game123/players',
+      url: `/games/${VALID_GAME_ID}/players`,
       headers: { 'content-type': 'application/json' },
       payload: { name: 'Alice' },
     });
@@ -85,7 +104,7 @@ describe('PATCH /games/:gameId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'PATCH',
-      url: '/games/game123/players/not-a-uuid',
+      url: `/games/${VALID_GAME_ID}/players/not-a-uuid`,
     });
     expect(res.statusCode).toBe(400);
   });
@@ -94,7 +113,7 @@ describe('PATCH /games/:gameId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'PATCH',
-      url: `/games/game123/players/${VALID_UUID}`,
+      url: `/games/${VALID_GAME_ID}/players/${VALID_UUID}`,
     });
     expect(res.statusCode).not.toBe(400);
   });
@@ -118,7 +137,7 @@ describe('DELETE /games/:gameId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'DELETE',
-      url: '/games/game123/players/not-a-uuid',
+      url: `/games/${VALID_GAME_ID}/players/not-a-uuid`,
     });
     expect(res.statusCode).toBe(400);
   });
@@ -127,7 +146,7 @@ describe('DELETE /games/:gameId/players/:playerId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'DELETE',
-      url: `/games/game123/players/${VALID_UUID}`,
+      url: `/games/${VALID_GAME_ID}/players/${VALID_UUID}`,
     });
     expect(res.statusCode).not.toBe(400);
   });
@@ -153,7 +172,7 @@ describe('PATCH /games/:gameId param validation', () => {
     const app = await buildApp();
     const res = await app.inject({
       method: 'PATCH',
-      url: '/games/game123',
+      url: `/games/${VALID_GAME_ID}`,
       headers: { 'content-type': 'application/json' },
       payload: { teamCount: 2 },
     });
@@ -174,7 +193,7 @@ describe('POST /games/:gameId/sort param validation', () => {
 
   it('passes with a valid gameId', async () => {
     const app = await buildApp();
-    const res = await app.inject({ method: 'POST', url: '/games/game123/sort' });
+    const res = await app.inject({ method: 'POST', url: `/games/${VALID_GAME_ID}/sort` });
     expect(res.statusCode).not.toBe(400);
   });
 });

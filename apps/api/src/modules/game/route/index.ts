@@ -1,11 +1,13 @@
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import type { GameController } from '@modules/game/controller/index.js';
 
+const GAME_ID_SCHEMA = { type: 'string', pattern: '^[A-Za-z0-9]{21}$' } as const;
+
 const gameIdParam = {
   type: 'object',
   required: ['gameId'],
   properties: {
-    gameId: { type: 'string', minLength: 1, maxLength: 21 },
+    gameId: GAME_ID_SCHEMA,
   },
 } as const;
 
@@ -13,7 +15,7 @@ const playerIdParam = {
   type: 'object',
   required: ['gameId', 'playerId'],
   properties: {
-    gameId: { type: 'string', minLength: 1, maxLength: 21 },
+    gameId: GAME_ID_SCHEMA,
     playerId: { type: 'string', format: 'uuid' },
   },
 } as const;
