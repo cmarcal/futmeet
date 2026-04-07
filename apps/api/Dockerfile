@@ -19,7 +19,7 @@ COPY packages/tsconfig ./packages/tsconfig
 # Copy API source
 COPY apps/api ./apps/api
 # Build shared first so @futmeet/shared resolves to JS at API build time
-RUN cd packages/shared && npx tsc
+RUN cd packages/shared && npm run build
 # Build API
 RUN cd apps/api && npm run build
 
@@ -44,5 +44,7 @@ COPY --from=build /app/packages/shared/dist ./packages/shared/dist
 # Compiled API
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 WORKDIR /app/apps/api
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 EXPOSE 3001
 CMD ["node", "dist/index.js"]
