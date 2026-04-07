@@ -1,6 +1,25 @@
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import type { GameController } from '@modules/game/controller/index.js';
 
+const GAME_ID_SCHEMA = { type: 'string', pattern: '^[A-Za-z0-9]{21}$' } as const;
+
+const gameIdParam = {
+  type: 'object',
+  required: ['gameId'],
+  properties: {
+    gameId: GAME_ID_SCHEMA,
+  },
+} as const;
+
+const playerIdParam = {
+  type: 'object',
+  required: ['gameId', 'playerId'],
+  properties: {
+    gameId: GAME_ID_SCHEMA,
+    playerId: { type: 'string', format: 'uuid' },
+  },
+} as const;
+
 export const gameRoutes =
   (controller: GameController) =>
   async (fastify: FastifyInstance, _opts: FastifyPluginOptions): Promise<void> => {
@@ -8,13 +27,14 @@ export const gameRoutes =
     fastify.post('/', controller.createGame);
 
     // GET /api/v1/games/:gameId
-    fastify.get('/:gameId', controller.getGame);
+    fastify.get('/:gameId', { schema: { params: gameIdParam } }, controller.getGame);
 
     // POST /api/v1/games/:gameId/players — add player
     fastify.post(
       '/:gameId/players',
       {
         schema: {
+          params: gameIdParam,
           body: {
             type: 'object',
             required: ['name'],
@@ -29,16 +49,25 @@ export const gameRoutes =
     );
 
     // PATCH /api/v1/games/:gameId/players/:playerId — toggle priority only
-    fastify.patch('/:gameId/players/:playerId', controller.togglePriority);
+    fastify.patch(
+      '/:gameId/players/:playerId',
+      { schema: { params: playerIdParam } },
+      controller.togglePriority
+    );
 
     // DELETE /api/v1/games/:gameId/players/:playerId — remove player
-    fastify.delete('/:gameId/players/:playerId', controller.removePlayer);
+    fastify.delete(
+      '/:gameId/players/:playerId',
+      { schema: { params: playerIdParam } },
+      controller.removePlayer
+    );
 
     // POST /api/v1/games/:gameId/players/reorder — reorder
     fastify.post(
       '/:gameId/players/reorder',
       {
         schema: {
+          params: gameIdParam,
           body: {
             type: 'object',
             required: ['fromIndex', 'toIndex'],
@@ -57,6 +86,7 @@ export const gameRoutes =
       '/:gameId',
       {
         schema: {
+          params: gameIdParam,
           body: {
             type: 'object',
             required: ['teamCount'],
@@ -70,5 +100,5 @@ export const gameRoutes =
     );
 
     // POST /api/v1/games/:gameId/sort — run sort (setup → complete, re-sort safe)
-    fastify.post('/:gameId/sort', controller.sortTeams);
+    fastify.post('/:gameId/sort', { schema: { params: gameIdParam } }, controller.sortTeams);
   };
