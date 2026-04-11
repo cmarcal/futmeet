@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.worktrees/
+
+# Build output
+dist/
+build/
+
+# Test artifacts
+coverage/
+
+# Environment files (never send to Docker daemon)
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Turbo cache
+.turbo/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docs and plans (not needed in image)
+docs/
