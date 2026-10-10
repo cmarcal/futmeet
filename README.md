@@ -18,7 +18,7 @@ A website to help casual football players organize pickup games by managing part
 
 ### Prerequisites
 
-- Node.js (v20.19.0 or >=22.12.0 recommended)
+- Node.js 26 or newer
 - npm
 
 ### Installation

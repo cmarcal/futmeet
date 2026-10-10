@@ -1,5 +1,5 @@
 # ---- Stage 1: Install all workspace dependencies ----
-FROM node:22-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /app
 # Copy workspace manifests first (layer cache: only reinstall when lockfile changes)
 COPY package.json package-lock.json ./
@@ -10,7 +10,7 @@ COPY apps/api/package.json ./apps/api/
 RUN npm ci
 
 # ---- Stage 2: Build shared + API ----
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 # Copy shared package (source + tsconfig)
@@ -24,7 +24,7 @@ RUN cd packages/shared && npm run build
 RUN cd apps/api && npm run build
 
 # ---- Stage 3: Migration runner (keeps tsx + full source) ----
-FROM node:22-alpine AS migrate
+FROM node:26-alpine AS migrate
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY packages/shared ./packages/shared
@@ -34,7 +34,7 @@ WORKDIR /app/apps/api
 CMD ["node", "--import", "tsx/esm", "node_modules/knex/bin/cli.js", "migrate:latest", "--knexfile", "knexfile.ts"]
 
 # ---- Stage 4: Lean production runtime ----
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 WORKDIR /app
 # node_modules contains @futmeet/shared symlink → /app/packages/shared
 COPY --from=deps /app/node_modules ./node_modules
