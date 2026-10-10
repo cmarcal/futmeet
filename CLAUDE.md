@@ -8,7 +8,7 @@ FutMeet is a **TypeScript monorepo** for organizing casual football pickup games
 
 ```
 apps/api      — Fastify REST API + PostgreSQL
-apps/web      — React 18 + Vite SPA
+apps/web      — React 19 + TanStack Start (Vite 8, Nitro)
 packages/shared       — Shared domain types and utilities
 packages/tsconfig     — Reusable TypeScript configs
 packages/oxlint-config — Reusable oxlint configs + CLI wrappers
@@ -45,8 +45,9 @@ npm run db:status   # Show migration status
 
 ### Web (`apps/web`)
 ```bash
-npm run dev         # Vite dev server at http://localhost:5173
-npm run build       # tsc + vite build
+npm run dev         # Start dev server with SSR (port is printed by Vite)
+npm run build       # vite build (client + SSR server in .output/) then tsc --noEmit
+npm run start       # node .output/server/index.mjs (serve the built SSR server)
 npm run test        # Vitest
 npm run test:watch  # Watch mode
 ```
@@ -91,10 +92,12 @@ ID types: Room and Game IDs are `VARCHAR(21)` (nanoid). Player and Team IDs are 
 
 ## Web architecture
 
-React 18 SPA with:
+React 19 app on TanStack Start (SSR only on shareable routes) with:
 - **Zustand** — global state management
 - **React Hook Form + Zod** — form handling and validation
-- **TanStack Router** — file-based client-side routing (`src/routes`, generated `routeTree.gen.ts` is committed)
+- **TanStack Start** (Release Candidate, versions pinned exactly) on Vite 8 + Nitro — SSR is opt-in per route: `waiting-room/$roomId` and `results/$gameId` use `ssr: true`; `/` and `/game/$gameId` use `ssr: false`. Never set `defaultSsr: false`. `apps/api` stays the only backend (no server functions replacing API logic). Fallback if SSR becomes a problem: SPA mode (`tanstackStart({ spa: { enabled: true } })`), which disables SSR everywhere
+- **TanStack Router** — file-based routing (`src/routes`, generated `routeTree.gen.ts` is committed); the document shell lives in `routes/__root.tsx`, `getRouter()` in `router.tsx`
+- Test/Vite configs are split: `vite.config.ts` (Start + Nitro) vs `vitest.config.ts` (no Start plugin); shared PostCSS/CSS Modules options live in `css.config.ts`
 - **CSS Modules** — all component styling (no Tailwind, no inline styles)
 
 ### Frontend code conventions
