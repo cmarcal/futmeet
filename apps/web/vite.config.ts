@@ -1,12 +1,14 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import postcssNesting from 'postcss-nesting'
 import postcssCustomMedia from 'postcss-custom-media'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
+    tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     react(),
     process.env.ANALYZE === 'true' &&
       visualizer({

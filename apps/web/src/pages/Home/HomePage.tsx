@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { generateGameId } from '../../utils/gameId';
@@ -9,12 +9,12 @@ const HomePage = () => {
 
   const handleStartGame = () => {
     const gameId = generateGameId();
-    navigate(`/game/${gameId}`);
+    navigate({ to: '/game/$gameId', params: { gameId } });
   };
 
   const handleOpenWaitingRoom = () => {
     const roomId = generateGameId();
-    navigate(`/waiting-room/${roomId}`);
+    navigate({ to: '/waiting-room/$roomId', params: { roomId } });
   };
 
   return (

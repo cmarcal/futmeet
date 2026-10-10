@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams, Navigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from '@tanstack/react-router';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { PlayerInput } from '../../components/PlayerInput';
@@ -12,7 +12,7 @@ import { generateGameId, isValidGameId } from '../../utils/gameId';
 import styles from './GamePage.module.css';
 
 const GamePage = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useParams({ from: '/game/$gameId' });
 
   if (!gameId || !isValidGameId(gameId)) {
     return <Navigate to="/" replace />;
@@ -40,12 +40,12 @@ const GamePageContent = ({ gameId }: GamePageContentProps) => {
       return;
     }
     sortTeams();
-    navigate(`/results/${gameId}`);
+    navigate({ to: '/results/$gameId', params: { gameId } });
   };
 
   const handleNewGame = () => {
     const newGameId = generateGameId();
-    navigate(`/game/${newGameId}`);
+    navigate({ to: '/game/$gameId', params: { gameId: newGameId } });
   };
 
   const handleMaxTeamsExceeded = () => {

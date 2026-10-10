@@ -1,26 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { renderWithRouter } from '../../test/renderWithRouter';
 import { useGameStore } from '../../stores/gameStore';
 import WaitingRoomPage from './WaitingRoomPage';
 
 const VALID_ROOM_ID = 'V1StGXR8_Z5jdHi6B-myT';
 
-const mockNavigate = vi.fn();
 const mockOpen = vi.fn();
 const mockShare = vi.fn();
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
-
 beforeEach(() => {
-  mockNavigate.mockClear();
   mockOpen.mockClear();
   mockShare.mockClear();
   useGameStore.setState({ waitingRooms: {}, games: {} });
@@ -33,52 +23,45 @@ beforeEach(() => {
 });
 
 const renderWaitingRoomPage = (roomId = VALID_ROOM_ID) => {
-  return render(
-    <MemoryRouter initialEntries={[`/waiting-room/${roomId}`]}>
-      <Routes>
-        <Route path="/waiting-room/:roomId" element={<WaitingRoomPage />} />
-        <Route path="/" element={<div>Home</div>} />
-      </Routes>
-    </MemoryRouter>
-  );
+  return renderWithRouter(<WaitingRoomPage />, { path: '/waiting-room/$roomId', initialEntry: `/waiting-room/${roomId}` });
 };
 
 describe('WaitingRoomPage', () => {
-  it('should render page title and subtitle', () => {
-    renderWaitingRoomPage();
+  it('should render page title and subtitle', async () => {
+    await renderWaitingRoomPage();
 
     expect(screen.getByRole('heading', { name: 'Sala de Espera' })).toBeInTheDocument();
     expect(screen.getByText('Adicione jogadores antes do dia do jogo')).toBeInTheDocument();
   });
 
-  it('should render Início back button', () => {
-    renderWaitingRoomPage();
+  it('should render Início back button', async () => {
+    await renderWaitingRoomPage();
 
     expect(screen.getByRole('button', { name: 'Voltar para página inicial' })).toBeInTheDocument();
   });
 
-  it('should render Add New Player section', () => {
-    renderWaitingRoomPage();
+  it('should render Add New Player section', async () => {
+    await renderWaitingRoomPage();
 
     expect(screen.getByRole('heading', { name: 'Adicionar Jogador' })).toBeInTheDocument();
   });
 
-  it('should render Player List section', () => {
-    renderWaitingRoomPage();
+  it('should render Player List section', async () => {
+    await renderWaitingRoomPage();
 
     expect(screen.getByRole('heading', { name: 'Lista de Jogadores' })).toBeInTheDocument();
     expect(screen.getByText('Nenhum jogador ainda. Adicione o primeiro!')).toBeInTheDocument();
   });
 
-  it('should render Share on WhatsApp and Create Game buttons', () => {
-    renderWaitingRoomPage();
+  it('should render Share on WhatsApp and Create Game buttons', async () => {
+    await renderWaitingRoomPage();
 
     expect(screen.getByRole('button', { name: 'Compartilhar sala de espera via WhatsApp' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Criar partida com os jogadores da sala de espera' })).toBeInTheDocument();
   });
 
-  it('should have Create Game button disabled when fewer than 2 players', () => {
-    renderWaitingRoomPage();
+  it('should have Create Game button disabled when fewer than 2 players', async () => {
+    await renderWaitingRoomPage();
 
     const createButton = screen.getByRole('button', { name: 'Criar partida com os jogadores da sala de espera' });
     expect(createButton).toBeDisabled();
@@ -86,7 +69,7 @@ describe('WaitingRoomPage', () => {
 
   it('should add a player and show it in the list', async () => {
     const user = userEvent.setup();
-    renderWaitingRoomPage();
+    await renderWaitingRoomPage();
 
     const input = screen.getByPlaceholderText('Nome do jogador...');
     await user.type(input, 'Alice');
@@ -97,7 +80,7 @@ describe('WaitingRoomPage', () => {
 
   it('should persist player to store', async () => {
     const user = userEvent.setup();
-    renderWaitingRoomPage();
+    await renderWaitingRoomPage();
 
     const input = screen.getByPlaceholderText('Nome do jogador...');
     await user.type(input, 'Bob');
@@ -109,11 +92,11 @@ describe('WaitingRoomPage', () => {
 
   it('should navigate to home when Início is clicked', async () => {
     const user = userEvent.setup();
-    renderWaitingRoomPage();
+    const { router } = await renderWaitingRoomPage();
 
     await user.click(screen.getByRole('button', { name: 'Voltar para página inicial' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'));
   });
 
   it('should navigate to game when Create Game is clicked with enough players', async () => {
@@ -121,18 +104,18 @@ describe('WaitingRoomPage', () => {
     useGameStore.getState().initWaitingRoom(VALID_ROOM_ID);
     useGameStore.getState().addWaitingRoomPlayer(VALID_ROOM_ID, 'Alice');
     useGameStore.getState().addWaitingRoomPlayer(VALID_ROOM_ID, 'Bob');
-    renderWaitingRoomPage();
+    const { router } = await renderWaitingRoomPage();
 
     await user.click(screen.getByRole('button', { name: 'Criar partida com os jogadores da sala de espera' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith(`/game/${VALID_ROOM_ID}`);
+    await waitFor(() => expect(router.state.location.pathname).toBe(`/game/${VALID_ROOM_ID}`));
     const game = useGameStore.getState().games[VALID_ROOM_ID];
     expect(game?.players).toHaveLength(2);
   });
 
-  it('should redirect to / when roomId is invalid', () => {
-    renderWaitingRoomPage('invalid-id');
+  it('should redirect to / when roomId is invalid', async () => {
+    const { router } = await renderWaitingRoomPage('invalid-id');
 
-    expect(screen.getByText('Home')).toBeInTheDocument();
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'));
   });
 });

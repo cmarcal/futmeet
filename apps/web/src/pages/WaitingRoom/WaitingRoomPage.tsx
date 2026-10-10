@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams, Navigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from '@tanstack/react-router';
 import { ArrowLeft, Share2 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
@@ -12,7 +12,7 @@ import { isValidGameId } from '../../utils/gameId';
 import styles from './WaitingRoomPage.module.css';
 
 const WaitingRoomPage = () => {
-  const { roomId } = useParams<{ roomId: string }>();
+  const { roomId } = useParams({ from: '/waiting-room/$roomId' });
 
   if (!roomId || !isValidGameId(roomId)) {
     return <Navigate to="/" replace />;
@@ -38,7 +38,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
   const handleStartGame = () => {
     if (players.length < 2) return;
     createGameFromWaitingRoom();
-    navigate(`/game/${roomId}`);
+    navigate({ to: '/game/$gameId', params: { gameId: roomId } });
   };
 
   const handleShareWhatsApp = async () => {
@@ -82,7 +82,7 @@ const WaitingRoomContent = ({ roomId }: WaitingRoomContentProps) => {
   };
 
   const handleBack = () => {
-    navigate('/');
+    navigate({ to: '/' });
   };
 
   return (

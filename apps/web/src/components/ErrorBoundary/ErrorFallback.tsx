@@ -1,5 +1,5 @@
 import type { FallbackProps } from 'react-error-boundary';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { getErrorMessage } from '../../utils/errorMessages';
 import styles from './ErrorFallback.module.css';
 
@@ -9,7 +9,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
 
   const handleGoHome = () => {
     resetErrorBoundary();
-    navigate('/');
+    navigate({ to: '/' });
   };
 
   return (

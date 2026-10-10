@@ -1,66 +1,48 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { renderWithRouter } from '../../test/renderWithRouter';
 import HomePage from './HomePage';
 
-const mockNavigate = vi.fn();
-
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
-
 const renderHomePage = () => {
-  return render(
-    <MemoryRouter>
-      <HomePage />
-    </MemoryRouter>
-  );
+  return renderWithRouter(<HomePage />);
 };
 
 describe('HomePage', () => {
-  beforeEach(() => {
-    mockNavigate.mockClear();
-  });
-
-  it('should render title and subtitle', () => {
-    renderHomePage();
+  it('should render title and subtitle', async () => {
+    await renderHomePage();
 
     expect(screen.getByRole('heading', { name: 'FutMeet' })).toBeInTheDocument();
     expect(screen.getByText('Organize suas peladas')).toBeInTheDocument();
   });
 
-  it('should render Start Game button', () => {
-    renderHomePage();
+  it('should render Start Game button', async () => {
+    await renderHomePage();
 
     expect(screen.getByRole('button', { name: 'Iniciar Partida' })).toBeInTheDocument();
   });
 
   it('should navigate to /game/:gameId when Start Game is clicked', async () => {
     const user = userEvent.setup();
-    renderHomePage();
+    const { router } = await renderHomePage();
 
     await user.click(screen.getByRole('button', { name: 'Iniciar Partida' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/game\/[A-Za-z0-9_-]{21}$/));
+    await waitFor(() => expect(router.state.location.pathname).toMatch(/^\/game\/[A-Za-z0-9_-]{21}$/));
   });
 
-  it('should render Sala de Espera link', () => {
-    renderHomePage();
+  it('should render Sala de Espera link', async () => {
+    await renderHomePage();
 
     expect(screen.getByRole('button', { name: 'Sala de Espera' })).toBeInTheDocument();
   });
 
   it('should navigate to /waiting-room/:roomId when Sala de Espera is clicked', async () => {
     const user = userEvent.setup();
-    renderHomePage();
+    const { router } = await renderHomePage();
 
     await user.click(screen.getByRole('button', { name: 'Sala de Espera' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/waiting-room\/[A-Za-z0-9_-]{21}$/));
+    await waitFor(() => expect(router.state.location.pathname).toMatch(/^\/waiting-room\/[A-Za-z0-9_-]{21}$/));
   });
 });

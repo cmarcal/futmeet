@@ -1,4 +1,4 @@
-import { useNavigate, useParams, Navigate } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from '@tanstack/react-router';
 import { Layout } from '../../components/Layout';
 import { Button } from '../../components/Button';
 import { TeamList } from '../../components/TeamList';
@@ -7,7 +7,7 @@ import { generateGameId, isValidGameId } from '../../utils/gameId';
 import styles from './ResultsPage.module.css';
 
 const ResultsPage = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useParams({ from: '/results/$gameId' });
 
   if (!gameId || !isValidGameId(gameId)) {
     return <Navigate to="/" replace />;
@@ -26,11 +26,11 @@ const ResultsPageContent = ({ gameId }: ResultsPageContentProps) => {
 
   const handleNewGame = () => {
     const newGameId = generateGameId();
-    navigate(`/game/${newGameId}`);
+    navigate({ to: '/game/$gameId', params: { gameId: newGameId } });
   };
 
   const handleBackToGame = () => {
-    navigate(`/game/${gameId}`);
+    navigate({ to: '/game/$gameId', params: { gameId: gameId } });
   };
 
   return (
