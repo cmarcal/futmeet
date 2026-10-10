@@ -94,7 +94,7 @@ ID types: Room and Game IDs are `VARCHAR(21)` (nanoid). Player and Team IDs are 
 React 18 SPA with:
 - **Zustand** — global state management
 - **React Hook Form + Zod** — form handling and validation
-- **React Router DOM v7** — client-side routing
+- **TanStack Router** — file-based client-side routing (`src/routes`, generated `routeTree.gen.ts` is committed)
 - **CSS Modules** — all component styling (no Tailwind, no inline styles)
 
 ### Frontend code conventions
