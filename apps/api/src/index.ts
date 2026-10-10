@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+import Fastify, { type FastifyBaseLogger } from 'fastify';
 import ajvFormats from 'ajv-formats';
 import { config } from './config.js';
 import { logger } from '@core/logger/index.js';
@@ -20,7 +20,7 @@ const start = async (): Promise<void> => {
   const db = createPool(config.databaseUrl);
 
   const fastify = Fastify({
-    logger,
+    loggerInstance: logger as FastifyBaseLogger,
     ajv: { plugins: [ajvFormats as never] },
     genReqId: () => crypto.randomUUID(),
   });

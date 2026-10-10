@@ -1,18 +1,3 @@
-import type { Knex } from 'knex';
+import { knexConfig } from './src/scripts/knexConfig.js';
 
-const config: Knex.Config = {
-  client: 'pg',
-  connection: process.env['DATABASE_URL'],
-  migrations: {
-    directory: './src/migrations',
-    extension: 'ts',
-    loadExtensions: ['.ts'],
-  },
-  seeds: {
-    directory: './src/seeds',
-    extension: 'ts',
-    loadExtensions: ['.ts'],
-  },
-};
-
-export default config;
+export default knexConfig;
