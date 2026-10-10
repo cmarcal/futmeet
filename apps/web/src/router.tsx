@@ -7,17 +7,17 @@ const DefaultErrorComponent = ({ error, reset }: ErrorComponentProps) => (
   <ErrorFallback error={error} resetErrorBoundary={reset} />
 );
 
-const router = createRouter({
-  routeTree,
-  defaultPendingComponent: LoadingSpinner,
-  defaultErrorComponent: DefaultErrorComponent,
-  defaultPendingMs: 0,
-});
+export const getRouter = () =>
+  createRouter({
+    routeTree,
+    scrollRestoration: true,
+    defaultPendingComponent: LoadingSpinner,
+    defaultErrorComponent: DefaultErrorComponent,
+    defaultPendingMs: 0,
+  });
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router;
+    router: ReturnType<typeof getRouter>;
   }
 }
-
-export { router };

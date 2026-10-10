@@ -1,41 +1,21 @@
-/// <reference types="vitest" />
 import { defineConfig } from 'vite'
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import { nitro } from 'nitro/vite'
 import react from '@vitejs/plugin-react'
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import postcssNesting from 'postcss-nesting'
-import postcssCustomMedia from 'postcss-custom-media'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { cssConfig } from './css.config.ts'
 
 export default defineConfig({
   plugins: [
-    tanstackRouter({ target: 'react', autoCodeSplitting: true }),
+    tanstackStart(),
+    nitro(),
     react(),
     process.env.ANALYZE === 'true' &&
       visualizer({
-        filename: 'dist/stats.html',
+        filename: '.output/public/stats.html',
         gzipSize: true,
         brotliSize: true,
       }),
   ],
-  css: {
-    modules: {
-      localsConvention: 'camelCase',
-    },
-    postcss: {
-      plugins: [postcssNesting(), postcssCustomMedia()],
-    },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    css: true,
-    execArgv: ['--no-experimental-webstorage'],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'src/test/'],
-    },
-  },
+  css: cssConfig,
 })
