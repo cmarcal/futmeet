@@ -115,7 +115,7 @@ Manages games — created from a room or standalone, tracks players and team ass
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 26+
 - Docker (for local PostgreSQL)
 
 ### 1. Environment
