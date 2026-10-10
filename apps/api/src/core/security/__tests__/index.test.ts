@@ -99,6 +99,35 @@ describe('onRequest hook — /health bypass', () => {
   });
 });
 
+describe('onRequest hook — /share bypass', () => {
+  it('does not check API key for GET /share/rooms/:id', async () => {
+    const { mockFastify, mockReply } = buildMocks();
+    const handler = await getOnRequestHandler(mockFastify);
+
+    await handler({ method: 'GET', url: '/share/rooms/abc?x=1', headers: {} }, mockReply);
+
+    expect(mockReply.status).not.toHaveBeenCalled();
+  });
+
+  it('still requires an API key for non-GET requests under /share/', async () => {
+    const { mockFastify, mockReply } = buildMocks();
+    const handler = await getOnRequestHandler(mockFastify);
+
+    await handler({ method: 'POST', url: '/share/rooms/abc', headers: {} }, mockReply);
+
+    expect(mockReply.status).toHaveBeenCalledWith(401);
+  });
+
+  it('still requires an API key for paths that merely resemble /share', async () => {
+    const { mockFastify, mockReply } = buildMocks();
+    const handler = await getOnRequestHandler(mockFastify);
+
+    await handler({ method: 'GET', url: '/sharex/rooms', headers: {} }, mockReply);
+
+    expect(mockReply.status).toHaveBeenCalledWith(401);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // onRequest hook — API key validation
 // ---------------------------------------------------------------------------

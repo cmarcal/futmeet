@@ -14,6 +14,7 @@ export const registerSecurity = async (fastify: FastifyInstance): Promise<void> 
   fastify.addHook('onRequest', async (request, reply) => {
     const pathname = request.url.split('?', 1)[0];
     if (pathname === '/health' || pathname === '/health/') return;
+    if (request.method === 'GET' && pathname?.startsWith('/share/')) return;
     if (request.headers['x-api-key'] !== config.apiKey) {
       return reply.status(401).send({ code: 'UNAUTHORIZED', message: 'Invalid or missing API key' });
     }

@@ -12,5 +12,6 @@ export const config = {
     .split(',')
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0),
+  spaBaseUrl: (process.env['SPA_BASE_URL'] ?? 'http://localhost:5173').trim(),
   apiKey: requireEnv('API_KEY'),
 } as const;

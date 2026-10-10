@@ -15,8 +15,11 @@ import { RoomController } from '@modules/room/controller/index.js';
 import { GameRepository } from '@modules/game/repository/index.js';
 import { GameService } from '@modules/game/service/index.js';
 import { GameController } from '@modules/game/controller/index.js';
+import { shareRoutes } from '@modules/share/route/index.js';
+import { ShareService } from '@modules/share/service/index.js';
+import { ShareController } from '@modules/share/controller/index.js';
 
-const start = async (): Promise<void> => {
+const start =async (): Promise<void> => {
   const db = createPool(config.databaseUrl);
 
   const fastify = Fastify({
@@ -43,7 +46,11 @@ const start = async (): Promise<void> => {
   const gameService = new GameService(gameRepository);
   const gameController = new GameController(gameService);
 
+  const shareService = new ShareService(roomRepository, gameRepository, config.spaBaseUrl);
+  const shareController = new ShareController(shareService);
+
   // Routes
+  await fastify.register(shareRoutes(shareController), { prefix: '/share' });
   await fastify.register(roomRoutes(roomController), { prefix: '/api/v1/rooms' });
   await fastify.register(gameRoutes(gameController), { prefix: '/api/v1/games' });
 

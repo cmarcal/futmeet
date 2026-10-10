@@ -132,7 +132,12 @@ NODE_ENV=development
 DATABASE_URL=postgresql://postgres:password@localhost:5432/futmeet
 CORS_ORIGIN=http://localhost:5173
 LOG_LEVEL=info
+SPA_BASE_URL=http://localhost:5173
 ```
+
+`SPA_BASE_URL` (optional) is the public URL of the web app. Share preview pages
+(`GET /share/rooms/:roomId`, `GET /share/results/:gameId`) are public (no API key), return
+Open Graph/Twitter meta tags for link crawlers, and redirect browsers to the SPA at this URL.
 
 ### 2. Start the database
 
