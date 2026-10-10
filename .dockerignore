@@ -36,3 +36,11 @@ npm-debug.log*
 
 # Docs and plans (not needed in image)
 docs/
+
+# Nested workspace deps and outputs (patterns without ** only match the root)
+**/node_modules
+**/dist
+**/.output
+**/.turbo
+.claude/
+.wayfinder/
