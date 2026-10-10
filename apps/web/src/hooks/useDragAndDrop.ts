@@ -45,8 +45,8 @@ export interface UseDragAndDropReturn {
   getItemHeight: () => number;
   isDragging: (index: number) => boolean;
   isDragOver: (index: number) => boolean;
-  listRef: React.RefObject<HTMLUListElement>;
-  itemRefs: React.MutableRefObject<(HTMLLIElement | null)[]>;
+  listRef: React.RefObject<HTMLUListElement | null>;
+  itemRefs: React.RefObject<(HTMLLIElement | null)[]>;
 }
 
 const initialState: DragState = {
