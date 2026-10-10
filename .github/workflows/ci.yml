@@ -92,3 +92,13 @@ jobs:
 
       - name: Build application
         run: npx turbo run build
+
+  docker-web:
+    name: Docker Build (web)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build web image
+        run: docker build -f apps/web/Dockerfile -t futmeet-web:ci .
