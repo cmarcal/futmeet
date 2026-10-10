@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, devtools } from 'zustand/middleware';
+import { persist, devtools, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import type { Player, Team, GameStatus } from '../types';
 import { sortTeams as sortTeamsUtil } from '../utils/teamSorter';
 
@@ -61,6 +61,15 @@ const updateGame = (
     [gameId]: { ...game, ...updater(game) },
   };
 };
+
+const serverStorage: StateStorage = {
+  getItem: () => null,
+  setItem: () => undefined,
+  removeItem: () => undefined,
+};
+
+export const getGameStorage = (): StateStorage =>
+  typeof window === 'undefined' ? serverStorage : window.localStorage;
 
 export const useGameStore = create<GamesState>()(
   devtools(
@@ -273,6 +282,7 @@ export const useGameStore = create<GamesState>()(
       }),
       {
         name: 'futmeet-games-storage',
+        storage: createJSONStorage(getGameStorage),
         partialize: (state) => ({
           games: state.games,
           waitingRooms: state.waitingRooms,
