@@ -100,7 +100,7 @@ src/
 
 - **Architecture Decisions**: See `adr/frontend/01-frontend-architecture/`
 - **Project Plan**: See `adr/frontend/PROJECT_PLAN.md`
-- **Skills**: See `.cursor/skills/` for development guidelines
+- **Skills**: See `.claude/skills/` for development guidelines (index in `CLAUDE.md`)
 
 ## License
 

@@ -1,0 +1,6 @@
+{
+  "maxEntryJsKb": 100,
+  "maxChunkJsKb": 100,
+  "maxTotalJsKb": 160,
+  "maxTotalCssKb": 15
+}

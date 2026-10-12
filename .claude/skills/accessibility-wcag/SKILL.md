@@ -1,13 +1,17 @@
 ---
 name: accessibility-wcag
-description: Use when building interactive components, adding ARIA attributes, implementing keyboard navigation, handling focus management, or ensuring color contrast meets WCAG 2.1 Level AA.
+description: Use when building interactive components, adding ARIA attributes, keyboard navigation, focus management, or checking color contrast.
 ---
 
 # Accessibility (WCAG 2.1 Level AA)
 
-Target: WCAG 2.1 Level AA. Every interactive element must be keyboard accessible with proper ARIA semantics and sufficient color contrast.
+Every interactive element is keyboard accessible, has proper ARIA semantics, and meets AA contrast.
 
-## Keyboard Navigation
+## Keyboard
+
+- Tab order follows visual flow; no keyboard traps
+- Buttons, links and inputs respond to Enter and Space
+- Focus indicators are always visible
 
 ```typescript
 const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -16,120 +20,49 @@ const handleKeyDown = (event: React.KeyboardEvent) => {
     handleClick();
   }
 };
-
-<button onClick={handleClick} onKeyDown={handleKeyDown} aria-label="Add player">
-  Add Player
-</button>
 ```
 
-Requirements: tab order follows visual flow; all buttons/links/inputs keyboard accessible; no keyboard traps; focus indicators clearly visible.
+## Screen Readers
 
-## Screen Reader Support
+- Icon-only buttons require `aria-label`; the icon gets `aria-hidden="true"` (see `icons-lucide-react`)
+- Icon plus text: hide the icon, keep the text
+- Dynamic updates use `role="status"` with `aria-live="polite"`
 
 ```typescript
-// Icon-only button — always requires aria-label
 <button aria-label="Delete player" onClick={handleDelete}>
   <Trash2 size={16} aria-hidden="true" />
 </button>
-
-// Icon with text — hide icon from screen readers
-<button>
-  <Plus size={16} aria-hidden="true" />
-  <span>Add Player</span>
-</button>
-
-// Dynamic content announcements
-<div role="status" aria-live="polite" aria-atomic="true">
-  {playerCount} players added
-</div>
 ```
 
-## Color Contrast (WCAG AA)
+## Color Contrast
 
 - Normal text: 4.5:1 minimum
-- Large text (18pt+ or 14pt+ bold): 3:1 minimum
+- Large text (18pt+, or 14pt+ bold): 3:1 minimum
+- Check with DevTools, axe DevTools, or WebAIM Contrast Checker
 
-```css
-/* Good */
-.button { background-color: #2E7D32; color: #FFFFFF; } /* 4.5:1+ */
-
-/* Bad */
-.button { background-color: #E0E0E0; color: #F5F5F5; } /* too low */
-```
-
-Tools: browser DevTools, axe DevTools extension, WebAIM Contrast Checker.
-
-## Focus Management
+## Focus
 
 ```css
 .button:focus-visible {
   outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
-
-*:focus:not(:focus-visible) {
-  outline: none;
-}
 ```
 
-```typescript
-// Skip to content link
-<a href="#main-content" className={styles.skipLink}>
-  Skip to main content
-</a>
-<main id="main-content">{/* content */}</main>
-```
+Provide a skip link (`<a href="#main-content">`) before the navigation.
 
 ## Semantic HTML
 
-Use `<button>` for actions, `<nav>` for navigation, `<main>` for main content, `<form>` for forms. Maintain heading hierarchy h1 → h2 → h3.
+`<button>` for actions, `<nav>` for navigation, `<main>` for main content, `<form>` for forms. Heading hierarchy runs h1 → h2 → h3 without gaps.
 
-```html
-<!-- Good -->
-<main>
-  <h1>FutMeet</h1>
-  <nav aria-label="Main navigation">
-    <a href="/">Home</a>
-    <a href="/game">Game</a>
-  </nav>
-  <section>
-    <h2>Players</h2>
-  </section>
-</main>
-```
+## Form Fields
 
-## Accessible Form Fields
+Label every input with `htmlFor`; set `aria-invalid` and `aria-describedby` to an error element with `role="alert"`. Full form pattern: `forms-react-hook-form-zod` skill.
 
-```typescript
-<label htmlFor="player-name">Player Name</label>
-<input
-  id="player-name"
-  aria-invalid={!!errors.name}
-  aria-describedby={errors.name ? "name-error" : undefined}
-/>
-{errors.name && (
-  <span id="name-error" role="alert">
-    {errors.name.message}
-  </span>
-)}
-```
+## Testing
 
-## Automated Accessibility Testing
+Add a `<Component>.a11y.test.tsx` using `jest-axe` for each new web component (the `test:presence` sensor requires it), then check manually: keyboard only, NVDA or VoiceOver, 200% zoom.
 
-```typescript
-// npm install -D @axe-core/react vitest-axe
-import { axe, toHaveNoViolations } from 'vitest-axe';
-expect.extend(toHaveNoViolations);
+## References
 
-it('should have no accessibility violations', async () => {
-  const { container } = render(<Button>Click me</Button>);
-  expect(await axe(container)).toHaveNoViolations();
-});
-```
-
-## Manual Testing Checklist
-
-- Keyboard only (Tab, Enter, Space, Arrow keys)
-- Screen reader: NVDA (Windows), VoiceOver (Mac)
-- Color contrast via DevTools or axe
-- 200% zoom test
+Read `references/examples.md` for the axe test, form field, skip link and semantic layout snippets.

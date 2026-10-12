@@ -1,159 +1,67 @@
 ---
 name: testing-vitest
-description: Use when writing, modifying, or reviewing any code file in apps/api or apps/web. Covers the mandatory test requirement, layer-specific patterns, and Vitest + React Testing Library conventions.
+description: Use when writing, modifying, or reviewing any code file in apps/api or apps/web.
 ---
 
 # Testing with Vitest
 
 ## The Rule
 
-**Every file you create or modify must have unit tests in the same commit. No exceptions.**
-
-If you added or changed code without a `__tests__/index.test.ts` next to it, go back and write the tests before committing.
+**Every file you create or modify has unit tests in the same commit.** Code changed without a `__tests__/index.test.ts` beside it is unfinished; write the tests before committing.
 
 | Thought | Reality |
 |---|---|
 | "This file is too simple to need tests" | Simple files break silently. Tests take 5 minutes. |
 | "I'll add tests in a follow-up" | There is no follow-up. Write them now. |
-| "The logic is already tested elsewhere" | Test the layer you changed, not a different layer. |
+| "The logic is already tested elsewhere" | Test the layer you changed. |
 | "This is just a config change" | Config changes have observable behaviour. Test it. |
 
----
+## What to test per layer
 
-## API Layer Test Patterns (`apps/api`)
+| Layer | Test | How |
+|---|---|---|
+| Route | Invalid params/body return 400; valid input passes | `Fastify().inject()` with a mock controller, `ajvFormats as never` |
+| Controller | Calls the right service method; maps result to HTTP status/body | Mock the service, call the handler directly |
+| Service | Business rules and error branches | Mock the repository |
+| Repository | Correct SQL runs; rows map to domain types | Mock the `queryFactory` |
+| Core plugin | Registration; hook/handler behaviour | Mock Fastify with `vi.fn()`, extract the registered hook |
+| Framework utility | Constructor args; return value | `vi.hoisted()` + `vi.mock()` |
+| Web component | Rendering and interaction | React Testing Library + `userEvent` |
 
-### Route — param / body validation
+## Conventions
 
-Use Fastify's `inject()` with a mock controller. Requires `ajvFormats` for `format: 'uuid'`.
+- Files live in `__tests__/index.test.ts` next to the source
+- No comments in test files
+- Import with path aliases (`@modules/...`), never relative cross-package paths
+- Each test is independent, with no shared mutable state
+- Test behaviour, not implementation
+- Web queries: prefer `getByRole` and `getByLabelText` over `getByTestId`
+- Repositories take `queryFactory`; tests inject a fake query object
+
+## Route test skeleton
 
 ```ts
-import Fastify from 'fastify';
-import ajvFormats from 'ajv-formats';
-import { vi } from 'vitest';
-import { myRoutes } from '../index.js';
-
-function buildMockController() {
-  return {
-    getItem: vi.fn(async (_req: unknown, reply: any) => reply.status(200).send({})),
-    // ... one mock per route handler
-  };
-}
-
-async function buildApp() {
+const buildApp = async () => {
   const fastify = Fastify({ logger: false, ajv: { plugins: [ajvFormats as never] } });
   await fastify.register(myRoutes(buildMockController() as never), { prefix: '/items' });
   await fastify.ready();
   return fastify;
-}
+};
 
 it('returns 400 when id exceeds max length', async () => {
   const app = await buildApp();
   const res = await app.inject({ method: 'GET', url: '/items/' + 'a'.repeat(22) });
   expect(res.statusCode).toBe(400);
 });
-
-it('returns 400 when playerId is not a UUID', async () => {
-  const app = await buildApp();
-  const res = await app.inject({ method: 'PATCH', url: '/items/id123/members/not-a-uuid' });
-  expect(res.statusCode).toBe(400);
-});
 ```
 
-### Controller — service delegation + HTTP mapping
-
-Mock the service, call handlers directly.
-
-```ts
-const mockService = { getItem: vi.fn() };
-const controller = new MyController(mockService as any);
-
-it('calls service and replies 200', async () => {
-  const item = { id: '1' };
-  mockService.getItem.mockResolvedValue(item);
-  const reply = { status: vi.fn().mockReturnThis(), send: vi.fn() };
-  await controller.getItem({ params: { id: '1' } } as any, reply as any);
-  expect(reply.status).toHaveBeenCalledWith(200);
-  expect(reply.send).toHaveBeenCalledWith(item);
-});
-```
-
-### Core plugin — hook / handler behaviour
-
-Mock Fastify methods, extract registered hook, test it directly.
-
-```ts
-const mockFastify = {
-  register: vi.fn().mockResolvedValue(undefined),
-  addHook: vi.fn(),
-};
-await registerMyPlugin(mockFastify as never);
-const [, handler] = mockFastify.addHook.mock.calls.find(([name]) => name === 'onRequest');
-const reply = { status: vi.fn().mockReturnThis(), send: vi.fn() };
-await handler({ url: '/some-path', headers: {} }, reply);
-expect(reply.status).toHaveBeenCalledWith(401);
-```
-
-### Framework utility — constructor args / return value
-
-Use `vi.hoisted` to avoid hoisting errors with class mocks.
-
-```ts
-const { MockClass } = vi.hoisted(() => ({ MockClass: vi.fn() }));
-vi.mock('third-party', () => ({ default: { ClassName: MockClass } }));
-
-import { createThing } from '../index.js';
-
-it('passes correct options', () => {
-  createThing('connection-string');
-  expect(MockClass).toHaveBeenCalledWith(
-    expect.objectContaining({ connectionString: 'connection-string', timeout: 5_000 })
-  );
-});
-```
-
-### Service — business rules
-
-Mock the repository via `queryFactory`, test each branch.
-
-```ts
-const fakeQuery = { findById: vi.fn(), update: vi.fn() };
-const repo = new MyRepository(db, () => fakeQuery);
-```
-
----
-
-## Web Layer Test Patterns (`apps/web`)
-
-### Component — rendering + interaction
-
-```ts
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-it('calls onClick when clicked', async () => {
-  const handleClick = vi.fn();
-  const user = userEvent.setup();
-  render(<Button onClick={handleClick}>Click me</Button>);
-  await user.click(screen.getByRole('button'));
-  expect(handleClick).toHaveBeenCalledTimes(1);
-});
-```
-
-Prefer `getByRole`, `getByLabelText` over `getByTestId`.
-
----
-
-## General Rules
-
-- Test files: `__tests__/index.test.ts` next to the source file
-- No comments in test files
-- Use path aliases (`@modules/...`), never relative cross-package imports
-- Each test must be independent — no shared mutable state
-- Test behaviour, not implementation details
-
-## Running Tests
+## Running
 
 ```bash
-npm run test                                        # all packages
-npx vitest run apps/api/src/modules/room/route/__tests__/index.test.ts  # single file
+npm run test
+npx vitest run apps/api/src/modules/room/route/__tests__/index.test.ts
 ```
+
+## References
+
+Read `references/patterns.md` for controller, core plugin, framework utility, service and web component examples.

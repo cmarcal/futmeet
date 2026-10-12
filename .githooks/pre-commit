@@ -1,6 +1,13 @@
 #!/bin/sh
 branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 if [ "$branch" = "main" ]; then
-  echo "Direct commits to 'main' are blocked. Create a branch: git switch -c feat/your-change"
+  echo "Direct commits to 'main' are blocked. Create a worktree: git worktree add .worktrees/feat-name -b feat/name"
+  exit 1
+fi
+
+git_dir=$(git rev-parse --git-dir)
+common_dir=$(git rev-parse --git-common-dir)
+if [ "$git_dir" = "$common_dir" ] && [ -z "$ALLOW_PRIMARY_COMMIT" ]; then
+  echo "Commits from the primary checkout are blocked. Work in a worktree (see .claude/skills/worktree-workflow)."
   exit 1
 fi

@@ -8,6 +8,11 @@ export default defineConfig({
   test: {
     globals: false,
     environment: 'node',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary'],
+      thresholds: { statements: 78, lines: 78, branches: 90, functions: 90 },
+    },
   },
   resolve: {
     alias: {

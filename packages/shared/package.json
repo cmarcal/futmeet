@@ -16,7 +16,8 @@
   "scripts": {
     "build": "tsc",
     "lint": "oxlint-node src/",
-    "test": "vitest run --passWithNoTests"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests --coverage"
   },
   "dependencies": {
     "nanoid": "^5"
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@futmeet/oxlint-config": "*",
     "@futmeet/tsconfig": "*",
+    "@vitest/coverage-v8": "^2.1.9",
     "oxlint": "^0.16.0",
     "typescript": "^5",
     "vitest": "^2"

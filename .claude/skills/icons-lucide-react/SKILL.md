@@ -1,64 +1,42 @@
 ---
 name: icons-lucide-react
-description: Use when adding icons to buttons or UI elements, choosing icon names, styling icons with design tokens, or ensuring icon accessibility (aria-label, aria-hidden).
+description: Use when adding icons to buttons or UI elements, choosing icon names, or making icons accessible.
 ---
 
 # Icons with Lucide React
 
-Lucide React is the only icon library in this project. It is tree-shakeable and TypeScript-first.
+`lucide-react` is the only icon library: tree-shakeable, TypeScript-first.
 
-Install: `npm install lucide-react`
+## Rules
 
-## Basic Usage
-
-```typescript
-import { Plus, Trash2, User, Edit } from 'lucide-react';
-
-// Standard sizes
-<Plus size={16} />   // Small (buttons, inline)
-<Plus size={20} />   // Medium (default)
-<Plus size={24} />   // Large (headers, prominent)
-```
-
-## Usage Patterns
-
-### Icon in Button (with text)
+- Sizes: `16` (buttons, inline), `20` (default), `24` (headers, prominent)
+- Icon-only button: `aria-label` on the button, `aria-hidden="true"` on the icon
+- Icon plus text: `aria-hidden="true"` on the icon; the text serves screen readers
+- Decorative icons: always `aria-hidden="true"`
+- `aria-label` never goes on an icon inside a labeled button
+- Icons inherit the parent's `color`; set color through CSS tokens, never inline (`design-tokens-strategy`)
 
 ```typescript
-<button className={styles.button}>
+<button type="button" aria-label="Delete player" onClick={handleDelete}>
+  <Trash2 size={16} aria-hidden="true" />
+</button>
+
+<button>
   <Plus size={16} aria-hidden="true" />
   <span>Add Player</span>
 </button>
 ```
 
-### Icon-Only Button (requires aria-label)
+## Project Icon Reference
 
-```typescript
-<button
-  className={styles.iconButton}
-  onClick={onClick}
-  aria-label="Delete player"
-  type="button"
->
-  <Trash2 size={16} aria-hidden="true" />
-</button>
-```
-
-### Icon with Text Label
-
-```typescript
-<div className={styles.label}>
-  <User size={16} className={styles.icon} aria-hidden="true" />
-  <span>{name}</span>
-</div>
-```
+| Area | Icons |
+|---|---|
+| Player management | `User` player, `Plus` add, `Trash2` delete, `Edit` edit, `Check` confirm, `X` cancel |
+| Priority/sorting | `Star` priority, `Shuffle` sort teams, `ArrowUp`/`ArrowDown` reorder |
+| Navigation | `Home`, `List` player list, `Users` teams, `Settings` |
+| Status | `CheckCircle` success, `AlertCircle` warning, `XCircle` error |
 
 ## Styling
-
-```typescript
-// With CSS class
-<Plus size={16} className={styles.icon} />
-```
 
 ```css
 .icon {
@@ -71,64 +49,6 @@ import { Plus, Trash2, User, Edit } from 'lucide-react';
 }
 ```
 
-Icons inherit the parent element's `color` by default — leverage this instead of setting color inline.
+## References
 
-## Project Icon Reference
-
-### Player Management
-- `User` — player/user
-- `Plus` — add player
-- `Trash2` — remove/delete
-- `Edit` — edit player
-- `Check` — confirm
-- `X` — cancel/close
-
-### Priority/Sorting
-- `Star` — priority player
-- `Shuffle` — sort/shuffle teams
-- `ArrowUp` / `ArrowDown` — reorder
-
-### Navigation
-- `Home` — home page
-- `List` — player list
-- `Users` — teams
-- `Settings` — settings
-
-### Status
-- `CheckCircle` — success
-- `AlertCircle` — warning
-- `XCircle` — error
-
-## Optional Icon Wrapper Component
-
-```typescript
-// components/base-elements/Icon/Icon.tsx
-import { LucideIcon } from 'lucide-react';
-
-interface IconProps {
-  icon: LucideIcon;
-  size?: number;
-  className?: string;
-  ariaLabel?: string;
-}
-
-export function Icon({ icon: IconComponent, size = 20, className, ariaLabel }: IconProps) {
-  return (
-    <IconComponent
-      size={size}
-      className={className}
-      aria-label={ariaLabel}
-      aria-hidden={!ariaLabel}
-    />
-  );
-}
-
-// <Icon icon={Plus} size={16} className={styles.icon} />
-```
-
-## Accessibility Rules
-
-- Icon-only buttons: always add `aria-label` to the button, `aria-hidden="true"` to the icon
-- Icon + text: add `aria-hidden="true"` to the icon — the text is sufficient for screen readers
-- Decorative icons: always `aria-hidden="true"`
-- Never put `aria-label` on the icon itself when it's inside a labeled button
+Read `references/icon-wrapper.md` for the optional `Icon` wrapper component. General accessibility rules: `accessibility-wcag` skill.
