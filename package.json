@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
     "dev": "turbo dev",
     "dev:web": "turbo dev --filter=@futmeet/web",
     "dev:api": "turbo dev --filter=@futmeet/api",
