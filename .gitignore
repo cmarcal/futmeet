@@ -70,3 +70,6 @@ PHASE_*.md
 
 # Git worktrees
 .worktrees/
+
+# Claude Code
+.claude/worktrees/

@@ -11,6 +11,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@': resolve(__dirname, 'src'),
       '@core': resolve(__dirname, 'src/core'),
       '@modules': resolve(__dirname, 'src/modules'),
       '@futmeet/shared/types': resolve(__dirname, '../../packages/shared/src/types/index.ts'),

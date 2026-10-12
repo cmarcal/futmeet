@@ -31,7 +31,7 @@ COPY packages/shared ./packages/shared
 COPY packages/tsconfig ./packages/tsconfig
 COPY apps/api ./apps/api
 WORKDIR /app/apps/api
-CMD ["node", "--import", "tsx/esm", "node_modules/knex/bin/cli.js", "migrate:latest", "--knexfile", "knexfile.ts"]
+CMD ["node", "--import", "tsx/esm", "src/scripts/db.ts", "migrate:latest"]
 
 # ---- Stage 4: Lean production runtime ----
 FROM node:26-alpine AS runtime
