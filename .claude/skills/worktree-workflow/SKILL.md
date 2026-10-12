@@ -1,6 +1,6 @@
 ---
 name: worktree-workflow
-description: Use before making any change in this repo, and when starting, finishing, or cleaning up a branch.
+description: Use when about to change anything in this repo, or when starting, finishing, or cleaning up a branch.
 ---
 
 # Worktree Workflow

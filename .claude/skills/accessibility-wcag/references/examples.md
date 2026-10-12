@@ -69,9 +69,8 @@ The first pair passes 4.5:1; the second fails.
 ## Automated test
 
 ```typescript
-// npm install -D @axe-core/react vitest-axe
-import { axe, toHaveNoViolations } from 'vitest-axe';
-expect.extend(toHaveNoViolations);
+// Button.a11y.test.tsx, using jest-axe (matcher registered in src/test/setup.ts)
+import { axe } from 'jest-axe';
 
 it('should have no accessibility violations', async () => {
   const { container } = render(<Button>Click me</Button>);

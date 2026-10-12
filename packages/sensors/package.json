@@ -1,0 +1,15 @@
+{
+  "name": "@futmeet/sensors",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint-node src/",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@futmeet/oxlint-config": "*",
+    "oxlint": "^0.16.0",
+    "vitest": "^2"
+  }
+}

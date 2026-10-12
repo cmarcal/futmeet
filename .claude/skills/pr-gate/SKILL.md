@@ -1,28 +1,47 @@
 ---
 name: pr-gate
-description: Use before opening a pull request, or when asked to verify that lint, typecheck, test and build are green.
+description: Use when about to open a pull request, or when asked to verify that the sensors are green.
 ---
 
 # PR Gate
 
-A pull request opens only when four sensors read green: `lint`, `typecheck`, `test`, `build`. Red means fix and rerun; it never means open anyway.
+A pull request opens only when every sensor reads green. Red means fix and rerun; it never means open anyway.
 
 ## Loop
 
-1. From the worktree root run `npm run verify`. It runs all four sensors and prints a GREEN/RED summary.
-2. Any RED: run that sensor alone (`npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`), read the first error, fix the cause in the code.
+1. From the worktree root run `npm run verify`. It runs every sensor and prints a GREEN/RED summary.
+2. Any RED: run that sensor alone (`npm run <sensor>`), read the first error, fix the cause in the code.
 3. Rerun `npm run verify` until every line reads GREEN.
 4. Commit the fixes (`git-conventional-commits`), push, then `gh pr create`.
 
 Done when `npm run verify` ends with `verify passed: all sensors green.` in this session, after the last edit.
 
+## Sensors
+
+| Sensor | Catches | Fix |
+|---|---|---|
+| `lint` | oxlint warnings (denied) | Fix the code |
+| `typecheck` | `tsc --noEmit` errors | Fix the types |
+| `format:check` | Changed files not matching Prettier | `npm run format` |
+| `knip` | Unused files, dependencies, binaries | Delete or use it; real dynamic use goes in `knip.json` ignores |
+| `skills:lint` | Skill over 100 lines, bad frontmatter, broken `references/` link, skill missing from the `CLAUDE.md` table | Move detail to `references/`, update the table |
+| `test:presence` | Changed source file without a test; changed web component without `*.a11y.test.tsx` | Write the tests (`testing-vitest`) |
+| `secrets` | Credentials in any file | Remove and rotate the secret |
+| `audit:prod` | High or critical vulnerabilities in production dependencies | `npm update <pkg>`, then rerun tests |
+| `test` | Failing tests or coverage under the floor in each `vitest.config` | Fix the code; add tests for uncovered code |
+| `build` | Compile or bundle errors | Fix the code |
+| `bundle` | Web bundle over `packages/sensors/bundle-budget.json` | Split or drop the weight; raise a limit only with a stated reason in the PR |
+| `db:check` | Migrations that fail to apply or roll back | Fix the migration (`VERIFY_DB=1`, needs `DATABASE_URL`; always runs in CI) |
+
 ## Fix the cause
 
 A fix changes code, tests or config so the sensor passes for the right reason. These make a sensor green without fixing anything, so none of them count:
 - Skipping, deleting or weakening a test (`it.skip`, loosened assertions)
+- Lowering a coverage threshold or raising a bundle limit to fit the change
 - Lint disable comments or rule downgrades
 - `@ts-ignore`, `@ts-expect-error`, `any` casts added to silence an error
-- Removing a check from `scripts/verify.mjs` or CI
+- Adding a `knip.json` ignore or secret allowlist for something that is not a false positive
+- Removing a sensor from `packages/sensors/src/verify.mjs` or CI
 
 A test that fails because behavior changed on purpose: update the test and say so in the PR body.
 
@@ -32,4 +51,4 @@ A test that fails because behavior changed on purpose: update the test and say s
 
 ## Enforcement
 
-`.claude/settings.json` runs `npm run verify` before every `gh pr create` and blocks the command while any sensor is red. CI runs the same four checks as the backstop.
+`.claude/settings.json` runs `npm run verify` before every `gh pr create` and blocks the command while any sensor is red. CI runs the same sensors as the backstop. Sensor code lives in `packages/sensors`.

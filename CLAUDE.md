@@ -16,7 +16,7 @@ Scripts live in each `package.json`; Postgres runs through `npm run db:up` in `a
 
 - **Every change happens in a git worktree on its own branch.** Follow `worktree-workflow`; the pre-commit hook rejects commits from the primary checkout and from `main`.
 - **Every file you create or modify ships with unit tests** in the same commit (`testing-vitest`).
-- **A PR opens only when `npm run verify` is green** on lint, typecheck, test and build (`pr-gate`). A red sensor is fixed at its cause and rerun; a hook blocks `gh pr create` while any sensor is red. CI treats warnings as errors.
+- **A PR opens only when `npm run verify` is green** on lint, typecheck, test and build (`pr-gate`). A red sensor is fixed at its cause and rerun; a hook blocks `gh pr create` while any sensor is red (lint, typecheck, format, knip, skills, test presence, secrets, audit, tests with coverage floors, build, bundle budget; migrations in CI). CI treats warnings as errors.
 
 ## Skills
 

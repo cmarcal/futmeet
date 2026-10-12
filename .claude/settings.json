@@ -19,7 +19,7 @@
             "type": "command",
             "if": "Bash(gh pr create*)",
             "command": "npm run verify >&2 || { echo 'PR gate: a sensor is red. Fix the cause (pr-gate skill), rerun npm run verify, then open the PR.' >&2; exit 2; }",
-            "timeout": 600,
+            "timeout": 900,
             "statusMessage": "PR gate: lint, typecheck, test, build must be green..."
           }
         ]

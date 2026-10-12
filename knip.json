@@ -1,0 +1,39 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "rules": {
+    "exports": "off",
+    "types": "off",
+    "nsExports": "off",
+    "nsTypes": "off",
+    "duplicates": "off"
+  },
+  "ignoreBinaries": ["cross-env"],
+  "workspaces": {
+    ".": {
+      "ignoreDependencies": ["@secretlint/secretlint-rule-preset-recommend"]
+    },
+    "apps/api": {
+      "entry": ["src/index.ts", "src/scripts/db.ts", "src/migrations/*.ts", "src/seeds/*.ts"],
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": ["oxlint", "pino-pretty"]
+    },
+    "apps/web": {
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignore": ["src/pages/index.ts", "src/components/Badge/index.ts", "src/test/a11y.ts"],
+      "ignoreDependencies": ["oxlint"]
+    },
+    "packages/shared": {
+      "entry": ["src/types/index.ts", "src/utils/index.ts"],
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": ["oxlint"]
+    },
+    "packages/oxlint-config": {
+      "entry": ["bin/*.js"]
+    },
+    "packages/sensors": {
+      "entry": ["src/*.mjs"],
+      "project": ["src/**/*.mjs"],
+      "ignoreDependencies": ["oxlint"]
+    }
+  }
+}

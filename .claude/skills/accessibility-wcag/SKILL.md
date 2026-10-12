@@ -61,7 +61,7 @@ Label every input with `htmlFor`; set `aria-invalid` and `aria-describedby` to a
 
 ## Testing
 
-Run `vitest-axe` on each new component, then check manually: keyboard only, NVDA or VoiceOver, 200% zoom.
+Add a `<Component>.a11y.test.tsx` using `jest-axe` for each new web component (the `test:presence` sensor requires it), then check manually: keyboard only, NVDA or VoiceOver, 200% zoom.
 
 ## References
 

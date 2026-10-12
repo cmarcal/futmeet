@@ -15,9 +15,22 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node packages/sensors/src/verify.mjs",
+    "format:check": "node packages/sensors/src/format-changed.mjs",
+    "format": "node packages/sensors/src/format-changed.mjs --write",
+    "knip": "knip",
+    "skills:lint": "node packages/sensors/src/skills-lint.mjs",
+    "test:presence": "node packages/sensors/src/test-presence.mjs",
+    "secrets": "secretlint --secretlintignore .secretlintignore \"**/*\"",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "bundle": "node packages/sensors/src/bundle-budget.mjs",
+    "db:check": "npm run db:check -w @futmeet/api"
   },
   "devDependencies": {
+    "@secretlint/secretlint-rule-preset-recommend": "^10.2.2",
+    "knip": "^5.88.1",
+    "prettier": "^3.9.10",
+    "secretlint": "^10.2.2",
     "turbo": "^2"
   }
 }
