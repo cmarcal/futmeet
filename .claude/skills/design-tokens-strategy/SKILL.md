@@ -1,6 +1,6 @@
 ---
 name: design-tokens-strategy
-description: Use when referencing or defining design tokens (colors, spacing, typography, border radius) in CSS Modules. Covers the token catalog and import convention for src/styles/tokens.css.
+description: Use when referencing or defining design tokens (colors, spacing, typography, border radius) in CSS Modules.
 ---
 
 # Design Tokens Strategy

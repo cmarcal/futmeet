@@ -1,46 +1,19 @@
 ---
 name: routing-react-router
-description: Use when setting up routes, implementing navigation, adding new pages, or using routing hooks (useNavigate, useParams, useLocation) in the React web app.
+description: Use when setting up routes, adding pages, or navigating with routing hooks in the React web app.
 ---
 
 # Routing with React Router DOM
 
-Use React Router DOM v7 for all client-side routing. Note: `@types/react-router-dom` is bundled in v6+, no separate types package needed.
+React Router DOM v7 handles all client-side routing. Types are bundled; no `@types` package needed.
 
-Install: `npm install react-router-dom`
+## Rules
 
-## Setup
-
-```typescript
-// main.tsx
-import { BrowserRouter } from 'react-router-dom';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
-);
-```
-
-```typescript
-// App.tsx — all routes defined here
-import { Routes, Route } from 'react-router-dom';
-import { HomePage } from './pages/HomePage';
-import { GamePage } from './pages/GamePage';
-import { ResultsPage } from './pages/ResultsPage';
-
-export function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/game" element={<GamePage />} />
-      <Route path="/results" element={<ResultsPage />} />
-    </Routes>
-  );
-}
-```
+- Define every route in `App.tsx`, one place for the full route map
+- Page components live in `src/pages/`
+- `useNavigate` for programmatic navigation, `Link` for declarative navigation
+- `BrowserRouter` wraps `<App />` in `main.tsx`
+- After adding routes, test the browser back/forward buttons
 
 ## MVP Routes
 
@@ -50,101 +23,46 @@ export function App() {
 /results    → ResultsPage (team display)
 ```
 
-## Navigation Hooks
-
-### useNavigate
+## Setup
 
 ```typescript
-import { useNavigate } from 'react-router-dom';
-
-function GameManager() {
-  const navigate = useNavigate();
-
-  const handleSortComplete = () => navigate('/results');
-  const handleGoBack = () => navigate(-1);
-}
+// App.tsx
+export const App = () => (
+  <Routes>
+    <Route path="/" element={<HomePage />} />
+    <Route path="/game" element={<GamePage />} />
+    <Route path="/results" element={<ResultsPage />} />
+  </Routes>
+);
 ```
 
-### Link Component
+## Navigation
 
 ```typescript
-import { Link } from 'react-router-dom';
+const navigate = useNavigate();
+const handleSortComplete = () => navigate('/results');
+const handleGoBack = () => navigate(-1);
 
-function Navigation() {
-  return (
-    <nav>
-      <Link to="/">Home</Link>
-      <Link to="/game">Game</Link>
-      <Link to="/results">Results</Link>
-    </nav>
-  );
-}
+<Link to="/game">Game</Link>
 ```
 
-### useLocation
+## Route Parameters
 
 ```typescript
-import { useLocation } from 'react-router-dom';
-
-const location = useLocation();
-// location.pathname → '/game'
-```
-
-## Route Parameters (Future)
-
-```typescript
-// Route
 <Route path="/game/:gameId" element={<GamePage />} />
 
-// Component
-import { useParams } from 'react-router-dom';
 const { gameId } = useParams<{ gameId: string }>();
-```
-
-## Route Protection (Future)
-
-```typescript
-// components/ProtectedRoute.tsx
-import { Navigate } from 'react-router-dom';
-
-function ProtectedRoute({ children, isAuthenticated }: { children: React.ReactNode; isAuthenticated: boolean }) {
-  if (!isAuthenticated) return <Navigate to="/" replace />;
-  return <>{children}</>;
-}
-
-// Usage
-<Route path="/game" element={
-  <ProtectedRoute isAuthenticated={isAuthenticated}>
-    <GamePage />
-  </ProtectedRoute>
-} />
-```
-
-## Typed Routes (Optional)
-
-```typescript
-// types/routes.ts
-export type RoutePath = '/' | '/game' | '/results';
-const navigate = useNavigate();
-navigate('/game' as RoutePath);
 ```
 
 ## Project Structure
 
 ```
 src/
-├── pages/
-│   ├── HomePage.tsx
-│   ├── GamePage.tsx
-│   └── ResultsPage.tsx
-├── components/navigation/
-│   └── Navigation.tsx
-└── App.tsx   ← routes defined here
+├── pages/{HomePage,GamePage,ResultsPage}.tsx
+├── components/navigation/Navigation.tsx
+└── App.tsx
 ```
 
-## Best Practices
+## References
 
-- Define all routes in `App.tsx` — one place for the full route map
-- Keep page components in `src/pages/`
-- Use `useNavigate` for programmatic navigation, `Link` for declarative navigation
-- Always test browser back/forward buttons after adding routes
+Read `references/examples.md` for `main.tsx` setup, `useLocation`, `ProtectedRoute` and typed routes.
