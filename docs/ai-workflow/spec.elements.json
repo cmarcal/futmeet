@@ -1,0 +1,174 @@
+[
+  { "type": "cameraUpdate", "width": 1200, "height": 900, "x": -75, "y": -40 },
+  {
+    "type": "text",
+    "id": "t1",
+    "x": 330,
+    "y": 0,
+    "text": "Stage 1: Spec",
+    "fontSize": 36,
+    "strokeColor": "#1e1e1e"
+  },
+  {
+    "type": "text",
+    "id": "t1s",
+    "x": 210,
+    "y": 55,
+    "text": "Decide what to build before any code is written",
+    "fontSize": 22,
+    "strokeColor": "#757575"
+  },
+  {
+    "type": "rectangle",
+    "id": "b1",
+    "x": 0,
+    "y": 200,
+    "width": 210,
+    "height": 110,
+    "roundness": { "type": 3 },
+    "backgroundColor": "#a5d8ff",
+    "fillStyle": "solid",
+    "strokeColor": "#4a9eed",
+    "label": { "text": "Idea\nyour request", "fontSize": 20 }
+  },
+  {
+    "type": "arrow",
+    "id": "a1",
+    "x": 210,
+    "y": 255,
+    "width": 70,
+    "height": 0,
+    "points": [
+      [0, 0],
+      [70, 0]
+    ],
+    "strokeColor": "#1e1e1e",
+    "strokeWidth": 2,
+    "endArrowhead": "arrow"
+  },
+  {
+    "type": "rectangle",
+    "id": "b2",
+    "x": 280,
+    "y": 200,
+    "width": 210,
+    "height": 110,
+    "roundness": { "type": 3 },
+    "backgroundColor": "#fff3bf",
+    "fillStyle": "solid",
+    "strokeColor": "#f59e0b",
+    "label": { "text": "Brainstorm\nintent + options", "fontSize": 20 }
+  },
+  {
+    "type": "arrow",
+    "id": "a2",
+    "x": 490,
+    "y": 255,
+    "width": 70,
+    "height": 0,
+    "points": [
+      [0, 0],
+      [70, 0]
+    ],
+    "strokeColor": "#1e1e1e",
+    "strokeWidth": 2,
+    "endArrowhead": "arrow"
+  },
+  {
+    "type": "rectangle",
+    "id": "b3",
+    "x": 560,
+    "y": 200,
+    "width": 210,
+    "height": 110,
+    "roundness": { "type": 3 },
+    "backgroundColor": "#d0bfff",
+    "fillStyle": "solid",
+    "strokeColor": "#8b5cf6",
+    "label": { "text": "Spec\ndocs/superpowers/specs", "fontSize": 18 }
+  },
+  {
+    "type": "text",
+    "id": "ap",
+    "x": 753,
+    "y": 160,
+    "text": "you approve",
+    "fontSize": 18,
+    "strokeColor": "#15803d"
+  },
+  {
+    "type": "arrow",
+    "id": "a3",
+    "x": 770,
+    "y": 255,
+    "width": 70,
+    "height": 0,
+    "points": [
+      [0, 0],
+      [70, 0]
+    ],
+    "strokeColor": "#22c55e",
+    "strokeWidth": 3,
+    "endArrowhead": "arrow"
+  },
+  {
+    "type": "rectangle",
+    "id": "b4",
+    "x": 840,
+    "y": 200,
+    "width": 210,
+    "height": 110,
+    "roundness": { "type": 3 },
+    "backgroundColor": "#b2f2bb",
+    "fillStyle": "solid",
+    "strokeColor": "#22c55e",
+    "label": { "text": "Plan\ndocs/superpowers/plans", "fontSize": 18 }
+  },
+  {
+    "type": "arrow",
+    "id": "a4",
+    "x": 665,
+    "y": 310,
+    "width": 0,
+    "height": 100,
+    "points": [
+      [0, 0],
+      [0, 100]
+    ],
+    "strokeColor": "#f59e0b",
+    "strokeWidth": 2,
+    "strokeStyle": "dashed",
+    "endArrowhead": "arrow"
+  },
+  {
+    "type": "text",
+    "id": "adrq",
+    "x": 690,
+    "y": 345,
+    "text": "hard to reverse?",
+    "fontSize": 18,
+    "strokeColor": "#9a6700"
+  },
+  {
+    "type": "rectangle",
+    "id": "b5",
+    "x": 560,
+    "y": 410,
+    "width": 210,
+    "height": 100,
+    "roundness": { "type": 3 },
+    "backgroundColor": "#ffd8a8",
+    "fillStyle": "solid",
+    "strokeColor": "#f59e0b",
+    "label": { "text": "ADR\nsrc/docs/adr", "fontSize": 18 }
+  },
+  {
+    "type": "text",
+    "id": "foot",
+    "x": 60,
+    "y": 570,
+    "text": "Output: an approved spec and a step-by-step plan. The agent builds nothing until you approve.",
+    "fontSize": 20,
+    "strokeColor": "#757575"
+  }
+]
