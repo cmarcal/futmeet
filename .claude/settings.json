@@ -2,7 +2,7 @@
   "enabledPlugins": {
     "github@claude-plugins-official": true
   },
-  "enabledMcpjsonServers": ["miro"],
+  "enabledMcpjsonServers": ["miro", "excalidraw"],
   "hooks": {
     "PreToolUse": [
       {
@@ -17,10 +17,9 @@
           },
           {
             "type": "command",
-            "if": "Bash(gh pr create*)",
-            "command": "npm run verify >&2 || { echo 'PR gate: a sensor is red. Fix the cause (pr-gate skill), rerun npm run verify, then open the PR.' >&2; exit 2; }",
+            "command": "node \"$CLAUDE_PROJECT_DIR/packages/sensors/src/pr-gate-hook.mjs\"",
             "timeout": 900,
-            "statusMessage": "PR gate: lint, typecheck, test, build must be green..."
+            "statusMessage": "PR gate: lint, typecheck, test, build and the other sensors must be green..."
           }
         ]
       }

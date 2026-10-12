@@ -4,7 +4,7 @@ FutMeet is a TypeScript monorepo (npm workspaces + Turbo) for organizing casual 
 
 ```
 apps/api               Fastify REST API + PostgreSQL
-apps/web               React 18 + Vite SPA
+apps/web               React 19 + Vite SPA
 packages/shared        Shared types and utils (@futmeet/shared)
 packages/tsconfig      Reusable TypeScript configs
 packages/oxlint-config Reusable oxlint configs + CLI wrappers
