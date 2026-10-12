@@ -16,6 +16,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "oxlint-node src/",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {

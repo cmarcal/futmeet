@@ -13,7 +13,9 @@
     "dev:api": "turbo dev --filter=@futmeet/api",
     "build": "turbo build",
     "lint": "turbo lint",
-    "test": "turbo test"
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
+    "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {
     "turbo": "^2"

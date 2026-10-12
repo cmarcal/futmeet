@@ -27,7 +27,7 @@ npm install
 1. Write an ADR first when the change is architectural (`adr-on-branch`)
 2. Write tests with the code (`testing-vitest`)
 3. Commit with Conventional Commits (`git-conventional-commits`)
-4. Before pushing, run from the worktree root: `npm run lint && npm run test && npm run build`
+4. Before opening the PR, `pr-gate` must pass: `npm run verify` green on lint, typecheck, test and build
 
 ## Finish
 

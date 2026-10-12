@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "oxlint-node src/",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",

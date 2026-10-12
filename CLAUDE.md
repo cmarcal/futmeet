@@ -16,7 +16,7 @@ Scripts live in each `package.json`; Postgres runs through `npm run db:up` in `a
 
 - **Every change happens in a git worktree on its own branch.** Follow `worktree-workflow`; the pre-commit hook rejects commits from the primary checkout and from `main`.
 - **Every file you create or modify ships with unit tests** in the same commit (`testing-vitest`).
-- **Before pushing**, run from the worktree root: `npm run lint && npm run test && npm run build`. CI treats warnings as errors.
+- **A PR opens only when `npm run verify` is green** on lint, typecheck, test and build (`pr-gate`). A red sensor is fixed at its cause and rerun; a hook blocks `gh pr create` while any sensor is red. CI treats warnings as errors.
 
 ## Skills
 
@@ -25,6 +25,7 @@ Load the matching skill from `.claude/skills/` before working in its area.
 | Working on | Skill |
 |---|---|
 | Any change, branch, or cleanup | `worktree-workflow` |
+| Before opening a PR | `pr-gate` |
 | Branch names, commits, PR titles | `git-conventional-commits` |
 | Architectural decision | `adr-on-branch` |
 | Tests (api or web) | `testing-vitest` |
